@@ -1,4 +1,252 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bartlomiej Mika</title><link>https://bartlomiejmika.com/</link><description>Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 11 Jul 2020 00:02:30 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Hello World</title><link>https://bartlomiejmika.com/posts/2020/07/10/hello-world/</link><pubDate>Sat, 11 Jul 2020 00:02:30 -0400</pubDate><guid>https://bartlomiejmika.com/posts/2020/07/10/hello-world/</guid><description>&lt;p>&lt;img src="https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&amp;amp;cs=tinysrgb&amp;amp;dpr=2&amp;amp;h=650&amp;amp;w=940" alt="">&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Bartlomiej Mika</title><link>https://bartlomiejmika.com/</link><description>Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2020 12:15:15 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Setup Peercoin on Raspberry Pi for Headless Minting</title><link>https://bartlomiejmika.com/posts/2020/07/26/how-to-setup-peercoin-on-raspberry-pi-for-headless-minting/</link><pubDate>Sun, 26 Jul 2020 12:15:15 -0400</pubDate><guid>https://bartlomiejmika.com/posts/2020/07/26/how-to-setup-peercoin-on-raspberry-pi-for-headless-minting/</guid><description>&lt;p>Would you believe you can participate in cryptocurrency production using a simple Raspberry Pi computer? No need for powerful ASIC miners! Peercoin is an interesting altcoin that has &lt;strong>minting&lt;/strong> capability built-in, and minting is the ability to create new coins from the ones you already have. In this tutorial, you&amp;rsquo;ll learn how to set up a dedicated Raspberry Pi computer to mint the Peercoins in your wallet.&lt;/p>
+&lt;h2 id="assumptions">Assumptions&lt;/h2>
+&lt;p>This guide assumes the following:&lt;/p>
+&lt;ul>
+&lt;li>You&amp;rsquo;ve downloaded &lt;a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian Lite ISO image&lt;/a>.&lt;/li>
+&lt;li>You&amp;rsquo;ve burned the image on the SDCard and you have some experience working with the Raspberry Pi computer&lt;/li>
+&lt;li>You&amp;rsquo;ve installed &lt;code>Peercoin&lt;/code> on your computer and you want to transfer your &lt;code>wallet.dat&lt;/code> file to your Raspberry Pi computer.&lt;/li>
+&lt;li>You already have some Peercoins in your wallet.&lt;/li>
+&lt;/ul>
+&lt;p>This guide has been confirmed working on:&lt;/p>
+&lt;ul>
+&lt;li>Pi 2 Model B v1.1 1GB a21041 (Embest, China) &lt;a href="https://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/">*&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/peercoin/peercoin/releases">Peercoin Daemon version v0.8.1.0&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="instructions">Instructions&lt;/h2>
+&lt;h3 id="optional-changing-the-host-on-your-pi">(Optional) Changing the Host on your Pi&lt;/h3>
+&lt;p>The following section was taken from &lt;a href="https://www.howtogeek.com/167195/how-to-change-your-raspberry-pi-or-other-linux-devices-hostname/">this link&lt;/a>.&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Open up this file.&lt;/p>
+&lt;pre>&lt;code>sudo nano /etc/hosts
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Leave all of the entries alone except for the very last entry labeled 127.0.1.1 with the hostname &lt;code>raspberrypi&lt;/code>. This is the only line you want to edit. Replace “raspberrypi” with whatever hostname you desire. I named my computer &lt;code>peercoin-pi&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Back at the terminal, type the following command to open the hostname file:&lt;/p>
+&lt;pre>&lt;code>sudo nano /etc/hostname
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Replace the default “raspberrypi” with the same hostname you put in the previous step (e.g. &lt;code>peercoin-pi&lt;/code>).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Commit our changes.&lt;/p>
+&lt;pre>&lt;code>sudo /etc/init.d/hostname.sh
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Reboot the computer.&lt;/p>
+&lt;pre>&lt;code>sudo reboot
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;/ol>
+&lt;h3 id="improve-security">Improve security&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Install firewall.&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install git ufw
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Enable firewall and allow only ssh access&lt;/p>
+&lt;pre>&lt;code>sudo ufw allow 22
+sudo ufw allow 9901
+sudo ufw --force enable
+sudo ufw status
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>To add more security, read &lt;a href="https://www.raspberrypi.org/documentation/configuration/security.md">this link&lt;/a>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="swap">Swap&lt;/h3>
+&lt;p>The following section was inspired by &lt;a href="http://raspberrypimaker.com/adding-swap-to-the-raspberrypi/">this article&lt;/a>. Please be warned that running the following code can shorten the life-span of your SDCard.&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Configure using the following.&lt;/p>
+&lt;pre>&lt;code>sudo dd if=/dev/zero of=/swapfile bs=64M count=16
+sudo mkswap /swapfile
+sudo swapon /swapfile
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>(Optional) Stop our &lt;code>swap&lt;/code> memory and remove it.&lt;/p>
+&lt;pre>&lt;code>sudo swapoff /swapfile
+sudo rm -f /swapfile
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>(Optional) Make the swap memory permanent on every boot.&lt;/p>
+&lt;pre>&lt;code>sudo vi /etc/fstab
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>(Optional) Append the contents:&lt;/p>
+&lt;pre>&lt;code>/swapfile none swap defaults 0 0
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;/ol>
+&lt;h3 id="peercoin">Peercoin&lt;/h3>
+&lt;h4 id="build-executable">Build Executable&lt;/h4>
+&lt;p>Please note these instructions where taken from &lt;a href="https://github.com/peercoin/peercoin/blob/master/doc/build-unix.md">this section&lt;/a>. The following instructions are to be run on your raspberry pi.&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Update the libraries.&lt;/p>
+&lt;pre>&lt;code>sudo apt-get update
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Install build requirements:&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils python3
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Install more requirements&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>(Optional) If above command doesn&amp;rsquo;t work, you can install all boost development packages with:&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install libboost-all-dev
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>According to &lt;a href="https://github.com/peercoin/peercoin/blob/master/doc/build-unix.md#arm-cross-compilation">this link&lt;/a>, we are compiling on &lt;code>arm&lt;/code> processor so we need to run:&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install g++-arm-linux-gnueabihf curl
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Install &lt;code>git&lt;/code> because it’s not installed.&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install git
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Clone &lt;a href="https://github.com/peercoin/peercoin">Peercoin&lt;/a> to our home directory.&lt;/p>
+&lt;pre>&lt;code>cd /home/pi
+git clone https://github.com/ppcoin/ppcoin.git
+``
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>To build our dependencies for &lt;code>arm&lt;/code>, according to &lt;a href="https://github.com/peercoin/peercoin/blob/master/doc/build-unix.md#arm-cross-compilation">this link&lt;/a>, then run the following:&lt;/p>
+&lt;pre>&lt;code>cd depends
+make HOST=arm-linux-gnueabihf NO_QT=1
+cd ..
+./configure --prefix=$PWD/depends/arm-linux-gnueabihf --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++
+make
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>To build our executable for &lt;code>arm&lt;/code>, according to &lt;a href="https://github.com/peercoin/peercoin/blob/master/doc/build-unix.md#arm-cross-compilation">this link&lt;/a>, then run the following:&lt;/p>
+&lt;pre>&lt;code>./autogen.sh
+./configure
+make
+make install # optional
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;/ol>
+&lt;h4 id="setup-and-run-executable">Setup and Run Executable&lt;/h4>
+&lt;ol>
+&lt;li>
+&lt;p>Upload the &lt;code>wallet.dat&lt;/code> file on your computer to your raspberry pi.&lt;/p>
+&lt;pre>&lt;code>rsync -avz ~/Desktop/wallet.dat pi@192.168.1.10:/home/pi/.peercoin/wallets/wallet.dat
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Run the following code to confirm the &lt;code>Peercoin&lt;/code> daemon starts running in the background.&lt;/p>
+&lt;pre>&lt;code>cd /home/pi/ppcoin/src
+./peercoind -listen=0 -daemon -server
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>If the daemon loads up then you have successfully built the executable.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h4 id="optional-run-peercoind-in-background">(Optional) Run &lt;code>peercoind&lt;/code> in background&lt;/h4>
+&lt;p>This section had assistance from &lt;a href="https://raspi.tv/2012/using-screen-with-raspberry-pi-to-avoid-leaving-ssh-sessions-open">this link&lt;/a>.&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Install &lt;code>screen&lt;/code>.&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install screen
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Open up our screen session.&lt;/p>
+&lt;pre>&lt;code>screen bash
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Start our session.&lt;/p>
+&lt;pre>&lt;code> cd /home/pi/ppcoin/src
+./peercoind -listen=0 -daemon -server
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Detach the screen session so it runs in the background. Enter &lt;code>CTRL&lt;/code> plus &lt;code>A&lt;/code> then &lt;code>D&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Confirm our background process is running.&lt;/p>
+&lt;pre>&lt;code>screen -list
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>(Optional) If you would like to resume your background session then run the following, else skip this step.&lt;/p>
+&lt;pre>&lt;code>screen -r
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Confirm our daemon is running in background by running the following command. (Don&amp;rsquo;t forget to run &lt;code>CTRL&lt;/code> plus &lt;code>X&lt;/code> when you finish)&lt;/p>
+&lt;pre>&lt;code>top | grep peercoin
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>(Optional) If you get any error, please investigate the &lt;code>debug.log&lt;/code> file by running the following.&lt;/p>
+&lt;pre>&lt;code>~/.peercoin/debug.log
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;/ol>
+&lt;h4 id="start-peercoind-on-system-startup">Start &lt;code>peercoind&lt;/code> on system startup&lt;/h4>
+&lt;p>We are going to create a service in &lt;code>systemd&lt;/code> to have our &lt;code>peercoind&lt;/code> startup on boot time.&lt;/p>
+&lt;p>&lt;strong>DEVELOPERS NOTE: For some reason the following code does not want to work. If someone can comment on how to fix this, that would be great!&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>While being logged in as &lt;code>pi&lt;/code> run the following:&lt;/p>
+&lt;pre>&lt;code>cd ~/
+touch peercoind_startup.sh
+vi peercoind_startup.sh
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Populate the contents of our new file with the following&lt;/p>
+&lt;pre>&lt;code>#!/bin/sh
+cd /home/pi/ppcoin/src
+./peercoind -listen=0 -daemon -server
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Permit to run our script.&lt;/p>
+&lt;pre>&lt;code>chmod u+x peercoind_startup.sh
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Create our &lt;code>systemd&lt;/code> service to handle loading our startup script.&lt;/p>
+&lt;pre>&lt;code>sudo vi /etc/systemd/system/peercoind.service
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Copy and paste the following contents.&lt;/p>
+&lt;pre>&lt;code>[Unit]
+Description=Peercoin Daemon
+After=multi-user.target
+[Service]
+Type=idle
+ExecStart=/home/pi/peercoind_startup.sh
+Restart=on-failure
+KillSignal=SIGTERM
+[Install]
+WantedBy=multi-user.target
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>We can now start the Gunicorn service we created and enable it so that it starts at boot:&lt;/p>
+&lt;pre>&lt;code>sudo systemctl start peercoind
+sudo systemctl enable peercoind
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Confirm our service is running.&lt;/p>
+&lt;pre>&lt;code>sudo systemctl status peercoind.service
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>If the service is working correctly you should see something like this at the bottom:&lt;/p>
+&lt;pre>&lt;code>raspberrypi systemd[1]: Started Peercoin Daemon.
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>Congratulations, you have set up a Peercoin headless minter service.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>If you see any problems, run the following service to see what is wrong. More information can be found in &lt;a href="https://unix.stackexchange.com/a/225407">this article&lt;/a>.&lt;/p>
+&lt;pre>&lt;code>sudo journalctl -u peercoind
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;li>
+&lt;p>To reload the latest modifications to &lt;code>systemctl&lt;/code> file.&lt;/p>
+&lt;pre>&lt;code>sudo systemctl daemon-reload
+&lt;/code>&lt;/pre>&lt;/li>
+&lt;/ol>
+&lt;h1 id="donate">Donate&lt;/h1>
+&lt;p>If you found this article useful, please consider donating:&lt;/p>
+&lt;ul>
+&lt;li>Peercoin &lt;code>PXTyiBqraYCn95cvEP2jcoCfYEBscNHxBW&lt;/code>&lt;/li>
+&lt;/ul></description></item><item><title>Hello World</title><link>https://bartlomiejmika.com/posts/2020/07/10/hello-world/</link><pubDate>Sat, 11 Jul 2020 00:02:30 -0400</pubDate><guid>https://bartlomiejmika.com/posts/2020/07/10/hello-world/</guid><description>&lt;p>&lt;img src="https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&amp;amp;cs=tinysrgb&amp;amp;dpr=2&amp;amp;h=650&amp;amp;w=940" alt="">&lt;/p>
 &lt;p>Welcome to my first blog post, I&amp;rsquo;ll explain the purpose of this site, why I started it, and what I hope to accomplish.&lt;/p>
 &lt;h1 id="hello-and-welcome">Hello and welcome!&lt;/h1>
 &lt;p>My name is Bartlomiej Mika, I am a technical consultant at [Mika Software Corporation] and welcome to my first blog post.&lt;/p>

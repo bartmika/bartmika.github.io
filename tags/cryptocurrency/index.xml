@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Bartlomiej Mika</title><link>https://bartlomiejmika.com/posts/</link><description>Bartlomiej Mika (Posts)</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2020 12:15:15 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Setup Peercoin on Raspberry Pi for Headless Minting</title><link>https://bartlomiejmika.com/posts/2020/07/26/how-to-setup-peercoin-on-raspberry-pi-for-headless-minting/</link><pubDate>Sun, 26 Jul 2020 12:15:15 -0400</pubDate><guid>https://bartlomiejmika.com/posts/2020/07/26/how-to-setup-peercoin-on-raspberry-pi-for-headless-minting/</guid><description>&lt;p>Would you believe you can participate in cryptocurrency production using a simple Raspberry Pi computer? No need for powerful ASIC miners! Peercoin is an interesting altcoin that has &lt;strong>minting&lt;/strong> capability built-in, and minting is the ability to create new coins from the ones you already have. In this tutorial, you&amp;rsquo;ll learn how to set up a dedicated Raspberry Pi computer to mint the Peercoins in your wallet.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>cryptocurrency on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/cryptocurrency/</link><description>Bartlomiej Mika (cryptocurrency)</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2020 12:15:15 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/cryptocurrency/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Setup Peercoin on Raspberry Pi for Headless Minting</title><link>https://bartlomiejmika.com/posts/2020/07/26/how-to-setup-peercoin-on-raspberry-pi-for-headless-minting/</link><pubDate>Sun, 26 Jul 2020 12:15:15 -0400</pubDate><guid>https://bartlomiejmika.com/posts/2020/07/26/how-to-setup-peercoin-on-raspberry-pi-for-headless-minting/</guid><description>&lt;p>Would you believe you can participate in cryptocurrency production using a simple Raspberry Pi computer? No need for powerful ASIC miners! Peercoin is an interesting altcoin that has &lt;strong>minting&lt;/strong> capability built-in, and minting is the ability to create new coins from the ones you already have. In this tutorial, you&amp;rsquo;ll learn how to set up a dedicated Raspberry Pi computer to mint the Peercoins in your wallet.&lt;/p>
 &lt;h2 id="assumptions">Assumptions&lt;/h2>
 &lt;p>This guide assumes the following:&lt;/p>
 &lt;ul>
@@ -246,45 +246,4 @@ sudo systemctl enable peercoind
 &lt;p>If you found this article useful, please consider donating:&lt;/p>
 &lt;ul>
 &lt;li>Peercoin &lt;code>PXTyiBqraYCn95cvEP2jcoCfYEBscNHxBW&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Hello World</title><link>https://bartlomiejmika.com/posts/2020/07/10/hello-world/</link><pubDate>Sat, 11 Jul 2020 00:02:30 -0400</pubDate><guid>https://bartlomiejmika.com/posts/2020/07/10/hello-world/</guid><description>&lt;p>&lt;img src="https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&amp;amp;cs=tinysrgb&amp;amp;dpr=2&amp;amp;h=650&amp;amp;w=940" alt="">&lt;/p>
-&lt;p>Welcome to my first blog post, I&amp;rsquo;ll explain the purpose of this site, why I started it, and what I hope to accomplish.&lt;/p>
-&lt;h1 id="hello-and-welcome">Hello and welcome!&lt;/h1>
-&lt;p>My name is Bartlomiej Mika, I am a technical consultant at [Mika Software Corporation] and welcome to my first blog post.&lt;/p>
-&lt;p>I am a big fan of reading &lt;a href="">Hacker News&lt;/a> for my tech news but recently an article titled &lt;a href="https://archive.is/xbFqF">&amp;ldquo;Why you (yes, you) should blog&lt;/a> has inspired me to create this blog!&lt;/p>
-&lt;h2 id="purpose">Purpose&lt;/h2>
-&lt;p>The purpose of this website is as follows.&lt;/p>
-&lt;h3 id="1--share-knowledge">1. Share Knowledge&lt;/h3>
-&lt;p>As I learn new things I want to share the lessons learned.&lt;/p>
-&lt;h3 id="2-centralize-content">2. Centralize Content&lt;/h3>
-&lt;p>Over the years I have written various articles across different websites but always scattered across the web; sometimes the content written gets lost over time for various reasons such as:&lt;/p>
-&lt;ul>
-&lt;li>Site owners delete data&lt;/li>
-&lt;li>Sites lose data&lt;/li>
-&lt;li>Sites shutdown&lt;/li>
-&lt;li>Content gets &amp;ldquo;curated&amp;rdquo; out&lt;/li>
-&lt;/ul>
-&lt;p>As a result, this site will be that single location to centralize my content and make it easy-to-find for users.&lt;/p>
-&lt;h2 id="3-improve-technical-communication">3. Improve Technical Communication&lt;/h2>
-&lt;p>I want to improve my technical communication writing articles.&lt;/p>
-&lt;h3 id="4-personalized-site">4. Personalized Site&lt;/h3>
-&lt;p>I miss the old world wide web that I remember in the &amp;rsquo;90s. I miss the creativity, the ingenuity, and quirkiness of personal websites that you would typically find from individuals before giant websites like &lt;a href="https://facebook.com">Facebook&lt;/a> or &lt;a href="https://twitter.com">Twitter&lt;/a> came along. In a sense, I hope this website could be an interesting place.&lt;/p>
-&lt;h2 id="expected-topics">Expected Topics&lt;/h2>
-&lt;p>What sort of topics should you expect?&lt;/p>
-&lt;ul>
-&lt;li>
-&lt;p>Programming&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>Open-Source Libraries&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>Tutorials&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>My Projects&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>Personal thoughts about various topics and subjects&lt;/p>
-&lt;/li>
-&lt;/ul>
-&lt;p>Thank you for visiting and please don&amp;rsquo;t forget to bookmark this site.&lt;/p></description></item></channel></rss>
+&lt;/ul></description></item></channel></rss>
