@@ -1,28 +1,35 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>How to write a webserver in Golang using only the std net/http - Part 1 - Bartlomiej Mika</title><meta name=description content="Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http"><meta name=author content="Bartlomiej Mika"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartmika.github.io"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartmika.github.io"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartmika.github.io","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartmika.github.io\/posts\/2021\/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1\/","name":"How to write a webserver in golang using only the std net\/http part 1"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to write a webserver in Golang using only the std net\/http - Part 1","description":"The purpose of this article is to provide instructions on how to setup a simple RESTful API server, in Golang, using the standard library and not any other third-party web framework. You will know how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests.\n","inLanguage":"en","wordCount":2519,"datePublished":"2021-01-25T00:02:30","dateModified":"2021-01-25T00:02:30","image":"https:\/\/bartmika.github.io\/img\/bartlomiej_mika.jpeg","keywords":["golang, api"],"mainEntityOfPage":"https:\/\/bartmika.github.io\/posts\/2021\/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1\/","publisher":{"@type":"Organization","name":"https:\/\/bartmika.github.io","logo":{"@type":"ImageObject","url":"https:\/\/bartmika.github.io\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="How to write a webserver in Golang using only the std net/http - Part 1"><meta property="og:description" content="Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http"><meta property="og:image" content="https://bartmika.github.io/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartmika.github.io/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="How to write a webserver in Golang using only the std net/http - Part …"><meta name=twitter:description content="Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http"><meta name=twitter:image content="https://bartmika.github.io/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartmika.github.io/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.73.0"><link rel=alternate href=https://bartmika.github.io/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartmika.github.io/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartmika.github.io/css/highlight.min.css><link rel=stylesheet href=https://bartmika.github.io/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>How to write a webserver in Golang using only the std net/http - Part 1 - Bartlomiej Mika</title><meta name=description content="Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http"><meta name=author content="Bartlomiej Mika"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartmika.github.io"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartmika.github.io"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartmika.github.io","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartmika.github.io\/posts\/2021\/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1\/","name":"How to write a webserver in golang using only the std net\/http part 1"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to write a webserver in Golang using only the std net\/http - Part 1","description":"The purpose of this article is to provide instructions on how to setup a simple RESTful API server, in Golang, using the standard library and not any other third-party web framework. You will know how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests.\n","inLanguage":"en","wordCount":2141,"datePublished":"2021-01-25T00:02:30","dateModified":"2021-01-25T00:02:30","image":"https:\/\/bartmika.github.io\/img\/bartlomiej_mika.jpeg","keywords":["golang, api"],"mainEntityOfPage":"https:\/\/bartmika.github.io\/posts\/2021\/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1\/","publisher":{"@type":"Organization","name":"https:\/\/bartmika.github.io","logo":{"@type":"ImageObject","url":"https:\/\/bartmika.github.io\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="How to write a webserver in Golang using only the std net/http - Part 1"><meta property="og:description" content="Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http"><meta property="og:image" content="https://bartmika.github.io/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartmika.github.io/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="How to write a webserver in Golang using only the std net/http - Part …"><meta name=twitter:description content="Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http"><meta name=twitter:image content="https://bartmika.github.io/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartmika.github.io/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.73.0"><link rel=alternate href=https://bartmika.github.io/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartmika.github.io/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartmika.github.io/css/highlight.min.css><link rel=stylesheet href=https://bartmika.github.io/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
 <span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button>
 <a class=navbar-brand href=https://bartmika.github.io>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title="Hire Me" href=https://mikasoftware.com>Hire Me</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=RSS href=/index.xml>RSS</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartmika.github.io><img class=avatar-img src=https://bartmika.github.io/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
 <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=posts-heading><h1>How to write a webserver in Golang using only the std net/http - Part 1</h1><hr class=small><h2 class=posts-subheading>Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http</h2></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src="https://images.pexels.com/photos/5582597/pexels-photo-5582597.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt></p><p>The purpose of this article is to provide instructions on how to setup a simple RESTful API server, in Golang, using the standard library and not any other third-party web framework. You will know how to create REST endpoints within your project that can handle <strong>POST</strong>, <strong>GET</strong>, <strong>PUT</strong> and <strong>DELETE</strong> HTTP requests.</p><h1 id=table-of-contents>Table of Contents</h1><ul><li>Why <a href=https://golang.org/pkg/net/http/><code>http</code></a> Standard Library?</li><li>What do I need?</li><li>Requirements - What are we building?</li><li>Design - How will it work?<ul><li>a. Project Structure</li><li>b. API Endpoints</li><li>c. Command Console</li><li>d. Coding Style</li><li>e. Datastructure</li></ul></li><li>Implementation - Let&rsquo;s build our code!<ul><li>a. Project Location</li><li>b. Code repository</li><li>c. Golang Modules</li><li>d. Project Scaffolding</li><li>e. API Scaffolding</li></ul></li><li>Testing - Verify the code works</li><li>Implement remaining API endpoints</li><li>Final Thoughts - What&rsquo;s next?</li></ul><h1 id=why-httphttpsgolangorgpkgnethttp-standard-library>Why <a href=https://golang.org/pkg/net/http/><code>http</code></a> Standard Library?</h1><p>A general popular opinion in web-development is to use a web-development framework for build web application - <em>why reinvent the wheel?</em></p><p>However in Golang, this general popular opinion is not held firm. The standard library is the core package provided by Golang is sufficient for all our web application needs.</p><p>I have used (and am using) <a href=https://github.com/go-chi/chi><code>go-chi</code></a> and <a href=https://github.com/gofiber/fiber><code>fibre</code></a> web libraries and I would highly recommend both. For this article, I want to explore what&rsquo;s involved with writing an application <em>without</em> any external library and only the provided <a href=https://golang.org/pkg/net/http/><code>http</code></a> library.</p><h1 id=what-do-i-need>What do I need?</h1><ol><li>You will need Golang version 1.15+ installed on your development machine.</li><li>You will need to know the basics of Golang. I am assuming you&rsquo;ve finished learning about how Golang works and you are looking to learn how to start coding a webserver for a API restful purposes.</li></ol><h1 id=requirements---what-are-we-building>Requirements - What are we building?</h1><p>Let&rsquo;s build a web-application which allows users to handle time-series data. The user can do the following:</p><ul><li>Create a new time-series datum</li><li>List time-series data</li><li>Retrieve a single time-series datum</li><li>Update a single timer-series datum</li><li>Delete a single time-series datum</li></ul><p>The name of our application will be called <code>mulberry</code> and it will exist in a code repository <code>mulberry-server</code>.</p><p>And remember, for this article, we cannot use any framework!</p><h1 id=design---how-will-it-work>Design - How will it work?</h1><h2 id=a-project-structure>a. Project Structure</h2><p>In Golang, there is no official project structure; as a result, the onus is on the developer to structure a correct project hierarchy. A popular solution developers choose is the <a href=https://github.com/golang-standards/project-layout>following convention</a>. Our application&rsquo;s structure will look as follows:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>📦mulberry-server
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=posts-heading><h1>How to write a webserver in Golang using only the std net/http - Part 1</h1><hr class=small><h2 class=posts-subheading>Learn how to setup a small project and make simple GET / POST / PUT / DELETE requests using only the standard library net/http</h2></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src="https://images.pexels.com/photos/5582597/pexels-photo-5582597.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt></p><p>The purpose of this article is to provide instructions on how to setup a simple RESTful API server, in Golang, using the standard library and not any other third-party web framework. You will know how to create REST endpoints within your project that can handle <strong>POST</strong>, <strong>GET</strong>, <strong>PUT</strong> and <strong>DELETE</strong> HTTP requests.</p><h1 id=table-of-contents>Table of Contents</h1><ul><li>Why the <a href=https://golang.org/pkg/net/http/><code>net/http</code></a> Standard Library?</li><li>What do I need?</li><li>Requirements - What are we building?</li><li>Design - How will it work?<ul><li>Project Structure</li><li>API Endpoints</li></ul></li><li>Implementation - Let&rsquo;s build our code!<ul><li><ol><li>Project Location</li></ol></li><li><ol start=2><li>Code repository</li></ol></li><li><ol start=3><li>Golang Modules</li></ol></li><li><ol start=4><li>Project Scaffolding</li></ol><ul><li>Part 1: Data Layer</li><li>Part 2: Application Layer</li><li>Part 3: Enter the <code>net/http</code> standard library</li></ul></li></ul></li><li>Testing - Verify the code works</li><li>Implement remaining API endpoints</li><li>Final Thoughts - What&rsquo;s next?</li></ul><h1 id=why-nethttphttpsgolangorgpkgnethttp-standard-library>Why <a href=https://golang.org/pkg/net/http/><code>net/http</code></a> Standard Library?</h1><p>A general popular opinion in web-development is to use a web-development framework for build web application - <em>why reinvent the wheel?</em></p><p>However in Golang, this general popular opinion is not held firm. The standard library is the core package provided by Golang is sufficient for all our web application needs.</p><p>I have used (and am using) <a href=https://github.com/go-chi/chi><code>go-chi</code></a> and <a href=https://github.com/gofiber/fiber><code>fibre</code></a> web libraries and I would highly recommend both. For this article, I want to explore what&rsquo;s involved with writing an application <em>without</em> any external library and only the provided <a href=https://golang.org/pkg/net/http/><code>http</code></a> library.</p><h1 id=what-do-i-need>What do I need?</h1><ol><li>You will need Golang version 1.15+ installed on your development machine.</li><li>You will need to know the basics of Golang. I am assuming you&rsquo;ve finished learning about how Golang works and you are looking to learn how to start coding a webserver for a API restful purposes.</li></ol><h1 id=requirements---what-are-we-building>Requirements - What are we building?</h1><p>Let&rsquo;s build a web-application which allows users to handle time-series data. The user can do the following:</p><ul><li>Create a new time-series datum</li><li>List time-series data</li><li>Retrieve a single time-series datum</li><li>Update a single timer-series datum</li><li>Delete a single time-series datum</li></ul><p>The name of our application will be called <code>mulberry</code> and it will exist in a code repository <code>mulberry-server</code>.</p><p>And remember, for this article, we cannot use any framework!</p><h1 id=design---how-will-it-work>Design - How will it work?</h1><h3 id=project-structure>Project Structure</h3><p>In Golang, there is no official project structure; as a result, the onus is on the developer to structure a correct project hierarchy. A popular solution developers choose is the <a href=https://github.com/golang-standards/project-layout>following convention</a>. Our application&rsquo;s initial structure will look as follows (and will grow with time!):</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>📦mulberry-server
 │   📄README.md
 │   📄Makefile
 │
 └───📁cmd
-|      📄serve.go
+│   |
+|   └───📁serve
+|       📄main.go
 │
 └───📁internal
-    │
-    └───📁api
-    │      📄api.go
-    │
-    └───📁manager
-    │      📄manager.go
-    │
+|   │
+|   └───📁controllers
+|   │      📄controller.go
+|   |
+|   └───📁repositories
+|          📄user.go
+|
+└───📁pkg
+    |
+    └───📁db
+    |   📄db.go
+    |
     └───📁models
-           📄model.go
-</code></pre></div><h2 id=b-api-endpoints>b. API Endpoints</h2><p>We will have the following API endpoints:</p><div class=highlight><pre class=chroma><code class=language-text data-lang=text>|--------------------------------------------------------------------------------
+        📄user.go
+</code></pre></div><h3 id=api-endpoints>API Endpoints</h3><p>We will have the following API endpoints:</p><div class=highlight><pre class=chroma><code class=language-text data-lang=text>|--------------------------------------------------------------------------------
 | METHOD  | URL                               | DESCRIPTION                    |
 |--------------------------------------------------------------------------------
 | GET     | /api/v1/version                   | Get the application version    |
@@ -32,236 +39,160 @@
 | PUT     | /api/v1/time-series-datum/&lt;uuid&gt;  | Update a single datum          |
 | DELETE  | /api/v1/time-series-datum/&lt;uuid&gt;  | Delete a single datum          |
 |--------------------------------------------------------------------------------
-</code></pre></div><h2 id=c-command-console>c. Command Console</h2><p>We should be able to run the following console commands:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>go run main.go
-</code></pre></div><h2 id=d-coding-style>d. Coding Style</h2><p>We will run the <code>gofmt</code> application on this code repository.</p><p>At the end of the project, please be sure to run:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ go fmt <span class=nv>$HOME</span>/go/src/github.com/bartmika/mulberry-server/...
-</code></pre></div><h2 id=e-datastructure>e. Datastructure</h2><p>Our app will work with time-series data.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// models.go
-</span><span class=c1></span>
-<span class=kd>type</span> <span class=nx>User</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>//TODO: We will implement in another article!
-</span><span class=c1></span><span class=p>}</span>
-
-<span class=kd>type</span> <span class=nx>TimeSeriesDatum</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=nx>Uuid</span>         <span class=kt>string</span>
-    <span class=nx>InstrumentId</span> <span class=kt>uint64</span>
-    <span class=nx>Value</span>        <span class=kt>float64</span>
-    <span class=nx>Timestamp</span>    <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span>
-    <span class=nx>UserId</span>       <span class=kt>uint64</span>
-<span class=p>}</span></code></pre></div><p>Please note, we won&rsquo;t be implementing the datastructure in this article.</p><h1 id=implementation---lets-build-our-code>Implementation - Let&rsquo;s build our code!</h1><h2 id=a-project-location>a. Project Location</h2><p>Start in your default Golang home folder:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nb>cd</span> ~/go/src/github.com/bartmika
-</code></pre></div><p>Please note:</p><ul><li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li><li>If that folder does not exist, please create it now.</li></ul><h2 id=b-code-repository>b. Code repository</h2><p>Create a new code repository called <code>mulberry-server</code> and run the following code:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ git clone https://github.com/bartmika/mulberry-server.git
+</code></pre></div><h1 id=implementation---lets-build-our-code>Implementation - Let&rsquo;s build our code!</h1><h2 id=1-project-location>1. Project Location</h2><p>Start in your default Golang home folder:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nb>cd</span> ~/go/src/github.com/bartmika
+</code></pre></div><p>Please note:</p><ul><li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li><li>If that folder does not exist, please create it now.</li></ul><h2 id=2-code-repository>2. Code repository</h2><p>Create a new code repository called <code>mulberry-server</code> and clone your code repository:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ git clone https://github.com/bartmika/mulberry-server.git
 $ <span class=nb>cd</span> mulberry-server
-</code></pre></div><h2 id=c-golang-modules>c. Golang Modules</h2><p>Since we are using Golang <code>modules</code> please follow these steps to get started:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ go mod init github.com/bartmika/mulberry-server
+</code></pre></div><p>Please note:</p><ul><li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li></ul><h2 id=3-golang-modules>3. Golang Modules</h2><p>Since we are using Golang <em>modules</em> please follow these steps to get started:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ go mod init github.com/bartmika/mulberry-server
 $ <span class=nb>export</span> <span class=nv>GIT_TERMINAL_PROMPT</span><span class=o>=</span><span class=m>1</span>
 $ go mod tidy
 </code></pre></div><p>After running the above code your repository should look like this:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>📦mulberry-server
    📄go.md
-</code></pre></div><h2 id=d-project-scaffolding>d. Project Scaffolding</h2><p>Before we write any API related functionality, let&rsquo;s structure our code with a good base to build from. The scaffolding we use is based on the &ldquo;model-view-controller&rdquo; pattern; in addition, the structure is my <em>opinion</em> and should not be considered <em>the standard</em> but rather the way I would write.</p><p>Begin with our <code>serve.go</code> file with the following contents:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
+</code></pre></div><h2 id=4-project-scaffolding>4. Project Scaffolding</h2><p>Before we write any API related functionality, let&rsquo;s structure our code with a good base to build from. The scaffolding we use is based on the &ldquo;model-view-controller&rdquo; pattern; in addition, the structure is my <em>opinion</em> and should not be considered <em>the standard</em>.</p><p>Start by creating the folders and the files inside each folder.</p><h3 id=part-1-data-layer>Part 1: Data Layer</h3><p>We will structure our data layer according to <strong>Approach 3: Repository Interface per Model</strong> as mentioned in <a href=https://archive.is/XxqyT>this article</a>.</p><p>Begin with our <strong>db.go</strong> file which we will implement in a future article:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/pkg/db/db.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>db</span>
 
 <span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&#34;log&#34;</span>
-    <span class=c1>// &#34;net/http&#34;
-</span><span class=c1></span>    <span class=s>&#34;os&#34;</span>
-    <span class=s>&#34;os/signal&#34;</span>
-    <span class=s>&#34;syscall&#34;</span>
-
-    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/manager&#34;</span>
+    <span class=s>&#34;database/sql&#34;</span>
 <span class=p>)</span>
 
-<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-    <span class=nx>manager</span><span class=p>,</span> <span class=nx>initErr</span> <span class=o>:=</span> <span class=nx>manager</span><span class=p>.</span><span class=nf>NewManager</span><span class=p>()</span>
-    <span class=k>if</span> <span class=nx>initErr</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;NewManager error: %s\n&#34;</span><span class=p>,</span> <span class=nx>initErr</span><span class=p>)</span>
-    <span class=p>}</span>
-
-    <span class=c1>// Integrate this program with the signal handler provided by the operating
-</span><span class=c1></span>    <span class=c1>// system through the go routine.
-</span><span class=c1></span>    <span class=nx>done</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Signal</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
-    <span class=nx>signal</span><span class=p>.</span><span class=nf>Notify</span><span class=p>(</span><span class=nx>done</span><span class=p>,</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Interrupt</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGINT</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGTERM</span><span class=p>)</span>
-
-    <span class=c1>// Create a new go routine which will become our main runtime loop because
-</span><span class=c1></span>    <span class=c1>// we will halt this current main runtime loop with a go channel.
-</span><span class=c1></span>    <span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
-        <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Server running.&#34;</span><span class=p>)</span>
-        <span class=k>if</span> <span class=nx>execErr</span> <span class=o>:=</span> <span class=nx>manager</span><span class=p>.</span><span class=nf>RunMainRuntimeLoop</span><span class=p>();</span> <span class=nx>execErr</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-            <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;main error: %s\n&#34;</span><span class=p>,</span> <span class=nx>execErr</span><span class=p>)</span>
-        <span class=p>}</span>
-    <span class=p>}()</span>
-
-    <span class=c1>// Halt the main runtime loop until the program receives a shutdown signal.
-</span><span class=c1></span>    <span class=o>&lt;-</span><span class=nx>done</span>
-
-    <span class=c1>// Execute the graceful shutdown sub-routine which will terminate any
-</span><span class=c1></span>    <span class=c1>// active connections and reject any new connections.
-</span><span class=c1></span>    <span class=nx>manager</span><span class=p>.</span><span class=nf>StopMainRuntimeLoop</span><span class=p>()</span>
-<span class=p>}</span></code></pre></div><p>Study the code and you should take away the following benefits:</p><ul><li>Core application logic is handled someplace else, so our currently file makes use of the easy-to-use functions.</li><li>We integrate with the OS to handle termination commands so our application <em>gracefully shuts down</em> when terminated.</li></ul><p>Next we need to create our application manager which is in essence the <em>controller</em>. This file will be responsible for starting up and managing the (a) database and (b) API.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/manager/manager.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>manager</span>
-
-<span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&#34;log&#34;</span>
-<span class=p>)</span>
-
-<span class=kd>type</span> <span class=nx>Manager</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>//TODO: api
-</span><span class=c1></span>    <span class=c1>//TODO: database
-</span><span class=c1></span><span class=p>}</span>
-
-<span class=kd>func</span> <span class=nf>NewManager</span><span class=p>()</span> <span class=p>(</span><span class=o>*</span><span class=nx>Manager</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
-    <span class=c1>//TODO: Database initialization code.
-</span><span class=c1></span>    <span class=c1>// ...
-</span><span class=c1></span>
-    <span class=c1>//TODO: API handler initialization code.
-</span><span class=c1></span>    <span class=c1>// ...
-</span><span class=c1></span>
-    <span class=c1>//TODO: Server initialization code.
-</span><span class=c1></span>    <span class=c1>// ...
-</span><span class=c1></span>
-    <span class=c1>//TODO: Save to our struct.
-</span><span class=c1></span>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>Manager</span><span class=p>{},</span> <span class=kc>nil</span>
-<span class=p>}</span>
-
-<span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>Manager</span><span class=p>)</span> <span class=nf>RunMainRuntimeLoop</span><span class=p>()</span> <span class=kt>error</span> <span class=p>{</span>
-    <span class=c1>//TODO
-</span><span class=c1></span>    <span class=k>return</span> <span class=kc>nil</span>
-<span class=p>}</span>
-
-<span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>Manager</span><span class=p>)</span> <span class=nf>StopMainRuntimeLoop</span><span class=p>()</span> <span class=kt>error</span> <span class=p>{</span>
-    <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Starting graceful shutdown&#34;</span><span class=p>)</span>
-
-    <span class=c1>//TODO
-</span><span class=c1></span>
-    <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Finished gaceful shutdown&#34;</span><span class=p>)</span>
-    <span class=k>return</span> <span class=kc>nil</span>
-<span class=p>}</span></code></pre></div><p>Next we&rsquo;ll create an <code>APIServer</code> structure. All our API functions will be methods belonging to this struct. This section can be considered both the <em>view</em> and <em>controller</em>.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/api/api.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>api</span>
-
-<span class=kd>type</span> <span class=nx>APIServer</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>//TODO: Implement properties
-</span><span class=c1></span><span class=p>}</span>
-
-<span class=kd>func</span> <span class=nf>NewAPIServer</span> <span class=p>()</span> <span class=p>(</span><span class=o>*</span><span class=nx>APIServer</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span>
-<span class=p>}</span>
-
-<span class=o>//</span><span class=nx>TODO</span><span class=p>:</span> <span class=nx>Implement</span> <span class=nx>functions</span></code></pre></div><p>And finally the <em>model</em> layer, we will create the <code>Store</code> structure so all our database methods will be utilizing it.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/models/models.go
+<span class=kd>func</span> <span class=nf>ConnectDB</span><span class=p>()</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span><span class=p>{}</span> <span class=c1>//TODO: Implement in future.
+</span><span class=c1></span><span class=p>}</span></code></pre></div><p>Next we will create a sample <strong>user.go</strong> file with the structure we can use in the <strong>models</strong> package. Please note, we are putting this file in the <strong>pkg</strong> folder in case we want to use this file in the future in another project.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/pkg/models/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
 
-<span class=kd>type</span> <span class=nx>Store</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>//TODO: Implement properties.
+<span class=kd>type</span> <span class=nx>User</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span> <span class=c1>//TODO: Will fill out in the future.
 </span><span class=c1></span><span class=p>}</span>
 
-<span class=kd>func</span> <span class=nf>NewStore</span><span class=p>()</span> <span class=p>(</span><span class=o>*</span><span class=nx>Store</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>Store</span><span class=p>{</span>
-        <span class=c1>//TODO: Finish...
-</span><span class=c1></span>    <span class=p>}</span>
-<span class=p>}</span>
-
-<span class=o>//</span><span class=nx>TODO</span><span class=p>:</span> <span class=nx>Implement</span> <span class=nx>functions</span><span class=p>.</span></code></pre></div><p>Copy and paste the above code to confirm no compilation errors. Study the code. Notice the following key points:</p><ol><li>If we want to add a new <em>model</em> then we create a file in the <code>mulberry-server/internal/models</code> folder. For example: &ldquo;user.go&rdquo; would be created and all the methods would be using the <code>Store</code> struct as the pointer receiver.</li><li>If we want to add another <em>api</em> then we create a file in the <code>mulberry-server/internal/api</code> folder and update the <code>api.go</code> file with our new URL routes.</li><li>The <code>internal</code> folder means anything inside of it cannot be called from other Golang code, in essence all our code is <em>private</em>. Some developers move the &ldquo;models&rdquo; folder in a <code>pkg</code> folder to make the code accessible outside the package - this is a good idea when you are building microservices.</li></ol><h2 id=e-api-scaffolding>e. API Scaffolding</h2><p>Since we&rsquo;ve never used the <code>net/http</code> standard library, let&rsquo;s write some prototype code that we can learn and play around with. The following code is used for learning purposes; afterwords, in a different tutorial, we will replace the code with real code using a database, etc.</p><p>Let us learn how to create our first API endpoint, the <code>/api/v1/version</code> URL path which supports <code>GET</code> requests.</p><p>To begin, we need to update <code>manager.go</code> as follows:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/manager/manager.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>manager</span>
+<span class=kd>type</span> <span class=nx>UserRepository</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>FindByID</span><span class=p>(</span><span class=nx>ID</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+    <span class=nf>Save</span><span class=p>(</span><span class=nx>user</span> <span class=o>*</span><span class=nx>User</span><span class=p>)</span> <span class=kt>error</span>
+    <span class=c1>//TODO: Will fill out in the future.
+</span><span class=c1></span><span class=p>}</span></code></pre></div><p>Now we will implement the <strong>repositories</strong> package which is responsible for storing <em>structs</em> and their implementation of the interfaces in the <strong>models</strong> package. Remember once a struct has implemented all the required methods of an interface, then we can call those methods on them; as a result, this makes testing much easier.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/respositories/user.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>repositories</span>
 
 <span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&#34;log&#34;</span>      <span class=c1>// STEP 1: Import the following...
-</span><span class=c1></span>    <span class=s>&#34;net/http&#34;</span> <span class=c1>// (1)
-</span><span class=c1></span>    <span class=s>&#34;os&#34;</span>       <span class=c1>// (2)
-</span><span class=c1></span>    <span class=s>&#34;context&#34;</span>  <span class=c1>// (3)
-</span><span class=c1></span>    <span class=s>&#34;time&#34;</span>     <span class=c1>// (4)
-</span><span class=c1></span>
-    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/api&#34;</span>
+    <span class=s>&#34;database/sql&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/models&#34;</span>
 <span class=p>)</span>
 
-<span class=kd>type</span> <span class=nx>Manager</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>// STEP 2: Our manager will handle the following...
-</span><span class=c1></span>    <span class=nx>server</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span>
-    <span class=c1>//TODO: database field in the future...
+<span class=c1>// UserRepo implements models.UserRepository
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>UserRepo</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>db</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewUserRepo</span><span class=p>(</span><span class=nx>db</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span><span class=p>)</span> <span class=o>*</span><span class=nx>UserRepo</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>UserRepo</span><span class=p>{</span>
+        <span class=nx>db</span><span class=p>:</span> <span class=nx>db</span><span class=p>,</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=nf>FindByID</span><span class=p>(</span><span class=nx>ID</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>{},</span> <span class=kc>nil</span> <span class=c1>//TODO: Implement in the future.
 </span><span class=c1></span><span class=p>}</span>
 
-<span class=kd>func</span> <span class=nf>NewManager</span><span class=p>()</span> <span class=p>(</span><span class=o>*</span><span class=nx>Manager</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
-    <span class=c1>//TODO: Database initialization.
-</span><span class=c1></span>    <span class=c1>// ...
-</span><span class=c1></span>
-    <span class=c1>// STEP 3: Initialize our API handler.
-</span><span class=c1></span>    <span class=nx>as</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>api</span><span class=p>.</span><span class=nf>NewAPIServer</span><span class=p>()</span> <span class=c1>//TODO: Integrate with the database in the future.
-</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
-    <span class=p>}</span>
-
-    <span class=c1>// STEP 4: Initialize our router.
-</span><span class=c1></span>    <span class=nx>router</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
-
-    <span class=c1>// STEP 5: Define URL paths that the `RouteHandler` will handle.
-</span><span class=c1></span>    <span class=nx>router</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>as</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>)</span>
-
-    <span class=nx>port</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;SERVERPORT&#34;</span><span class=p>)</span>
-    <span class=k>if</span> <span class=nx>port</span> <span class=o>==</span> <span class=s>&#34;&#34;</span> <span class=p>{</span>
-        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=s>&#34;Not specified the port.&#34;</span><span class=p>)</span>
-    <span class=p>}</span>
-
-    <span class=c1>// STEP 6: Initialize the server instance that will run the specified
-</span><span class=c1></span>    <span class=c1>//         port for the specified routes.
-</span><span class=c1></span>    <span class=nx>srv</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
-		<span class=nx>Addr</span><span class=p>:</span>    <span class=s>&#34;localhost:&#34;</span><span class=o>+</span><span class=nx>port</span><span class=p>,</span>
-		<span class=nx>Handler</span><span class=p>:</span> <span class=nx>router</span><span class=p>,</span>
-	<span class=p>}</span>
-
-    <span class=c1>// STEP 7: Finally initialize our struct which will manage these services.
-</span><span class=c1></span>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>Manager</span><span class=p>{</span>
-        <span class=nx>server</span><span class=p>:</span> <span class=nx>srv</span><span class=p>,</span> <span class=c1>// Step 4
-</span><span class=c1></span>    <span class=p>},</span> <span class=kc>nil</span>
-<span class=p>}</span>
-
-<span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>Manager</span><span class=p>)</span> <span class=nf>RunMainRuntimeLoop</span><span class=p>()</span> <span class=kt>error</span> <span class=p>{</span>
-    <span class=c1>// STEP 8
-</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>m</span><span class=p>.</span><span class=nx>server</span><span class=p>.</span><span class=nf>ListenAndServe</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>err</span> <span class=o>!=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ErrServerClosed</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=nx>err</span>
-    <span class=p>}</span>
-    <span class=k>return</span> <span class=kc>nil</span>
-<span class=p>}</span>
-
-<span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>Manager</span><span class=p>)</span> <span class=nf>StopMainRuntimeLoop</span><span class=p>()</span> <span class=kt>error</span> <span class=p>{</span>
-    <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Starting graceful shutdown&#34;</span><span class=p>)</span>
-
-    <span class=c1>// STEP 9
-</span><span class=c1></span>    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>(),</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
-	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
-		<span class=c1>//TODO: Database shutdown code in the future...
-</span><span class=c1></span>        <span class=c1>// . . .
-</span><span class=c1></span>
-		<span class=nf>cancel</span><span class=p>()</span>
-	<span class=p>}()</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>m</span><span class=p>.</span><span class=nx>server</span><span class=p>.</span><span class=nf>Shutdown</span><span class=p>(</span><span class=nx>ctx</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Server Shutdown Failed:%+v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-	<span class=p>}</span>
-
-    <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Finished gaceful shutdown&#34;</span><span class=p>)</span>
-    <span class=k>return</span> <span class=kc>nil</span>
-<span class=p>}</span></code></pre></div><p>Next we need to update the API as follows:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/api/api.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>api</span>
+<span class=c1>// Save ..
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=nf>Save</span><span class=p>(</span><span class=nx>user</span> <span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=kc>nil</span> <span class=c1>//TODO: Implement in the future.
+</span><span class=c1></span><span class=p>}</span></code></pre></div><h3 id=part-2-application-layer>Part 2: Application Layer</h3><p>This is how the <strong>main.go</strong> file will look like.</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&#34;fmt&#34;</span>
     <span class=s>&#34;net/http&#34;</span>
+
+    <span class=nx>sqldb</span> <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/db&#34;</span>
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/repositories&#34;</span>
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/controllers&#34;</span>
 <span class=p>)</span>
 
-<span class=kd>type</span> <span class=nx>APIServer</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>//TODO: Implement properties
-</span><span class=c1></span><span class=p>}</span>
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>db</span> <span class=o>:=</span> <span class=nx>sqldb</span><span class=p>.</span><span class=nf>ConnectDB</span><span class=p>()</span> <span class=c1>//TODO: Implement in the future.
+</span><span class=c1></span>
+    <span class=nx>userRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewUserRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
 
-<span class=kd>func</span> <span class=nf>NewAPIServer</span> <span class=p>()</span> <span class=p>(</span><span class=o>*</span><span class=nx>APIServer</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span>
-<span class=p>}</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>userRepo</span><span class=p>)</span>
 
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>RouteHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>if</span> <span class=nx>req</span><span class=p>.</span><span class=nx>URL</span><span class=p>.</span><span class=nx>Path</span> <span class=o>==</span> <span class=s>&#34;/api/v1/version&#34;</span> <span class=p>{</span>
-        <span class=k>if</span> <span class=nx>req</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodGet</span> <span class=p>{</span>
-            <span class=nx>as</span><span class=p>.</span><span class=nf>getVersionHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>req</span><span class=p>)</span>
-            <span class=k>return</span>
-        <span class=p>}</span>
+    <span class=nx>router</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
+    <span class=nx>router</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>)</span>
+
+	<span class=nx>s</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
+        <span class=nx>Addr</span><span class=p>:</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s:%s&#34;</span><span class=p>,</span> <span class=s>&#34;localhost&#34;</span><span class=p>,</span> <span class=s>&#34;5000&#34;</span><span class=p>),</span>
+        <span class=nx>Handler</span><span class=p>:</span> <span class=nx>router</span><span class=p>,</span>
     <span class=p>}</span>
 
-    <span class=c1>//TODO: Implement more functions...
-</span><span class=c1></span>
-    <span class=c1>// DEVELOPERS NOTE:
-</span><span class=c1></span>    <span class=c1>// PLEASE NOTE WE WILL BE IMPLEMENTING THE API ENDPOINTS OF OUR APP IN THE FUTURE:
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>s</span><span class=p>.</span><span class=nf>ListenAndServe</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>err</span> <span class=o>!=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ErrServerClosed</span> <span class=p>{</span>
+        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span></code></pre></div><p>And the <strong>controller.go</strong> file looks like this:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;net/http&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/repositories&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>BaseHandler</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>UserRepo</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>u</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>BaseHandler</span><span class=p>{</span>
+        <span class=nx>UserRepo</span><span class=p>:</span> <span class=nx>u</span><span class=p>,</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>HandleRequests</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>//TODO: Implement in the future
 </span><span class=c1></span>    <span class=c1>//--------------------------------------------------------------------------------
+</span><span class=c1></span>    <span class=c1>// GET     | /api/v1/version                   | Get the application version    |
+</span><span class=c1></span>    <span class=c1>// GET     | /api/v1/time-series-data          | List all the time-series data  |
+</span><span class=c1></span>    <span class=c1>// GET     | /api/v1/time-series-data          | List all the time-series data  |
+</span><span class=c1></span>    <span class=c1>// POST    | /api/v1/time-series-data          | Create a time-series datum     |
+</span><span class=c1></span>    <span class=c1>// GET     | /api/v1/time-series-datum/&lt;uuid&gt;  | Get the details of a datum     |
+</span><span class=c1></span>    <span class=c1>// PUT     | /api/v1/time-series-datum/&lt;uuid&gt;  | Update a single datum          |
+</span><span class=c1></span>    <span class=c1>// DELETE  | /api/v1/time-series-datum/&lt;uuid&gt;  | Delete a single datum          |
+</span><span class=c1></span>    <span class=c1>//--------------------------------------------------------------------------------
+</span><span class=c1></span>    <span class=k>return</span>
+<span class=p>}</span></code></pre></div><p>That&rsquo;s it, we&rsquo;ve structured our project which will grow nicely.</p><ul><li>Every time you want to add a new entity, you create a file in the <em>models</em>, <em>repositories</em> package and then write the API endpoint in the <em>controllers</em> package.</li><li>If you want to swap the database from <em>mysql</em> to <em>postgres</em> then you can update the <em>db.go</em> file and everything works fine.</li></ul><h3 id=part-3-enter-the-nethttp-standard-library>Part 3: Enter the <code>net/http</code> standard library</h3><p>Let us learn how to create our first API endpoint and then call it. We will be implementing the <code>/api/v1/version</code> URL path which supports <em>GET</em> requests.</p><p>Create a new file called <strong>version.go</strong> with the contents of:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/version.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;net/http&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>getVersion</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Header</span><span class=p>().</span><span class=nf>Set</span><span class=p>(</span><span class=s>&#34;Content-Type&#34;</span><span class=p>,</span> <span class=s>&#34;application/json&#34;</span><span class=p>)</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;Mulberry Server v1.0&#34;</span><span class=p>))</span>
+<span class=p>}</span></code></pre></div><p>Next update the <strong>controller.go</strong> with the following:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;net/http&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/repositories&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>BaseHandler</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>UserRepo</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>u</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>BaseHandler</span><span class=p>{</span>
+        <span class=nx>UserRepo</span><span class=p>:</span> <span class=nx>u</span><span class=p>,</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>HandleRequests</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=nx>r</span><span class=p>.</span><span class=nx>URL</span><span class=p>.</span><span class=nx>Path</span> <span class=o>==</span> <span class=s>&#34;/api/v1/version&#34;</span> <span class=p>{</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>getVersion</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+    <span class=c1>//TODO: Implement in the future
+</span><span class=c1></span>    <span class=c1>//--------------------------------------------------------------------------------
+</span><span class=c1></span>    <span class=c1>// GET     | /api/v1/version                   | Get the application version    |
+</span><span class=c1></span>    <span class=c1>// GET     | /api/v1/time-series-data          | List all the time-series data  |
 </span><span class=c1></span>    <span class=c1>// GET     | /api/v1/time-series-data          | List all the time-series data  |
 </span><span class=c1></span>    <span class=c1>// POST    | /api/v1/time-series-data          | Create a time-series datum     |
 </span><span class=c1></span>    <span class=c1>// GET     | /api/v1/time-series-datum/&lt;uuid&gt;  | Get the details of a datum     |
@@ -269,83 +200,90 @@ $ go mod tidy
 </span><span class=c1></span>    <span class=c1>// DELETE  | /api/v1/time-series-datum/&lt;uuid&gt;  | Delete a single datum          |
 </span><span class=c1></span>    <span class=c1>//--------------------------------------------------------------------------------
 </span><span class=c1></span>
-    <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;Unexpected method and URL path`, got %v&#34;</span><span class=p>,</span> <span class=nx>req</span><span class=p>.</span><span class=nx>Method</span><span class=p>),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusMethodNotAllowed</span><span class=p>)</span>
+    <span class=nx>http</span><span class=p>.</span><span class=nf>NotFound</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>return</span>
-<span class=p>}</span></code></pre></div><p>And finally we will need to create a new file called <code>version_api.go</code> with the contents of:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/api/version_api.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>api</span>
-
-<span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&#34;net/http&#34;</span>
-<span class=p>)</span>
-
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>getVersionHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Header</span><span class=p>().</span><span class=nf>Set</span><span class=p>(</span><span class=s>&#34;Content-Type&#34;</span><span class=p>,</span> <span class=s>&#34;application/json&#34;</span><span class=p>)</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;Mulberry Server v1.0&#34;</span><span class=p>))</span>
-<span class=p>}</span></code></pre></div><p>In summary the project hierarchy should look as follows:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>📦mulberry-server
-│   📄README.md
-│   📄Makefile
-│
-└───📁cmd
-|      📄serve.go
-│
-└───📁internal
-    │
-    └───📁api
-    │      📄api.go
-    │      📄version_api.go
-    │
-    └───📁manager
-    │      📄manager.go
-    │
-    └───📁models
-           📄model.go
-</code></pre></div><p>Finally start the server and confirm everything works:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nv>SERVERPORT</span><span class=o>=</span><span class=m>5656</span> go run cmd/serve.go<span class=p>;</span>
-</code></pre></div><p>If you see a message saying the server started then congratulations, you have setup the project scaffolding!</p><h1 id=testing---verify-the-code-works>Testing - Verify the code works</h1><p>Before you begin, please install the <a href=https://httpie.io/><code>httpie</code></a> application. Once installed, please run the following code to confirm we can make an API call:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5656/api/v1/version
+<span class=p>}</span></code></pre></div><p>Finally start the server and confirm everything works:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nv>SERVERPORT</span><span class=o>=</span><span class=m>5000</span> go run cmd/serve.go<span class=p>;</span>
+</code></pre></div><p>If you see a message saying the server started then congratulations, you have setup the project scaffolding!</p><h1 id=testing---verify-the-code-works>Testing - Verify the code works</h1><p>Before you begin, please install the <a href=https://httpie.io/><code>httpie</code></a> application. Once installed, please run the following code to confirm we can make an API call:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5000/api/v1/version
 </code></pre></div><p>If you get a result somewhat similar like this, then condradulations!</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>Last login: Thu Jan 28 00:10:01 on ttys015
-bmika@MACMINI-AFA2131 mulberry-server % http get 127.0.0.1:5656/api/v1/version
+bmika@MACMINI-AFA2131 mulberry-server % http get 127.0.0.1:5000/api/v1/version
 HTTP/1.1 200 OK
 Content-Length: 6
 Content-Type: application/json
 Date: Fri, 29 Jan 2021 05:03:22 GMT
 
 Mulberry Server v1.0
-</code></pre></div><h1 id=implement-remaining-api-endpoints>Implement remaining API endpoints</h1><p>Before we begin, you have to be aware of an issue, the issue is that the std <code>net/http</code> does not add any support for <strong>URL Arguments</strong> such as <code>/api/v1/time-series-datum/:uuid</code>. As a result, Golang developers are torn between using a third-party package, structuring your API endpoints differently, or writing your own custom router.</p><p>For more on this topic, please see the following links:</p><ul><li><a href=https://archive.is/T4cp0>Go’s std net/http is all you need … right?</a></li><li><a href=https://archive.is/6hptY>How to not use an http-router in go</a></li><li><a href=https://archive.is/ZpZg6>Different approaches to HTTP routing in Go</a></li></ul><p>Given these options, what should we do? From the beginners perspective, the <a href=https://benhoyt.com/writings/go-routing/#split-switch>split switch</a> seems like the easiest to do, in addition it&rsquo;s quite performant with the cost of slightly ugly looking code.</p><p>Before we begin, make sure your project hierarchy should look as follows by creating the <code>tsd_api.go</code> file in your project:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>📦mulberry-server
+</code></pre></div><h1 id=implement-remaining-api-endpoints>Implement remaining API endpoints</h1><p>Before we begin, you have to be aware of an issue, the issue is that the std <code>net/http</code> does not add any support for <strong>URL Arguments</strong> such as <code>/api/v1/time-series-datum/:uuid</code>. As a result, Golang developers are torn between using a third-party package, structuring your API endpoints differently, or writing your own custom router.</p><p>For more on this topic, please see the following links:</p><ul><li><a href=https://archive.is/T4cp0>Go’s std net/http is all you need … right?</a></li><li><a href=https://archive.is/6hptY>How to not use an http-router in go</a></li><li><a href=https://archive.is/ZpZg6>Different approaches to HTTP routing in Go</a></li></ul><p>Given these options, what should we do? From the beginners perspective, the <a href=https://benhoyt.com/writings/go-routing/#split-switch>split switch</a> seems like the easiest to do, in addition it&rsquo;s quite performant with the cost of slightly ugly looking code.</p><p>Before we begin, make sure your project hierarchy look as follows by creating the <strong>tsd.go</strong> file:</p><div class=highlight><pre class=chroma><code class=language-fallback data-lang=fallback>📦mulberry-server
 │   📄README.md
 │   📄Makefile
 │
 └───📁cmd
-|      📄serve.go
+│   |
+|   └───📁serve
+|       📄main.go
 │
 └───📁internal
-    │
-    └───📁api
-    │      📄api.go
-    │      📄tsd_api.go
-    │      📄version_api.go
-    │
-    └───📁manager
-    │      📄manager.go
-    │
+|   │
+|   └───📁controllers
+|   │      📄controller.go
+|   |      📄version.go
+|   |      📄tsd.go
+|   |
+|   └───📁repositories
+|          📄user.go
+|
+└───📁pkg
+    |
+    └───📁db
+    |   📄db.go
+    |
     └───📁models
-           📄model.go
-</code></pre></div><p>Therefore, the code will look like this:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/api/api.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>api</span>
+        📄user.go
+</code></pre></div><p>Please fill the <strong>tsd.go</strong> file with the following contents:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&#34;fmt&#34;</span>
-    <span class=s>&#34;strings&#34;</span>
     <span class=s>&#34;net/http&#34;</span>
 <span class=p>)</span>
 
-<span class=kd>type</span> <span class=nx>APIServer</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=c1>//TODO: Implement properties
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>getTimeSeriesData</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: List Time Series Data&#34;</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
 </span><span class=c1></span><span class=p>}</span>
 
-<span class=kd>func</span> <span class=nf>NewAPIServer</span> <span class=p>()</span> <span class=p>(</span><span class=o>*</span><span class=nx>APIServer</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span> <span class=c1>//TODO: Implement
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>postTimeSeriesData</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Create Series Data&#34;</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
 </span><span class=c1></span><span class=p>}</span>
 
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>HandleRequests</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>getTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Get Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>putTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Update Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>deleteTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Delete Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
+</span><span class=c1></span><span class=p>}</span></code></pre></div><p>And then update the <strong>controller.go</strong> file:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;net/http&#34;</span>
+    <span class=s>&#34;strings&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/repositories&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>BaseHandler</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>UserRepo</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>u</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>BaseHandler</span><span class=p>{</span>
+        <span class=nx>UserRepo</span><span class=p>:</span> <span class=nx>u</span><span class=p>,</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>HandleRequests</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>Header</span><span class=p>().</span><span class=nf>Set</span><span class=p>(</span><span class=s>&#34;Content-Type&#34;</span><span class=p>,</span> <span class=s>&#34;application/json&#34;</span><span class=p>)</span>
 
     <span class=c1>// Split path into slash-separated parts, for example, path &#34;/foo/bar&#34;
@@ -358,60 +296,35 @@ Mulberry Server v1.0
 </span><span class=c1></span>
     <span class=k>switch</span> <span class=p>{</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;version&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodGet</span><span class=p>:</span>
-        <span class=nx>as</span><span class=p>.</span><span class=nf>getVersionHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>getVersion</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-data&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodGet</span><span class=p>:</span>
-        <span class=nx>as</span><span class=p>.</span><span class=nf>getTimeSeriesDataHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>getTimeSeriesData</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-data&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodPost</span><span class=p>:</span>
-        <span class=nx>as</span><span class=p>.</span><span class=nf>postTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>postTimeSeriesData</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-datum&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodGet</span><span class=p>:</span>
-        <span class=nx>as</span><span class=p>.</span><span class=nf>getTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>getTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-datum&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodPut</span><span class=p>:</span>
-        <span class=nx>as</span><span class=p>.</span><span class=nf>putTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>putTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-datum&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodDelete</span><span class=p>:</span>
-        <span class=nx>as</span><span class=p>.</span><span class=nf>deleteTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>deleteTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
     <span class=k>default</span><span class=p>:</span>
         <span class=nx>http</span><span class=p>.</span><span class=nf>NotFound</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=p>}</span>
-<span class=p>}</span></code></pre></div><p>And</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/api/tsd_api.go
-</span><span class=c1></span><span class=kn>package</span> <span class=nx>api</span>
+<span class=p>}</span></code></pre></div><p>And finally to test out making API calls, we have the following commands you can run in your console.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5000/api/v1/version
 
-<span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&#34;net/http&#34;</span>
-<span class=p>)</span>
+$ http get 127.0.0.1:5000/api/v1/time-series-data
 
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>getTimeSeriesDataHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: List Time Series Data&#34;</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span>
+$ http post 127.0.0.1:5000/api/v1/time-series-data <span class=nv>instrument_id</span><span class=o>=</span><span class=s2>&#34;1&#34;</span> <span class=nv>timestamp</span><span class=o>=</span><span class=s2>&#34;2021-01-01&#34;</span>
 
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>postTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Create Series Data&#34;</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span>
+$ http get 127.0.0.1:5000/api/v1/time-series-datum/xxx
 
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>getTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Get Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span>
+$ http put 127.0.0.1:5000/api/v1/time-series-datum/xxx <span class=nv>instrument_id</span><span class=o>=</span><span class=s2>&#34;1&#34;</span> <span class=nv>timestamp</span><span class=o>=</span><span class=s2>&#34;2021-01-02&#34;</span>
 
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>putTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Update Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span>
-
-<span class=kd>func</span> <span class=p>(</span><span class=nx>as</span> <span class=o>*</span><span class=nx>APIServer</span><span class=p>)</span> <span class=nf>deleteTimeSeriesDatumHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Delete Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span></code></pre></div><h2 id=testing>Testing</h2><p>And finally to test out making API calls, we have the following commands you can run in your console.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5656/api/v1/version
-
-$ http get 127.0.0.1:4112/api/v1/time-series-data
-
-$ http post 127.0.0.1:4112/api/v1/time-series-data <span class=nv>instrument_id</span><span class=o>=</span><span class=s2>&#34;1&#34;</span> <span class=nv>timestamp</span><span class=o>=</span><span class=s2>&#34;2021-01-01&#34;</span>
-
-$ http get 127.0.0.1:4112/api/v1/time-series-datum/xxx
-
-$ http put 127.0.0.1:4112/api/v1/time-series-datum/xxx <span class=nv>instrument_id</span><span class=o>=</span><span class=s2>&#34;1&#34;</span> <span class=nv>timestamp</span><span class=o>=</span><span class=s2>&#34;2021-01-02&#34;</span>
-
-$ http delete 127.0.0.1:4112/api/v1/time-series-datum/xxx
-</code></pre></div><h1 id=final-thoughts---whats-next>Final Thoughts - What&rsquo;s next?</h1><p>That&rsquo;s it! We have ourselves a basic API web-app. We have dipped our feat on the shores of the ocean of Golang web-development and the water feels welcoming. Moving forward we&rsquo;ll need to cover more topics such as:</p><ul><li>How do we read <code>post</code>/<code>put</code> requests? How do we write responses?</li><li>How do we handle using a database?</li><li>How do we handle login and authenticated API endpoints?</li><li>How do we handle sessions?</li><li>How do we handle background processes?</li></ul><div class=blog-tags><a href=https://bartmika.github.io/tags/golang/>golang</a>&nbsp;
+$ http delete 127.0.0.1:5000/api/v1/time-series-datum/xxx
+</code></pre></div><p>If you got a <code>200 OK</code> response with some-sort of string message, then congratulations! You have implemented your server using only the <code>net/http</code> standard library.</p><h1 id=final-thoughts---whats-next>Final Thoughts - What&rsquo;s next?</h1><p>That&rsquo;s it! We have ourselves a basic API web-app. We have dipped our feat on the shores of the ocean of Golang web-development and the water feels welcoming. Moving forward we&rsquo;ll need to cover more topics such as:</p><ul><li>How do we read the body of a request? How do we write responses?</li><li>How do we handle using a database?</li><li>How do we handle login and authenticated API endpoints?</li><li>How do we handle sessions?</li><li>How do we handle background processes?</li></ul><div class=blog-tags><a href=https://bartmika.github.io/tags/golang/>golang</a>&nbsp;
 <a href=https://bartmika.github.io/tags/api/>api</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartmika.github.io%2fposts%2f2021%2fhow-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1%2f&text=How%20to%20write%20a%20webserver%20in%20Golang%20using%20only%20the%20std%20net%2fhttp%20-%20Part%201&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartmika.github.io%2fposts%2f2021%2fhow-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartmika.github.io%2fposts%2f2021%2fhow-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1%2f&title=How%20to%20write%20a%20webserver%20in%20Golang%20using%20only%20the%20std%20net%2fhttp%20-%20Part%201" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartmika.github.io%2fposts%2f2021%2fhow-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1%2f&title=How%20to%20write%20a%20webserver%20in%20Golang%20using%20only%20the%20std%20net%2fhttp%20-%20Part%201" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartmika.github.io%2fposts%2f2021%2fhow-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1%2f&title=How%20to%20write%20a%20webserver%20in%20Golang%20using%20only%20the%20std%20net%2fhttp%20-%20Part%201" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartmika.github.io%2fposts%2f2021%2fhow-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1%2f&description=How%20to%20write%20a%20webserver%20in%20Golang%20using%20only%20the%20std%20net%2fhttp%20-%20Part%201" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section><h4 class=see-also>See also</h4><ul><li><a href=/posts/2020/how-to-install-hugo-from-git-bash-for-window-users/>How to Install Hugo From Git Bash for Window Users</a></li><li><a href=/posts/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/>How to Start a Personal Blog With Hugo a Static Site Generator Written in Go (Part 1)</a></li><li><a href=/posts/2020/how-to-write-a-unit-test-for-a-remote-procedural-call-in-golang/>How to Write a Unit Test for a Remote Procedural Call in Golang</a></li></ul></article><ul class="pager blog-pager"><li class=previous><a href=https://bartmika.github.io/posts/2020/how-to-install-hugo-from-git-bash-for-window-users/ data-toggle=tooltip data-placement=top title="How to Install Hugo From Git Bash for Window Users">&larr; Previous Post</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartmika.github.io/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url='https:\/\/bartmika.github.io\/posts\/2021\/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1';};</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=bartlomiejmika.com>Bartlomiej Mika</a>
 &nbsp;&bull;&nbsp;&copy;
 2021
 &nbsp;&bull;&nbsp;
 <a href=https://bartmika.github.io>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.73.0</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
-&nbsp;&bull;&nbsp;[<a href=https://github.com/bartmika/bartlomiejmika-hugo/tree/b04e748f8c879a434027c567abbcfa4cc3728e34>b04e748f</a>]</p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartmika.github.io/js/main.js></script><script src=https://bartmika.github.io/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartmika.github.io/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
+&nbsp;&bull;&nbsp;[<a href=https://github.com/bartmika/bartlomiejmika-hugo/tree/43e0d4f456d7cec3690e1fabbe0c06f535a2965f>43e0d4f4</a>]</p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartmika.github.io/js/main.js></script><script src=https://bartmika.github.io/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartmika.github.io/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
