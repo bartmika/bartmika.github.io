@@ -1,0 +1,1640 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>How to write a webserver in Golang using only the std net/http - Part 3 - Bartlomiej Mika</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Bartlomiej Mika"><meta name=description content="The purpose of this article is to provide instructions on how to setup postgres database with our application."><meta name=keywords content="Golang,Web Development,Engineering"><meta name=generator content="Hugo 0.80.0 with theme even"><link rel=canonical href=https://bartmika.github.io/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-3/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="How to write a webserver in Golang using only the std net/http - Part 3"><meta property="og:description" content="The purpose of this article is to provide instructions on how to setup postgres database with our application."><meta property="og:type" content="article"><meta property="og:url" content="https://bartmika.github.io/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-3/"><meta property="article:published_time" content="2021-01-30T00:02:30-04:00"><meta property="article:modified_time" content="2021-01-30T00:02:30-04:00"><meta itemprop=name content="How to write a webserver in Golang using only the std net/http - Part 3"><meta itemprop=description content="The purpose of this article is to provide instructions on how to setup postgres database with our application."><meta itemprop=datePublished content="2021-01-30T00:02:30-04:00"><meta itemprop=dateModified content="2021-01-30T00:02:30-04:00"><meta itemprop=wordCount content="3797"><meta itemprop=keywords content="golang,api,"><meta name=twitter:card content="summary"><meta name=twitter:title content="How to write a webserver in Golang using only the std net/http - Part 3"><meta name=twitter:description content="The purpose of this article is to provide instructions on how to setup postgres database with our application."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Bartlomiej Mika</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>Home</li></a><a href=/post/><li class=mobile-menu-item>Archives</li></a><a href=/tags/><li class=mobile-menu-item>Tags</li></a><a href=/categories/><li class=mobile-menu-item>Categories</li></a><a href=/about/><li class=mobile-menu-item>About</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Bartlomiej Mika</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>Home</a></li><li class=menu-item><a class=menu-item-link href=/post/>Archives</a></li><li class=menu-item><a class=menu-item-link href=/tags/>Tags</a></li><li class=menu-item><a class=menu-item-link href=/categories/>Categories</a></li><li class=menu-item><a class=menu-item-link href=/about/>About</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>How to write a webserver in Golang using only the std net/http - Part 3</h1><div class=post-meta><span class=post-time>2021-01-30</span><div class=post-category><a href=/categories/development/>development</a></div></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#database-setup>Database Setup</a></li><li><a href=#data-layer>Data Layer</a></li><li><a href=#application-layer>Application Layer</a></li><li><a href=#testing>Testing</a><ul><li><a href=#starting-the-server>Starting the Server</a></li><li><a href=#making-api-calls>Making API Calls</a><ul><li><a href=#register-api>Register API</a></li><li><a href=#login-api>Login API</a></li><li><a href=#create-api>Create API</a></li><li><a href=#list-api>List API</a></li><li><a href=#retrieve-api>Retrieve API</a></li><li><a href=#update-api>Update API</a></li><li><a href=#delete-api>Delete API</a></li></ul></li></ul></li><li><a href=#whats-next>What&rsquo;s next?</a></li></ul></nav></div></div><div class=post-content><p>The purpose of this article is to provide instructions on how to setup <em>postgres</em> database with our application.</p><p>Just as a reminder this is part 3 of the series, you&rsquo;ll need to finish <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1/>part 2</a> before continuing.</p><h1 id=database-setup>Database Setup</h1><p>Before we begin, please download and install <a href=https://www.postgresql.org/><strong>postgres database</strong></a> onto your computer.</p><p>Load up your <em>terminal</em> or <em>postgres GUI</em> and run the following code:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-sql data-lang=sql><span class=k>drop</span> <span class=k>database</span> <span class=n>mulberry_db</span><span class=p>;</span>
+<span class=k>create</span> <span class=k>database</span> <span class=n>mulberry_db</span><span class=p>;</span>
+<span class=err>\</span><span class=k>c</span> <span class=n>mulberry_db</span><span class=p>;</span>
+<span class=k>CREATE</span> <span class=k>USER</span> <span class=n>golang</span> <span class=k>WITH</span> <span class=n>PASSWORD</span> <span class=s1>&#39;123password&#39;</span><span class=p>;</span>
+<span class=k>GRANT</span> <span class=k>ALL</span> <span class=k>PRIVILEGES</span> <span class=k>ON</span> <span class=k>DATABASE</span> <span class=n>mulberry_db</span> <span class=k>to</span> <span class=n>golang</span><span class=p>;</span>
+<span class=k>ALTER</span> <span class=k>USER</span> <span class=n>golang</span> <span class=k>CREATEDB</span><span class=p>;</span></code></pre></td></tr></table></div></div><p>Afterwords we will setup our application structure. Copy and paste the following:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-sql data-lang=sql><span class=k>CREATE</span> <span class=k>TABLE</span> <span class=n>users</span> <span class=p>(</span>
+    <span class=n>uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>PRIMARY</span> <span class=k>KEY</span><span class=p>,</span>
+    <span class=n>name</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>255</span><span class=p>)</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
+    <span class=n>email</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>255</span><span class=p>)</span> <span class=k>UNIQUE</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
+    <span class=n>password_hash</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>511</span><span class=p>)</span> <span class=k>NOT</span> <span class=k>NULL</span>
+<span class=p>);</span>
+<span class=k>CREATE</span> <span class=k>UNIQUE</span> <span class=k>INDEX</span> <span class=n>idx_user_uuid</span>
+<span class=k>ON</span> <span class=n>users</span> <span class=p>(</span><span class=n>uuid</span><span class=p>);</span>
+<span class=k>CREATE</span> <span class=k>UNIQUE</span> <span class=k>INDEX</span> <span class=n>idx_user_email</span>
+<span class=k>ON</span> <span class=n>users</span> <span class=p>(</span><span class=n>email</span><span class=p>);</span>
+
+<span class=k>CREATE</span> <span class=k>TABLE</span> <span class=n>time_series_data</span> <span class=p>(</span>
+    <span class=n>uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>PRIMARY</span> <span class=k>KEY</span><span class=p>,</span>
+    <span class=n>instrument_uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>UNIQUE</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
+    <span class=n>value</span> <span class=nb>FLOAT</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
+    <span class=k>timestamp</span> <span class=k>TIMESTAMP</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
+    <span class=n>user_uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>UNIQUE</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
+    <span class=k>FOREIGN</span> <span class=k>KEY</span> <span class=p>(</span><span class=n>user_uuid</span><span class=p>)</span> <span class=k>REFERENCES</span> <span class=n>users</span><span class=p>(</span><span class=n>uuid</span><span class=p>)</span>
+<span class=p>);</span>
+<span class=k>CREATE</span> <span class=k>UNIQUE</span> <span class=k>INDEX</span> <span class=n>idx_time_series_data_uuid</span>
+<span class=k>ON</span> <span class=n>time_series_data</span> <span class=p>(</span><span class=n>uuid</span><span class=p>);</span></code></pre></td></tr></table></div></div><h1 id=data-layer>Data Layer</h1><p>The project structure will remain the same as from <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1/>part 2</a>. We will begin with updating the files in the following order:</p><ol><li>mulberry-server/pkg/db/db.go</li><li>mulberry-server/pkg/models/user.go</li><li>mulberry-server/pkg/models/tsd.go</li><li>mulberry-server/internal/respositories/user.go</li><li>mulberry-server/internal/respositories/tsd.go</li></ol><p>Let&rsquo;s begin rewriting the data layer by starting in the <strong>db.go</strong> file. Please note we will be utilizing a third-party library for handling communication with the <strong>postgres</strong> database.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>db</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;fmt&#34;</span>
+    <span class=s>&#34;database/sql&#34;</span>
+
+    <span class=nx>_</span> <span class=s>&#34;github.com/lib/pq&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>ConnectDB</span><span class=p>(</span><span class=nx>databaseHost</span><span class=p>,</span> <span class=nx>databasePort</span><span class=p>,</span> <span class=nx>databaseUser</span><span class=p>,</span> <span class=nx>databasePassword</span><span class=p>,</span> <span class=nx>databaseName</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>psqlInfo</span> <span class=o>:=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;host=%s port=%s user=%s &#34;</span><span class=o>+</span><span class=s>&#34;password=%s dbname=%s sslmode=disable&#34;</span><span class=p>,</span>
+        <span class=nx>databaseHost</span><span class=p>,</span>
+        <span class=nx>databasePort</span><span class=p>,</span>
+        <span class=nx>databaseUser</span><span class=p>,</span>
+        <span class=nx>databasePassword</span><span class=p>,</span>
+        <span class=nx>databaseName</span><span class=p>,</span>
+    <span class=p>)</span>
+
+    <span class=nx>dbInstance</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sql</span><span class=p>.</span><span class=nf>Open</span><span class=p>(</span><span class=s>&#34;postgres&#34;</span><span class=p>,</span> <span class=nx>psqlInfo</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=nx>err</span> <span class=p>=</span> <span class=nx>dbInstance</span><span class=p>.</span><span class=nf>Ping</span><span class=p>()</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>dbInstance</span><span class=p>,</span> <span class=kc>nil</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Next we will update the <strong>user.go</strong> file in the <strong>models</strong> package.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/user.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;context&#34;</span>
+<span class=p>)</span>
+
+<span class=c1>// The definition of the user record we will saving in our database.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>User</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Uuid</span> <span class=kt>string</span>          <span class=s>`json:&#34;uuid&#34;`</span>
+    <span class=nx>Name</span> <span class=kt>string</span>          <span class=s>`json:&#34;name&#34;`</span>
+    <span class=nx>Email</span> <span class=kt>string</span>         <span class=s>`json:&#34;email&#34;`</span>
+    <span class=nx>PasswordHash</span> <span class=kt>string</span>  <span class=s>`json:&#34;password_hash&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The interface that *must* be implemented.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>UserRepository</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>name</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>email</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>passwordHash</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span>
+    <span class=nf>FindByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+    <span class=nf>FindByEmail</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>email</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+    <span class=nf>Save</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>user</span> <span class=o>*</span><span class=nx>User</span><span class=p>)</span> <span class=kt>error</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the user&#39;s `register` POST request data.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>RegisterRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>     <span class=s>`json:&#34;name&#34;`</span>
+    <span class=nx>Email</span> <span class=kt>string</span>    <span class=s>`json:&#34;email&#34;`</span>
+    <span class=nx>Password</span> <span class=kt>string</span> <span class=s>`json:&#34;password&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the system&#39;s response when the `register` POST request was a success.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>RegisterResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Message</span> <span class=kt>string</span> <span class=s>`json:&#34;message&#34;`</span>
+    <span class=nx>Uuid</span> <span class=kt>string</span>    <span class=s>`json:&#34;uuid&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the user&#39;s `login` POST request data.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>LoginRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Email</span> <span class=kt>string</span>    <span class=s>`json:&#34;email&#34;`</span>
+    <span class=nx>Password</span> <span class=kt>string</span> <span class=s>`json:&#34;password&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the system&#39;s response when the `login` POST request was a success.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>LoginResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>AccessToken</span> <span class=kt>string</span> <span class=s>`json:&#34;access_token&#34;`</span>
+    <span class=nx>Uuid</span> <span class=kt>string</span>        <span class=s>`json:&#34;uuid&#34;`</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>And the <strong>tsd.go</strong> file under the <strong>models</strong> package:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/tsd.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;context&#34;</span>
+    <span class=s>&#34;time&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>TimeSeriesDatum</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Uuid</span> <span class=kt>string</span> <span class=s>`json:&#34;uuid&#34;`</span>
+    <span class=nx>InstrumentUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;instrument_uuid&#34;`</span>
+    <span class=nx>Value</span> <span class=kt>float64</span> <span class=s>`json:&#34;value&#34;`</span>
+    <span class=nx>Timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span> <span class=s>`json:&#34;timestamp&#34;`</span>
+    <span class=nx>UserUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;user_uuid&#34;`</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>TimeSeriesDatumRepository</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>instrumentUuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>value</span> <span class=kt>float64</span><span class=p>,</span> <span class=nx>timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span><span class=p>,</span> <span class=nx>userUuid</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span>
+    <span class=nf>ListAll</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=p>([]</span><span class=o>*</span><span class=nx>TimeSeriesDatum</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+    <span class=nf>FilterByUserUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>userUuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>([]</span><span class=o>*</span><span class=nx>TimeSeriesDatum</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+    <span class=nf>FindByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>TimeSeriesDatum</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+    <span class=nf>DeleteByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span>
+    <span class=nf>Save</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>datum</span> <span class=o>*</span><span class=nx>TimeSeriesDatum</span><span class=p>)</span> <span class=kt>error</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>TimeSeriesDatumCreateRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>InstrumentUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;instrument_uuid&#34;`</span>
+    <span class=nx>Value</span> <span class=kt>float64</span> <span class=s>`json:&#34;value,string&#34;`</span>
+    <span class=nx>Timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span> <span class=s>`json:&#34;timestamp&#34;`</span>
+    <span class=nx>UserUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;user_uuid&#34;`</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>TimeSeriesDatumCreateResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Uuid</span> <span class=kt>string</span> <span class=s>`json:&#34;uuid&#34;`</span>
+    <span class=nx>InstrumentUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;instrument_uuid&#34;`</span>
+    <span class=nx>Value</span> <span class=kt>float64</span> <span class=s>`json:&#34;value,string&#34;`</span>
+    <span class=nx>Timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span> <span class=s>`json:&#34;timestamp&#34;`</span>
+    <span class=nx>UserUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;user_uuid&#34;`</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>TimeSeriesDatumPutRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>InstrumentUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;instrument_uuid&#34;`</span>
+    <span class=nx>Value</span> <span class=kt>float64</span> <span class=s>`json:&#34;value,string&#34;`</span>
+    <span class=nx>Timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span> <span class=s>`json:&#34;timestamp&#34;`</span>
+    <span class=nx>UserUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;user_uuid&#34;`</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Now we will move to the <strong>repositories</strong> package and start with the <strong>user.go</strong> file:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>repositories</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;context&#34;</span>
+    <span class=s>&#34;database/sql&#34;</span>
+    <span class=c1>// &#34;encoding/json&#34;
+</span><span class=c1></span>    <span class=s>&#34;time&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/models&#34;</span>
+<span class=p>)</span>
+
+<span class=c1>// UserRepo implements models.UserRepository
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>UserRepo</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>db</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewUserRepo</span><span class=p>(</span><span class=nx>db</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span><span class=p>)</span> <span class=o>*</span><span class=nx>UserRepo</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>UserRepo</span><span class=p>{</span>
+        <span class=nx>db</span><span class=p>:</span> <span class=nx>db</span><span class=p>,</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>name</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>email</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>passwordHash</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;INSERT INTO users (uuid, name, email, password_hash) VALUES ($1, $2, $3, $4)&#34;</span>
+
+    <span class=nx>stmt</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>PrepareContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>ExecContext</span><span class=p>(</span>
+        <span class=nx>ctx</span><span class=p>,</span>
+        <span class=nx>uuid</span><span class=p>,</span>
+        <span class=nx>name</span><span class=p>,</span>
+        <span class=nx>email</span><span class=p>,</span>
+        <span class=nx>passwordHash</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>return</span> <span class=nx>err</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=nf>FindByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>m</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>)</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;SELECT uuid, name, email, password_hash FROM users WHERE uuid = $1&#34;</span>
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>QueryRowContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>,</span> <span class=nx>uuid</span><span class=p>).</span><span class=nf>Scan</span><span class=p>(</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Email</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>PasswordHash</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=c1>// CASE 1 OF 2: Cannot find record with that uuid.
+</span><span class=c1></span>        <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=nx>sql</span><span class=p>.</span><span class=nx>ErrNoRows</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=c1>// CASE 2 OF 2: All other errors.
+</span><span class=c1></span>            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>m</span><span class=p>,</span> <span class=kc>nil</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=nf>FindByEmail</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>email</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>m</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>)</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;SELECT uuid, name, email, password_hash FROM users WHERE email = $1&#34;</span>
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>QueryRowContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>,</span> <span class=nx>email</span><span class=p>).</span><span class=nf>Scan</span><span class=p>(</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Email</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>PasswordHash</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=c1>// CASE 1 OF 2: Cannot find record with that email.
+</span><span class=c1></span>        <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=nx>sql</span><span class=p>.</span><span class=nx>ErrNoRows</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=c1>// CASE 2 OF 2: All other errors.
+</span><span class=c1></span>            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>m</span><span class=p>,</span> <span class=kc>nil</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>UserRepo</span><span class=p>)</span> <span class=nf>Save</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>m</span> <span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>User</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;UPDATE users SET name = $1, email = $2, password_hash = $3 WHERE uuid = $4&#34;</span>
+    <span class=nx>stmt</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>PrepareContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>ExecContext</span><span class=p>(</span>
+        <span class=nx>ctx</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>Email</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>PasswordHash</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>return</span> <span class=nx>err</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>And in the <strong>tsd.go</strong> file in the <strong>repositories</strong> package is:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span><span class=lnt>149
+</span><span class=lnt>150
+</span><span class=lnt>151
+</span><span class=lnt>152
+</span><span class=lnt>153
+</span><span class=lnt>154
+</span><span class=lnt>155
+</span><span class=lnt>156
+</span><span class=lnt>157
+</span><span class=lnt>158
+</span><span class=lnt>159
+</span><span class=lnt>160
+</span><span class=lnt>161
+</span><span class=lnt>162
+</span><span class=lnt>163
+</span><span class=lnt>164
+</span><span class=lnt>165
+</span><span class=lnt>166
+</span><span class=lnt>167
+</span><span class=lnt>168
+</span><span class=lnt>169
+</span><span class=lnt>170
+</span><span class=lnt>171
+</span><span class=lnt>172
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>repositories</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;context&#34;</span>
+    <span class=s>&#34;database/sql&#34;</span>
+    <span class=c1>// &#34;encoding/json&#34;
+</span><span class=c1></span>    <span class=s>&#34;time&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/models&#34;</span>
+<span class=p>)</span>
+
+<span class=c1>// TimeSeriesDatumRepo implements models.TimeSeriesDatumRepository
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>TimeSeriesDatumRepo</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>db</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>NewTimeSeriesDatumRepo</span><span class=p>(</span><span class=nx>db</span> <span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>DB</span><span class=p>)</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>{</span>
+        <span class=nx>db</span><span class=p>:</span> <span class=nx>db</span><span class=p>,</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>instrumentUuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>value</span> <span class=kt>float64</span><span class=p>,</span> <span class=nx>timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span><span class=p>,</span> <span class=nx>userUuid</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;INSERT INTO time_series_data (uuid, instrument_uuid, value, timestamp, user_uuid) VALUES ($1, $2, $3, $4, $5)&#34;</span>
+
+    <span class=nx>stmt</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>PrepareContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>ExecContext</span><span class=p>(</span>
+        <span class=nx>ctx</span><span class=p>,</span>
+        <span class=nx>uuid</span><span class=p>,</span>
+        <span class=nx>instrumentUuid</span><span class=p>,</span>
+        <span class=nx>value</span><span class=p>,</span>
+        <span class=nx>timestamp</span><span class=p>,</span>
+        <span class=nx>userUuid</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>return</span> <span class=nx>err</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=nf>ListAll</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=p>([]</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;SELECT uuid, instrument_uuid, value, timestamp, user_uuid FROM time_series_data&#34;</span>
+
+    <span class=nx>rows</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>QueryContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=kd>var</span> <span class=nx>s</span> <span class=p>[]</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span>
+    <span class=k>for</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Next</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>m</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>)</span>
+        <span class=nx>err</span> <span class=p>=</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Scan</span><span class=p>(</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>,</span>
+        <span class=p>)</span>
+        <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=p>}</span>
+        <span class=nx>s</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>s</span><span class=p>,</span> <span class=nx>m</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>err</span> <span class=p>=</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Err</span><span class=p>()</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>s</span><span class=p>,</span> <span class=nx>err</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=nf>FilterByUserUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>userUuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>([]</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;SELECT uuid, instrument_uuid, value, timestamp, user_uuid FROM time_series_data WHERE user_uuid = $1&#34;</span>
+
+    <span class=nx>rows</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>QueryContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>,</span> <span class=nx>userUuid</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=kd>var</span> <span class=nx>s</span> <span class=p>[]</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span>
+    <span class=k>for</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Next</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>m</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>)</span>
+        <span class=nx>err</span> <span class=p>=</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Scan</span><span class=p>(</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span>
+            <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>,</span>
+        <span class=p>)</span>
+        <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=p>}</span>
+        <span class=nx>s</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>s</span><span class=p>,</span> <span class=nx>m</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>err</span> <span class=p>=</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Err</span><span class=p>()</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>s</span><span class=p>,</span> <span class=nx>err</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=nf>FindByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>m</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>)</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;SELECT uuid, instrument_uuid, value, timestamp, user_uuid FROM time_series_data WHERE uuid = $1&#34;</span>
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>QueryRowContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>,</span> <span class=nx>uuid</span><span class=p>).</span><span class=nf>Scan</span><span class=p>(</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span>
+        <span class=o>&amp;</span><span class=nx>m</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=c1>// CASE 1 OF 2: Cannot find record with that uuid.
+</span><span class=c1></span>        <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=nx>sql</span><span class=p>.</span><span class=nx>ErrNoRows</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=c1>// CASE 2 OF 2: All other errors.
+</span><span class=c1></span>            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>m</span><span class=p>,</span> <span class=kc>nil</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=nf>DeleteByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;DELETE FROM time_series_data WHERE uuid = $1;&#34;</span>
+
+    <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>Exec</span><span class=p>(</span><span class=nx>query</span><span class=p>,</span> <span class=nx>uuid</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=kc>nil</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=nf>Save</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>m</span> <span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+    <span class=k>defer</span> <span class=nf>cancel</span><span class=p>()</span>
+
+    <span class=nx>query</span> <span class=o>:=</span> <span class=s>&#34;UPDATE time_series_data SET instrument_uuid = $1, value = $2, timestamp = $3, user_uuid = $4 WHERE uuid = $5&#34;</span>
+    <span class=nx>stmt</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>PrepareContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>err</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>stmt</span><span class=p>.</span><span class=nf>ExecContext</span><span class=p>(</span>
+        <span class=nx>ctx</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span>
+		<span class=nx>m</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>,</span>
+        <span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+    <span class=p>)</span>
+    <span class=k>return</span> <span class=nx>err</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h1 id=application-layer>Application Layer</h1><p>We need to update the <strong>controllers</strong> package to support <a href=https://golang.org/pkg/context/>contexts</a>. The following files need to be updated:</p><ol><li>mulberry-server/internal/controllers/user.go</li><li>mulberry-server/internal/controllers/tsd.go</li><li>mulberry-server/cmd/serve/main.go</li></ol><p>Begin with the <strong>user.go</strong> file:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;encoding/json&#34;</span>
+    <span class=s>&#34;fmt&#34;</span>
+    <span class=s>&#34;net/http&#34;</span>
+
+    <span class=s>&#34;github.com/google/uuid&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/models&#34;</span>
+    <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/utils&#34;</span>
+<span class=p>)</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http post 127.0.0.1:5000/api/v1/register email=&#34;fherbert@dune.com&#34; password=&#34;the-spice-must-flow&#34; name=&#34;Frank Herbert&#34;
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>postRegister</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+
+    <span class=c1>// Initialize our array which will store all the results from the remote server.
+</span><span class=c1></span>    <span class=kd>var</span> <span class=nx>requestData</span> <span class=nx>models</span><span class=p>.</span><span class=nx>RegisterRequest</span>
+
+    <span class=c1>// Read the JSON string and convert it into our golang stuct else we need
+</span><span class=c1></span>    <span class=c1>// to send a `400 Bad Request` errror message back to the client,
+</span><span class=c1></span>    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewDecoder</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>Body</span><span class=p>).</span><span class=nf>Decode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>requestData</span><span class=p>)</span> <span class=c1>// [1]
+</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// For debugging purposes, print our output so you can see the code working.
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Name</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Email</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Password</span><span class=p>)</span>
+
+    <span class=c1>// Lookup the email and if it is not unique we need to generate a `400 Bad Request` response.
+</span><span class=c1></span>    <span class=k>if</span> <span class=nx>userFound</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>.</span><span class=nf>FindByEmail</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Email</span><span class=p>);</span> <span class=nx>userFound</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Email alread exists&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Generate a `UUID` for our record.
+</span><span class=c1></span>    <span class=nx>uid</span> <span class=o>:=</span> <span class=nx>uuid</span><span class=p>.</span><span class=nf>New</span><span class=p>().</span><span class=nf>String</span><span class=p>()</span>
+
+    <span class=c1>// Secure our password.
+</span><span class=c1></span>    <span class=nx>passwordHash</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>HashPassword</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Password</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Save our new user account.
+</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>.</span><span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>uid</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Email</span><span class=p>,</span> <span class=nx>passwordHash</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Generate our response.
+</span><span class=c1></span>    <span class=nx>responseData</span> <span class=o>:=</span> <span class=nx>models</span><span class=p>.</span><span class=nx>RegisterResponse</span><span class=p>{</span>
+        <span class=nx>Message</span><span class=p>:</span> <span class=s>&#34;You have successfully registered an account.&#34;</span><span class=p>,</span>
+        <span class=nx>Uuid</span><span class=p>:</span> <span class=nx>uid</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>responseData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>  <span class=c1>// [2]
+</span><span class=c1></span>        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http post 127.0.0.1:5000/api/v1/login email=&#34;fherbert@dune.com&#34; password=&#34;the-spice-must-flow&#34;
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>postLogin</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+
+    <span class=kd>var</span> <span class=nx>requestData</span> <span class=nx>models</span><span class=p>.</span><span class=nx>LoginRequest</span>
+
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewDecoder</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>Body</span><span class=p>).</span><span class=nf>Decode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>requestData</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// For debugging purposes, print our output so you can see the code working.
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Email</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Password</span><span class=p>)</span>
+
+    <span class=c1>// Lookup the user in our database, else return a `400 Bad Request` error.
+</span><span class=c1></span>    <span class=nx>user</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>.</span><span class=nf>FindByEmail</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Email</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=nx>user</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Email does not exist&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Verify the inputted password and hashed password match.
+</span><span class=c1></span>    <span class=nx>passwordMatch</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>CheckPasswordHash</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Password</span><span class=p>,</span> <span class=nx>user</span><span class=p>.</span><span class=nx>PasswordHash</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>passwordMatch</span> <span class=o>==</span> <span class=kc>false</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Incorrect password&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Finally return success.
+</span><span class=c1></span>    <span class=nx>responseData</span> <span class=o>:=</span> <span class=nx>models</span><span class=p>.</span><span class=nx>LoginResponse</span><span class=p>{</span>
+        <span class=nx>AccessToken</span><span class=p>:</span> <span class=s>&#34;TODO: WE WILL FIGURE OUT HOW TO DO THIS IN ANOTHER ARTICLE!&#34;</span><span class=p>,</span>
+        <span class=nx>Uuid</span><span class=p>:</span> <span class=nx>user</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>responseData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// SPECIAL THANKS:
+</span><span class=c1>// [1][2]: Learned from:
+</span><span class=c1>// a. https://blog.golang.org/json
+</span><span class=c1>// b. https://stackoverflow.com/questions/21197239/decoding-json-using-json-unmarshal-vs-json-newdecoder-decode
+</span></code></pre></td></tr></table></div></div><p>Then with the <strong>tsd.go</strong> file:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;fmt&#34;</span>
+    <span class=s>&#34;net/http&#34;</span>
+    <span class=s>&#34;encoding/json&#34;</span>
+
+    <span class=s>&#34;github.com/google/uuid&#34;</span>
+
+    <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/models&#34;</span>
+<span class=p>)</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http get 127.0.0.1:5000/api/v1/time-series-data
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>getTimeSeriesData</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+
+    <span class=c1>//TODO: Add filtering based on the authenticated user account. For now just list all the records.
+</span><span class=c1></span>    <span class=c1>//      In a future article we will update this code.
+</span><span class=c1></span>    <span class=nx>results</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>TsdRepo</span><span class=p>.</span><span class=nf>ListAll</span><span class=p>(</span><span class=nx>ctx</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Encode our results
+</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>results</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http post 127.0.0.1:5000/api/v1/time-series-data instrument_uuid=&#34;lalala&#34; value=&#34;123&#34; timestamp=&#34;2021-01-30T10:20:10.000Z&#34; user_uuid=&#34;lalala&#34;
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>postTimeSeriesData</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+    <span class=kd>var</span> <span class=nx>requestData</span> <span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatumCreateRequest</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewDecoder</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>Body</span><span class=p>).</span><span class=nf>Decode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>requestData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// For debugging purposes only.
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>)</span>
+
+    <span class=c1>// Generate a `UUID` for our record.
+</span><span class=c1></span>    <span class=nx>uid</span> <span class=o>:=</span> <span class=nx>uuid</span><span class=p>.</span><span class=nf>New</span><span class=p>().</span><span class=nf>String</span><span class=p>()</span>
+
+    <span class=c1>// Save to our database.
+</span><span class=c1></span>    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>TsdRepo</span><span class=p>.</span><span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>uid</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=nx>w</span><span class=p>.</span><span class=nf>WriteHeader</span><span class=p>(</span><span class=nx>http</span><span class=p>.</span><span class=nx>StatusCreated</span><span class=p>)</span>
+
+    <span class=c1>// Return our record.
+</span><span class=c1></span>    <span class=nx>responseData</span> <span class=o>:=</span> <span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatumCreateResponse</span><span class=p>{</span>
+        <span class=nx>Uuid</span><span class=p>:</span> <span class=nx>uid</span><span class=p>,</span>
+        <span class=nx>InstrumentUuid</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span>
+        <span class=nx>Value</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span>
+        <span class=nx>Timestamp</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span>
+        <span class=nx>UserUuid</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>responseData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http get 127.0.0.1:5000/api/v1/time-series-datum/f3e7b442-f3d4-4c2f-8f8d-d347982c1569
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>getTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+
+    <span class=c1>// Lookup our record.
+</span><span class=c1></span>    <span class=nx>tsd</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>TsdRepo</span><span class=p>.</span><span class=nf>FindByUuid</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>uuid</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Return our record to the user as a response.
+</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>tsd</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http put 127.0.0.1:5000/api/v1/time-series-datum/f3e7b442-f3d4-4c2f-8f8d-d347982c1569 instrument_uuid=&#34;lalala&#34; value=&#34;321&#34; timestamp=&#34;2021-01-30T10:20:10.000Z&#34; user_uuid=&#34;lalala&#34;
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>putTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+
+    <span class=kd>var</span> <span class=nx>requestData</span> <span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatumPutRequest</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewDecoder</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>Body</span><span class=p>).</span><span class=nf>Decode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>requestData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// For debugging purposes only.
+</span><span class=c1></span>    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>uid</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>)</span>
+
+    <span class=c1>// Update our record.
+</span><span class=c1></span>    <span class=nx>tsd</span> <span class=o>:=</span> <span class=nx>models</span><span class=p>.</span><span class=nx>TimeSeriesDatum</span><span class=p>{</span>
+        <span class=nx>Uuid</span><span class=p>:</span> <span class=nx>uid</span><span class=p>,</span>
+        <span class=nx>InstrumentUuid</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>InstrumentUuid</span><span class=p>,</span>
+        <span class=nx>Value</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>,</span>
+        <span class=nx>Timestamp</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Timestamp</span><span class=p>,</span>
+        <span class=nx>UserUuid</span><span class=p>:</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>UserUuid</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>TsdRepo</span><span class=p>.</span><span class=nf>Save</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>tsd</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Return our record to the user as a response.
+</span><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>tsd</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http delete 127.0.0.1:5000/api/v1/time-series-datum/f3e7b442-f3d4-4c2f-8f8d-d347982c1569
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>deleteTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>h</span><span class=p>.</span><span class=nx>TsdRepo</span><span class=p>.</span><span class=nf>DeleteByUuid</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>uid</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>w</span><span class=p>.</span><span class=nf>WriteHeader</span><span class=p>(</span><span class=nx>http</span><span class=p>.</span><span class=nx>StatusOK</span><span class=p>)</span> <span class=c1>// Note: https://tools.ietf.org/html/rfc7231#section-6.3.1
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>And finally with the <strong>main.go</strong> file:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&#34;context&#34;</span>
+    <span class=s>&#34;fmt&#34;</span>
+    <span class=s>&#34;log&#34;</span>
+    <span class=s>&#34;net/http&#34;</span>
+    <span class=s>&#34;os&#34;</span>
+    <span class=s>&#34;os/signal&#34;</span>
+	<span class=s>&#34;syscall&#34;</span>
+	<span class=s>&#34;time&#34;</span>
+
+    <span class=nx>sqldb</span> <span class=s>&#34;github.com/bartmika/mulberry-server/pkg/db&#34;</span>
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/repositories&#34;</span>
+    <span class=s>&#34;github.com/bartmika/mulberry-server/internal/controllers&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=c1>// Get our environment variables which will used to configure our application.
+</span><span class=c1></span>    <span class=nx>databaseHost</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;MULBERRY_DB_HOST&#34;</span><span class=p>)</span>
+    <span class=nx>databasePort</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;MULBERRY_DB_PORT&#34;</span><span class=p>)</span>
+    <span class=nx>databaseUser</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;MULBERRY_DB_USER&#34;</span><span class=p>)</span>
+    <span class=nx>databasePassword</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;MULBERRY_DB_PASSWORD&#34;</span><span class=p>)</span>
+    <span class=nx>databaseName</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;MULBERRY_DB_NAME&#34;</span><span class=p>)</span>
+
+    <span class=nx>db</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sqldb</span><span class=p>.</span><span class=nf>ConnectDB</span><span class=p>(</span><span class=nx>databaseHost</span><span class=p>,</span> <span class=nx>databasePort</span><span class=p>,</span> <span class=nx>databaseUser</span><span class=p>,</span> <span class=nx>databasePassword</span><span class=p>,</span> <span class=nx>databaseName</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>db</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+    <span class=nx>userRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewUserRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
+    <span class=nx>tsdRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewTimeSeriesDatumRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
+
+    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>userRepo</span><span class=p>,</span> <span class=nx>tsdRepo</span><span class=p>)</span>
+
+    <span class=nx>router</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
+    <span class=nx>router</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>)</span>
+
+	<span class=nx>srv</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
+		<span class=nx>Addr</span><span class=p>:</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s:%s&#34;</span><span class=p>,</span> <span class=s>&#34;localhost&#34;</span><span class=p>,</span> <span class=s>&#34;5000&#34;</span><span class=p>),</span>
+        <span class=nx>Handler</span><span class=p>:</span> <span class=nx>router</span><span class=p>,</span>
+	<span class=p>}</span>
+
+    <span class=nx>done</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Signal</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+	<span class=nx>signal</span><span class=p>.</span><span class=nf>Notify</span><span class=p>(</span><span class=nx>done</span><span class=p>,</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Interrupt</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGINT</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGTERM</span><span class=p>)</span>
+
+    <span class=k>go</span> <span class=nf>runMainRuntimeLoop</span><span class=p>(</span><span class=nx>srv</span><span class=p>)</span>
+
+	<span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Started&#34;</span><span class=p>)</span>
+
+	<span class=c1>// Run the main loop blocking code.
+</span><span class=c1></span>	<span class=o>&lt;-</span><span class=nx>done</span>
+
+    <span class=nf>stopMainRuntimeLoop</span><span class=p>(</span><span class=nx>srv</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>runMainRuntimeLoop</span><span class=p>(</span><span class=nx>srv</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>srv</span><span class=p>.</span><span class=nf>ListenAndServe</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>err</span> <span class=o>!=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ErrServerClosed</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;listen: %s\n&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>stopMainRuntimeLoop</span><span class=p>(</span><span class=nx>srv</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Starting graceful shutdown now...&#34;</span><span class=p>)</span>
+
+    <span class=c1>// Execute the graceful shutdown sub-routine which will terminate any
+</span><span class=c1></span>	<span class=c1>// active connections and reject any new connections.
+</span><span class=c1></span>    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>(),</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+		<span class=c1>// extra handling here
+</span><span class=c1></span>		<span class=nf>cancel</span><span class=p>()</span>
+	<span class=p>}()</span>
+
+	<span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>srv</span><span class=p>.</span><span class=nf>Shutdown</span><span class=p>(</span><span class=nx>ctx</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Server Shutdown Failed:%+v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+	<span class=p>}</span>
+    <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Graceful shutdown finished.&#34;</span><span class=p>)</span>
+    <span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Exited&#34;</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h1 id=testing>Testing</h1><h2 id=starting-the-server>Starting the Server</h2><p>We are going to use <em>environment variables</em> to load configuration settings for our application.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_DB_HOST</span><span class=o>=</span>localhost
+<span class=nb>export</span> <span class=nv>MULBERRY_DB_PORT</span><span class=o>=</span><span class=m>5432</span>
+<span class=nb>export</span> <span class=nv>MULBERRY_DB_USER</span><span class=o>=</span>golang
+<span class=nb>export</span> <span class=nv>MULBERRY_DB_PASSWORD</span><span class=o>=</span>123password
+<span class=nb>export</span> <span class=nv>MULBERRY_DB_NAME</span><span class=o>=</span>mulberry_db</code></pre></div><p>And now you can run the code:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>go run cmd/serve/main.go</code></pre></div><h2 id=making-api-calls>Making API Calls</h2><p>Let&rsquo;s begin by making a post. Please note that the <em>timestamp</em> must be formatted using <strong>&ldquo;RFC3339&rdquo; date/time standard</strong> - For more information please read this <a href=https://archive.is/7cqtR>great article</a>.</p><h3 id=register-api>Register API</h3><p>Let&rsquo;s attempt to <em>register</em>. Start the server and run the following commands in your console:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http post 127.0.0.1:5000/api/v1/register <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=se>\
+</span><span class=se></span>                                        <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span> <span class=se>\
+</span><span class=se></span>                                            <span class=nv>name</span><span class=o>=</span><span class=s2>&#34;Frank Herbert&#34;</span></code></pre></div><p>The output should be as follows:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+Content-Length: <span class=m>105</span>
+Content-Type: application/json
+Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:09 GMT
+<span class=o>{</span>
+    <span class=s2>&#34;message&#34;</span>: <span class=s2>&#34;You have successfully registered an account.&#34;</span>,
+    <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
+<span class=o>}</span></code></pre></div><h3 id=login-api>Login API</h3><p>And for our grand finally, run the login command which works:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http post 127.0.0.1:5000/api/v1/login <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=se>\
+</span><span class=se></span>                                     <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span></code></pre></div><p>Wonderful! The success output will be as follows:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+Content-Length: <span class=m>125</span>
+Content-Type: application/json
+Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:52 GMT
+<span class=o>{</span>
+    <span class=s2>&#34;access_token&#34;</span>: <span class=s2>&#34;TODO: WE WILL FIGURE OUT HOW TO DO THIS IN ANOTHER ARTICLE!&#34;</span>,
+    <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
+<span class=o>}</span></code></pre></div><h3 id=create-api>Create API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>post</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>data</span> <span class=nx>instrument_uuid</span><span class=p>=</span><span class=s>&#34;lalala&#34;</span> \
+                                                             <span class=nx>value</span><span class=p>=</span><span class=s>&#34;123&#34;</span> \
+                                                         <span class=nx>timestamp</span><span class=p>=</span><span class=s>&#34;2021-01-30T10:20:10.000Z&#34;</span> \
+                                                         <span class=nx>user_uuid</span><span class=p>=</span><span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
+</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>201</span> <span class=nx>Created</span>
+<span class=nx>Content</span><span class=o>-</span><span class=nx>Length</span><span class=p>:</span> <span class=mi>175</span>
+<span class=nx>Content</span><span class=o>-</span><span class=nx>Type</span><span class=p>:</span> <span class=nx>application</span><span class=o>/</span><span class=nx>json</span>
+<span class=nx>Date</span><span class=p>:</span> <span class=nx>Sun</span><span class=p>,</span> <span class=mi>31</span> <span class=nx>Jan</span> <span class=mi>2021</span> <span class=mo>05</span><span class=p>:</span><span class=mi>58</span><span class=p>:</span><span class=mo>06</span> <span class=nx>GMT</span>
+
+<span class=p>{</span>
+    <span class=s>&#34;instrument_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;lalala&#34;</span><span class=p>,</span>
+    <span class=s>&#34;timestamp&#34;</span><span class=p>:</span> <span class=s>&#34;2021-01-30T10:20:10Z&#34;</span><span class=p>,</span>
+    <span class=s>&#34;user_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span><span class=p>,</span>
+    <span class=s>&#34;uuid&#34;</span><span class=p>:</span> <span class=s>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span><span class=p>,</span>
+    <span class=s>&#34;value&#34;</span><span class=p>:</span> <span class=s>&#34;123&#34;</span>
+<span class=p>}</span>
+</code></pre></div><h3 id=list-api>List API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>get</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>data</span>
+</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>200</span> <span class=nx>OK</span>
+<span class=nx>Content</span><span class=o>-</span><span class=nx>Length</span><span class=p>:</span> <span class=mi>145</span>
+<span class=nx>Content</span><span class=o>-</span><span class=nx>Type</span><span class=p>:</span> <span class=nx>application</span><span class=o>/</span><span class=nx>json</span>
+<span class=nx>Date</span><span class=p>:</span> <span class=nx>Sat</span><span class=p>,</span> <span class=mi>30</span> <span class=nx>Jan</span> <span class=mi>2021</span> <span class=mi>22</span><span class=p>:</span><span class=mi>37</span><span class=p>:</span><span class=mi>27</span> <span class=nx>GMT</span>
+<span class=p>[</span>
+    <span class=p>{</span>
+        <span class=s>&#34;instrument_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;lalala&#34;</span><span class=p>,</span>
+        <span class=s>&#34;timestamp&#34;</span><span class=p>:</span> <span class=s>&#34;2021-01-30T10:20:10Z&#34;</span><span class=p>,</span>
+        <span class=s>&#34;user_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span><span class=p>,</span>
+        <span class=s>&#34;uuid&#34;</span><span class=p>:</span> <span class=s>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span><span class=p>,</span>
+        <span class=s>&#34;value&#34;</span><span class=p>:</span> <span class=mi>123</span>
+    <span class=p>}</span>
+<span class=p>]</span>
+</code></pre></div><h3 id=retrieve-api>Retrieve API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>get</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>datum</span><span class=o>/</span><span class=nx>a8f355f4</span><span class=o>-</span><span class=mi>3</span><span class=nx>bb4</span><span class=o>-</span><span class=mi>4741</span><span class=o>-</span><span class=nx>b98b</span><span class=o>-</span><span class=nx>a0dbcc7a34ff</span>
+</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>200</span> <span class=nx>OK</span>
+<span class=nx>Content</span><span class=o>-</span><span class=nx>Length</span><span class=p>:</span> <span class=mi>173</span>
+<span class=nx>Content</span><span class=o>-</span><span class=nx>Type</span><span class=p>:</span> <span class=nx>application</span><span class=o>/</span><span class=nx>json</span>
+<span class=nx>Date</span><span class=p>:</span> <span class=nx>Sun</span><span class=p>,</span> <span class=mi>31</span> <span class=nx>Jan</span> <span class=mi>2021</span> <span class=mo>06</span><span class=p>:</span><span class=mo>00</span><span class=p>:</span><span class=mi>47</span> <span class=nx>GMT</span>
+
+<span class=p>{</span>
+    <span class=s>&#34;instrument_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;lalala&#34;</span><span class=p>,</span>
+    <span class=s>&#34;timestamp&#34;</span><span class=p>:</span> <span class=s>&#34;2021-01-30T10:20:10Z&#34;</span><span class=p>,</span>
+    <span class=s>&#34;user_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span><span class=p>,</span>
+    <span class=s>&#34;uuid&#34;</span><span class=p>:</span> <span class=s>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span><span class=p>,</span>
+    <span class=s>&#34;value&#34;</span><span class=p>:</span> <span class=mi>123</span>
+<span class=p>}</span>
+</code></pre></div><h3 id=update-api>Update API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>put</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>datum</span><span class=o>/</span><span class=nx>a8f355f4</span><span class=o>-</span><span class=mi>3</span><span class=nx>bb4</span><span class=o>-</span><span class=mi>4741</span><span class=o>-</span><span class=nx>b98b</span><span class=o>-</span><span class=nx>a0dbcc7a34ff</span> \
+<span class=nx>instrument_uuid</span><span class=p>=</span><span class=s>&#34;lalala&#34;</span> \
+          <span class=nx>value</span><span class=p>=</span><span class=s>&#34;321&#34;</span> \
+      <span class=nx>timestamp</span><span class=p>=</span><span class=s>&#34;2021-01-30T10:20:10.000Z&#34;</span> \
+      <span class=nx>user_uuid</span><span class=p>=</span><span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
+</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+Content-Length: <span class=m>173</span>
+Content-Type: application/json
+Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 06:01:14 GMT
+<span class=o>{</span>
+    <span class=s2>&#34;instrument_uuid&#34;</span>: <span class=s2>&#34;lalala&#34;</span>,
+    <span class=s2>&#34;timestamp&#34;</span>: <span class=s2>&#34;2021-01-30T10:20:10Z&#34;</span>,
+    <span class=s2>&#34;user_uuid&#34;</span>: <span class=s2>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>,
+    <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span>,
+    <span class=s2>&#34;value&#34;</span>: <span class=m>321</span>
+<span class=o>}</span></code></pre></div><h3 id=delete-api>Delete API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http delete 127.0.0.1:5000/api/v1/time-series-datum/a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+Content-Length: <span class=m>0</span>
+Content-Type: application/json
+Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 06:01:54 GMT</code></pre></div><h1 id=whats-next>What&rsquo;s next?</h1><p>That&rsquo;s it for this article. Hope you enjoyed it. What&rsquo;s next?</p><ul><li>How do we handle sessions? Access tokens?</li><li>How do we handle background processes?</li><li>How do we handle pagination in our list API endpoint?</li></ul></div><div class=post-copyright><p class=copyright-item><span class=item-title>Author</span>
+<span class=item-content>Bartlomiej Mika</span></p><p class=copyright-item><span class=item-title>LastMod</span>
+<span class=item-content>2021-01-30</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/golang/>golang</a>
+<a href=/tags/api/>api</a></div><nav class=post-nav><a class=next href=/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-2/><span class="next-text nav-default">How to write a webserver in Golang using only the std net/http - Part 2</span>
+<span class="next-text nav-mobile">Next</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><div id=disqus_thread></div><script type=text/javascript>(function(){if(window.location.hostname==='localhost')return;var dsq=document.createElement('script');dsq.type='text/javascript';dsq.async=true;var disqus_shortname='bartlomiej-mika';dsq.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(dsq);})();</script><noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=mailto:bart@mikasoftware.com class="iconfont icon-email" title=email></a><a href=bartlomiej-mika-a9a5683b class="iconfont icon-linkedin" title=linkedin></a><a href=https://github.com/bartmika class="iconfont icon-github" title=github></a><a href=https://bartmika.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
+<span class=division>|</span>
+<span class=theme-info>Theme -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span>
+<span class=copyright-year>&copy;
+2020 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>Bartlomiej Mika</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js></script><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('set','anonymizeIp',true);ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>
