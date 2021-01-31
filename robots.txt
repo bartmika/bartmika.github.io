@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://bartmika.github.io/sitemap.xml
