@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>How to write a webserver in Golang using only the std net/http - Part 4 - Bartlomiej Mika</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Bartlomiej Mika"><meta name=description content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><meta name=keywords content="Golang,Web Development,Engineering"><meta name=generator content="Hugo 0.80.0 with theme even"><link rel=canonical href=https://bartmika.github.io/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-4/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="How to write a webserver in Golang using only the std net/http - Part 4"><meta property="og:description" content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><meta property="og:type" content="article"><meta property="og:url" content="https://bartmika.github.io/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-4/"><meta property="article:published_time" content="2021-01-31T00:02:30-04:00"><meta property="article:modified_time" content="2021-01-31T00:02:30-04:00"><meta itemprop=name content="How to write a webserver in Golang using only the std net/http - Part 4"><meta itemprop=description content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><meta itemprop=datePublished content="2021-01-31T00:02:30-04:00"><meta itemprop=dateModified content="2021-01-31T00:02:30-04:00"><meta itemprop=wordCount content="2652"><meta itemprop=keywords content="golang,api,"><meta name=twitter:card content="summary"><meta name=twitter:title content="How to write a webserver in Golang using only the std net/http - Part 4"><meta name=twitter:description content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Bartlomiej Mika</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>Home</li></a><a href=/post/><li class=mobile-menu-item>Archives</li></a><a href=/tags/><li class=mobile-menu-item>Tags</li></a><a href=/categories/><li class=mobile-menu-item>Categories</li></a><a href=/about/><li class=mobile-menu-item>About</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Bartlomiej Mika</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>Home</a></li><li class=menu-item><a class=menu-item-link href=/post/>Archives</a></li><li class=menu-item><a class=menu-item-link href=/tags/>Tags</a></li><li class=menu-item><a class=menu-item-link href=/categories/>Categories</a></li><li class=menu-item><a class=menu-item-link href=/about/>About</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>How to write a webserver in Golang using only the std net/http - Part 4</h1><div class=post-meta><span class=post-time>2021-01-31</span><div class=post-category><a href=/categories/development/>development</a></div></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#authentication--authorization>Authentication & Authorization</a><ul><li><a href=#structure>Structure</a></li><li><a href=#utils-package>utils package</a><ul><li><a href=#jwtgo>jwt.go</a></li></ul></li><li><a href=#controllers-package>controllers package</a><ul><li><a href=#middlewarego>middleware.go</a></li><li><a href=#controllergo>controller.go</a></li><li><a href=#usergo>user.go</a></li><li><a href=#tsdgo>tsd.go</a></li></ul></li><li><a href=#serve-package>serve package</a><ul><li><a href=#maingo>main.go</a></li></ul></li></ul></li><li><a href=#testing>Testing</a><ul><li><a href=#starting-the-server>Starting the Server</a></li></ul></li></ul></nav></div></div><div class=post-content><p>The purpose of this article is to provide instructions on how utilize sessions and authentication.</p><h1 id=authentication--authorization>Authentication & Authorization</h1><p>Just as a reminder this is part 4 of the series, you&rsquo;ll need to finish <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-3/>part 3</a> before continuing.</p><h2 id=structure>Structure</h2><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
+<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>How to write a webserver in Golang using only the std net/http - Part 4 - Bartlomiej Mika</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Bartlomiej Mika"><meta name=description content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><meta name=keywords content="Golang,Web Development,Engineering"><meta name=generator content="Hugo 0.80.0 with theme even"><link rel=canonical href=https://bartmika.github.io/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-4/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.2e81bbed97b8b282c1aeb57488cc71c8d8c8ec559f3931531bd396bf31e0d4dd.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="How to write a webserver in Golang using only the std net/http - Part 4"><meta property="og:description" content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><meta property="og:type" content="article"><meta property="og:url" content="https://bartmika.github.io/post/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-4/"><meta property="article:published_time" content="2021-01-31T00:02:30-04:00"><meta property="article:modified_time" content="2021-01-31T00:02:30-04:00"><meta itemprop=name content="How to write a webserver in Golang using only the std net/http - Part 4"><meta itemprop=description content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><meta itemprop=datePublished content="2021-01-31T00:02:30-04:00"><meta itemprop=dateModified content="2021-01-31T00:02:30-04:00"><meta itemprop=wordCount content="3255"><meta itemprop=keywords content="golang,api,"><meta name=twitter:card content="summary"><meta name=twitter:title content="How to write a webserver in Golang using only the std net/http - Part 4"><meta name=twitter:description content="The purpose of this article is to provide instructions on how utilize sessions and authentication."><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Bartlomiej Mika</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>Home</li></a><a href=/post/><li class=mobile-menu-item>Archives</li></a><a href=/tags/><li class=mobile-menu-item>Tags</li></a><a href=/categories/><li class=mobile-menu-item>Categories</li></a><a href=/about/><li class=mobile-menu-item>About</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Bartlomiej Mika</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>Home</a></li><li class=menu-item><a class=menu-item-link href=/post/>Archives</a></li><li class=menu-item><a class=menu-item-link href=/tags/>Tags</a></li><li class=menu-item><a class=menu-item-link href=/categories/>Categories</a></li><li class=menu-item><a class=menu-item-link href=/about/>About</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>How to write a webserver in Golang using only the std net/http - Part 4</h1><div class=post-meta><span class=post-time>2021-01-31</span><div class=post-category><a href=/categories/development/>development</a></div></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>Contents</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#authentication--authorization>Authentication & Authorization</a><ul><li><a href=#structure>Structure</a></li><li><a href=#models-package>models package</a><ul><li><a href=#usergo>user.go</a></li></ul></li><li><a href=#utils-package>utils package</a><ul><li><a href=#jwtgo>jwt.go</a></li></ul></li><li><a href=#controllers-package>controllers package</a><ul><li><a href=#middlewarego>middleware.go</a></li><li><a href=#controllergo>controller.go</a></li><li><a href=#usergo-1>user.go</a></li><li><a href=#tsdgo>tsd.go</a></li></ul></li><li><a href=#serve-package>serve package</a><ul><li><a href=#maingo>main.go</a></li></ul></li></ul></li><li><a href=#testing>Testing</a><ul><li><a href=#starting-the-server>Starting the Server</a></li></ul></li></ul></nav></div></div><div class=post-content><p>The purpose of this article is to provide instructions on how utilize sessions and authentication.</p><h1 id=authentication--authorization>Authentication & Authorization</h1><p>Just as a reminder this is part 4 of the series, you&rsquo;ll need to finish <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-3/>part 3</a> before continuing.</p><h2 id=structure>Structure</h2><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
 │   📄README.md
 │   📄Makefile
 │
@@ -31,7 +31,7 @@
     <span class=p>|</span>
     └───📁utils
         📄jwt.go
-        📄password.go</code></pre></div><h2 id=utils-package>utils package</h2><h3 id=jwtgo>jwt.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+        📄password.go</code></pre></div><h2 id=models-package>models package</h2><h3 id=usergo>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -76,6 +76,135 @@
 </span><span class=lnt>43
 </span><span class=lnt>44
 </span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/user.go
+</span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;context&#34;</span>
+<span class=p>)</span>
+
+<span class=c1>// The definition of the user record we will saving in our database.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>User</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Uuid</span> <span class=kt>string</span>          <span class=s>`json:&#34;uuid&#34;`</span>
+	<span class=nx>Name</span> <span class=kt>string</span>          <span class=s>`json:&#34;name&#34;`</span>
+	<span class=nx>Email</span> <span class=kt>string</span>         <span class=s>`json:&#34;email&#34;`</span>
+	<span class=nx>PasswordHash</span> <span class=kt>string</span>  <span class=s>`json:&#34;password_hash&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The interface that *must* be implemented.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>UserRepository</span> <span class=kd>interface</span> <span class=p>{</span>
+	<span class=nf>Create</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>name</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>email</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>passwordHash</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>error</span>
+	<span class=nf>FindByUuid</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+	<span class=nf>FindByEmail</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>email</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>User</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+	<span class=nf>Save</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>user</span> <span class=o>*</span><span class=nx>User</span><span class=p>)</span> <span class=kt>error</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the user&#39;s `register` POST request data.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>RegisterRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Name</span> <span class=kt>string</span>     <span class=s>`json:&#34;name&#34;`</span>
+	<span class=nx>Email</span> <span class=kt>string</span>    <span class=s>`json:&#34;email&#34;`</span>
+	<span class=nx>Password</span> <span class=kt>string</span> <span class=s>`json:&#34;password&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the system&#39;s response when the `register` POST request was a success.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>RegisterResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Message</span> <span class=kt>string</span> <span class=s>`json:&#34;message&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the user&#39;s `login` POST request data.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>LoginRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Email</span> <span class=kt>string</span>    <span class=s>`json:&#34;email&#34;`</span>
+	<span class=nx>Password</span> <span class=kt>string</span> <span class=s>`json:&#34;password&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the system&#39;s response when the `login` POST request was a success.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>LoginResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>AccessToken</span> <span class=kt>string</span> <span class=s>`json:&#34;access_token&#34;`</span>
+    <span class=nx>RefreshToken</span> <span class=kt>string</span> <span class=s>`json:&#34;refresh_token&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the user&#39;s `refresh token` POST request data.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>RefreshTokenRequest</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Value</span> <span class=kt>string</span>     <span class=s>`json:&#34;value&#34;`</span>
+<span class=p>}</span>
+
+<span class=c1>// The struct used to represent the system&#39;s response when the `refresh token` POST request was a success.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>RefreshTokenResponse</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>AccessToken</span> <span class=kt>string</span> <span class=s>`json:&#34;access_token&#34;`</span>
+    <span class=nx>RefreshToken</span> <span class=kt>string</span> <span class=s>`json:&#34;refresh_token&#34;`</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=utils-package>utils package</h2><h3 id=jwtgo>jwt.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/pkg/utils/jwt.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>utils</span>
 
@@ -85,41 +214,56 @@
     <span class=nx>jwt</span> <span class=s>&#34;github.com/dgrijalva/jwt-go&#34;</span>
 <span class=p>)</span>
 
-<span class=kd>func</span> <span class=nf>GenerateJWT</span><span class=p>(</span><span class=nx>hmacSecret</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>,</span> <span class=nx>clientUuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>token</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>SigningMethodHS256</span><span class=p>)</span>
-
+<span class=c1>// Generate the `access token` and `refresh token` for the secret key.
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>GenerateJWTTokenPair</span><span class=p>(</span><span class=nx>hmacSecret</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>,</span> <span class=nx>clientUuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=kt>string</span><span class=p>,</span> <span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>//
+</span><span class=c1></span>    <span class=c1>// Generate token.
+</span><span class=c1></span>    <span class=c1>//
+</span><span class=c1></span>    <span class=nx>token</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>SigningMethodHS256</span><span class=p>)</span>
     <span class=nx>claims</span> <span class=o>:=</span> <span class=nx>token</span><span class=p>.</span><span class=nx>Claims</span><span class=p>.(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>MapClaims</span><span class=p>)</span>
-
-    <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;authorized&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=kc>true</span>
     <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;user_uuid&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>clientUuid</span>
-    <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;exp&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>().</span><span class=nf>Add</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Minute</span> <span class=o>*</span> <span class=mi>30</span><span class=p>).</span><span class=nf>Unix</span><span class=p>()</span>
+    <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;exp&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>().</span><span class=nf>Add</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Hour</span> <span class=o>*</span> <span class=mi>1</span><span class=p>).</span><span class=nf>Unix</span><span class=p>()</span>
 
     <span class=nx>tokenString</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>token</span><span class=p>.</span><span class=nf>SignedString</span><span class=p>(</span><span class=nx>hmacSecret</span><span class=p>)</span>
-
     <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
     <span class=p>}</span>
-    <span class=k>return</span> <span class=nx>tokenString</span><span class=p>,</span> <span class=kc>nil</span>
+
+    <span class=c1>//
+</span><span class=c1></span>    <span class=c1>// Generate refresh token.
+</span><span class=c1></span>    <span class=c1>//
+</span><span class=c1></span>    <span class=nx>refreshToken</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>SigningMethodHS256</span><span class=p>)</span>
+	<span class=nx>rtClaims</span> <span class=o>:=</span> <span class=nx>refreshToken</span><span class=p>.</span><span class=nx>Claims</span><span class=p>.(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>MapClaims</span><span class=p>)</span>
+	<span class=nx>rtClaims</span><span class=p>[</span><span class=s>&#34;user_uuid&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>clientUuid</span>
+	<span class=nx>rtClaims</span><span class=p>[</span><span class=s>&#34;exp&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>().</span><span class=nf>Add</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nx>Hour</span> <span class=o>*</span> <span class=mi>72</span><span class=p>).</span><span class=nf>Unix</span><span class=p>()</span>
+
+	<span class=nx>refreshTokenString</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>refreshToken</span><span class=p>.</span><span class=nf>SignedString</span><span class=p>(</span><span class=nx>hmacSecret</span><span class=p>)</span>
+	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+		<span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
+	<span class=p>}</span>
+
+    <span class=k>return</span> <span class=nx>tokenString</span><span class=p>,</span> <span class=nx>refreshTokenString</span><span class=p>,</span> <span class=kc>nil</span>
 <span class=p>}</span>
 
-<span class=kd>func</span> <span class=nf>ProcessJWT</span><span class=p>(</span><span class=nx>hmacSecret</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>,</span> <span class=nx>reqToken</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>){</span>
+<span class=c1>// Validates either the `access token` or `refresh token` and returns either the
+</span><span class=c1>// `user_uuid` if success or error on failure.
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>ProcessJWTToken</span><span class=p>(</span><span class=nx>hmacSecret</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>,</span> <span class=nx>reqToken</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>){</span>
     <span class=nx>token</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>jwt</span><span class=p>.</span><span class=nf>Parse</span><span class=p>(</span><span class=nx>reqToken</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>Token</span><span class=p>)</span> <span class=p>(</span><span class=kd>interface</span><span class=p>{},</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
         <span class=k>return</span> <span class=nx>hmacSecret</span><span class=p>,</span> <span class=kc>nil</span>
     <span class=p>})</span>
     <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>token</span><span class=p>.</span><span class=nx>Valid</span> <span class=p>{</span>
         <span class=k>if</span> <span class=nx>claims</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>token</span><span class=p>.</span><span class=nx>Claims</span><span class=p>.(</span><span class=nx>jwt</span><span class=p>.</span><span class=nx>MapClaims</span><span class=p>);</span> <span class=nx>ok</span> <span class=o>&amp;&amp;</span> <span class=nx>token</span><span class=p>.</span><span class=nx>Valid</span> <span class=p>{</span>
-            <span class=nx>m</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>)</span>
-            <span class=nx>m</span><span class=p>[</span><span class=s>&#34;user_uuid&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;user_uuid&#34;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span>
-            <span class=nx>m</span><span class=p>[</span><span class=s>&#34;exp&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;exp&#34;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span>
-            <span class=k>return</span> <span class=nx>m</span><span class=p>,</span> <span class=kc>nil</span>
+            <span class=nx>user_uuid</span> <span class=o>:=</span> <span class=nx>claims</span><span class=p>[</span><span class=s>&#34;user_uuid&#34;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span>
+            <span class=c1>// m[&#34;exp&#34;] := string(claims[&#34;exp&#34;].(float64))
+</span><span class=c1></span>            <span class=k>return</span> <span class=nx>user_uuid</span><span class=p>,</span> <span class=kc>nil</span>
         <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+            <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
         <span class=p>}</span>
 
     <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-        <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
+        <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
     <span class=p>}</span>
-    <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=kc>nil</span>
+    <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=kc>nil</span>
 <span class=p>}</span>
 </code></pre></td></tr></table></div></div><h2 id=controllers-package>controllers package</h2><h3 id=middlewarego>middleware.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
@@ -252,10 +396,10 @@
 
             <span class=c1>// log.Println(reqToken) // For debugging purposes only.
 </span><span class=c1></span>
-            <span class=nx>m</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>ProcessJWT</span><span class=p>(</span><span class=nx>mySigningKey</span><span class=p>,</span> <span class=nx>reqToken</span><span class=p>)</span>
+            <span class=nx>user_uuid</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>ProcessJWTToken</span><span class=p>(</span><span class=nx>mySigningKey</span><span class=p>,</span> <span class=nx>reqToken</span><span class=p>)</span>
             <span class=k>if</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
                 <span class=nx>ctx</span> <span class=p>=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithValue</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;is_authorized&#34;</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
-                <span class=nx>ctx</span> <span class=p>=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithValue</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;user_uuid&#34;</span><span class=p>,</span> <span class=nx>m</span><span class=p>[</span><span class=s>&#34;user_uuid&#34;</span><span class=p>])</span>
+                <span class=nx>ctx</span> <span class=p>=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithValue</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=s>&#34;user_uuid&#34;</span><span class=p>,</span> <span class=nx>user_uuid</span><span class=p>)</span>
 
                 <span class=c1>// Flow to the next middleware with our JWT token saved.
 </span><span class=c1></span>                <span class=nf>fn</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>.</span><span class=nf>WithContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>))</span>
@@ -352,6 +496,8 @@
 </span><span class=lnt>71
 </span><span class=lnt>72
 </span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
@@ -391,41 +537,43 @@
         <span class=nx>h</span><span class=p>.</span><span class=nf>postLogin</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;register&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodPost</span><span class=p>:</span>
         <span class=nx>h</span><span class=p>.</span><span class=nf>postRegister</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
+    <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;refresh-token&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodPost</span><span class=p>:</span>
+        <span class=nx>h</span><span class=p>.</span><span class=nf>postRefreshToken</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-data&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodGet</span><span class=p>:</span>
         <span class=k>if</span> <span class=nx>isAuthorized</span> <span class=p>{</span>
             <span class=nx>h</span><span class=p>.</span><span class=nf>getTimeSeriesData</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
         <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
+            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized - access token expired or invalid&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
         <span class=p>}</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-data&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodPost</span><span class=p>:</span>
         <span class=k>if</span> <span class=nx>isAuthorized</span> <span class=p>{</span>
             <span class=nx>h</span><span class=p>.</span><span class=nf>postTimeSeriesData</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
         <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
+            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized - access token expired or invalid&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
         <span class=p>}</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-datum&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodGet</span><span class=p>:</span>
         <span class=k>if</span> <span class=nx>isAuthorized</span> <span class=p>{</span>
             <span class=nx>h</span><span class=p>.</span><span class=nf>getTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
         <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
+            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized - access token expired or invalid&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
         <span class=p>}</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-datum&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodPut</span><span class=p>:</span>
         <span class=k>if</span> <span class=nx>isAuthorized</span> <span class=p>{</span>
             <span class=nx>h</span><span class=p>.</span><span class=nf>putTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
         <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
+            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized - access token expired or invalid&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
         <span class=p>}</span>
     <span class=k>case</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>&amp;&amp;</span> <span class=nx>p</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=s>&#34;time-series-datum&#34;</span> <span class=o>&amp;&amp;</span> <span class=nx>r</span><span class=p>.</span><span class=nx>Method</span> <span class=o>==</span> <span class=nx>http</span><span class=p>.</span><span class=nx>MethodDelete</span><span class=p>:</span>
         <span class=k>if</span> <span class=nx>isAuthorized</span> <span class=p>{</span>
             <span class=nx>h</span><span class=p>.</span><span class=nf>deleteTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>,</span> <span class=nx>p</span><span class=p>[</span><span class=mi>1</span><span class=p>])</span>
         <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
+            <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized - access token expired or invalid&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
         <span class=p>}</span>
     <span class=k>default</span><span class=p>:</span>
         <span class=nx>http</span><span class=p>.</span><span class=nf>NotFound</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=p>}</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=usergo>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</code></pre></td></tr></table></div></div><h3 id=usergo-1>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -549,13 +697,56 @@
 </span><span class=lnt>122
 </span><span class=lnt>123
 </span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span><span class=lnt>149
+</span><span class=lnt>150
+</span><span class=lnt>151
+</span><span class=lnt>152
+</span><span class=lnt>153
+</span><span class=lnt>154
+</span><span class=lnt>155
+</span><span class=lnt>156
+</span><span class=lnt>157
+</span><span class=lnt>158
+</span><span class=lnt>159
+</span><span class=lnt>160
+</span><span class=lnt>161
+</span><span class=lnt>162
+</span><span class=lnt>163
+</span><span class=lnt>164
+</span><span class=lnt>165
+</span><span class=lnt>166
+</span><span class=lnt>167
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&#34;encoding/json&#34;</span>
-    <span class=c1>// &#34;fmt&#34;
-</span><span class=c1></span>    <span class=s>&#34;net/http&#34;</span>
+    <span class=s>&#34;log&#34;</span>
+    <span class=s>&#34;net/http&#34;</span>
 
     <span class=s>&#34;github.com/google/uuid&#34;</span>
 
@@ -653,7 +844,7 @@
 
     <span class=c1>// Generate our JWT token.
 </span><span class=c1></span>    <span class=nx>mySigningKey</span> <span class=o>:=</span> <span class=nx>ctx</span><span class=p>.</span><span class=nf>Value</span><span class=p>(</span><span class=s>&#34;jwt_signing_key&#34;</span><span class=p>).([]</span><span class=kt>byte</span><span class=p>)</span>
-    <span class=nx>accessToken</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>GenerateJWT</span><span class=p>(</span><span class=nx>mySigningKey</span><span class=p>,</span> <span class=nx>user</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>)</span>
+    <span class=nx>accessToken</span><span class=p>,</span> <span class=nx>refreshToken</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>GenerateJWTTokenPair</span><span class=p>(</span><span class=nx>mySigningKey</span><span class=p>,</span> <span class=nx>user</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>)</span>
     <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
         <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
         <span class=k>return</span>
@@ -662,6 +853,49 @@
     <span class=c1>// Finally return success.
 </span><span class=c1></span>    <span class=nx>responseData</span> <span class=o>:=</span> <span class=nx>models</span><span class=p>.</span><span class=nx>LoginResponse</span><span class=p>{</span>
         <span class=nx>AccessToken</span><span class=p>:</span> <span class=nx>accessToken</span><span class=p>,</span>
+        <span class=nx>RefreshToken</span><span class=p>:</span> <span class=nx>refreshToken</span><span class=p>,</span>
+    <span class=p>}</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>responseData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// To run this API, try running in your console:
+</span><span class=c1>// $ http post 127.0.0.1:5000/api/v1/refresh-token value=&#34;xxx&#34;
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>h</span> <span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=nf>postRefreshToken</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>requestData</span> <span class=nx>models</span><span class=p>.</span><span class=nx>RefreshTokenRequest</span>
+
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewDecoder</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>Body</span><span class=p>).</span><span class=nf>Decode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>requestData</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusBadRequest</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// // For debugging purposes, print our output so you can see the code working.
+</span><span class=c1></span>    <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+
+    <span class=nx>ctx</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>Context</span><span class=p>()</span>
+    <span class=nx>mySigningKey</span> <span class=o>:=</span> <span class=nx>ctx</span><span class=p>.</span><span class=nf>Value</span><span class=p>(</span><span class=s>&#34;jwt_signing_key&#34;</span><span class=p>).([]</span><span class=kt>byte</span><span class=p>)</span>
+
+    <span class=c1>// Verify our refresh token.
+</span><span class=c1></span>    <span class=nx>user_uuid</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>ProcessJWTToken</span><span class=p>(</span><span class=nx>mySigningKey</span><span class=p>,</span> <span class=nx>requestData</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&#34;Unauthorized - refresh token expired or invalid&#34;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusUnauthorized</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Generate our JWT token.
+</span><span class=c1></span>    <span class=nx>accessToken</span><span class=p>,</span> <span class=nx>refreshToken</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>utils</span><span class=p>.</span><span class=nf>GenerateJWTTokenPair</span><span class=p>(</span><span class=nx>mySigningKey</span><span class=p>,</span> <span class=nx>user_uuid</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Finally return success.
+</span><span class=c1></span>    <span class=nx>responseData</span> <span class=o>:=</span> <span class=nx>models</span><span class=p>.</span><span class=nx>RefreshTokenResponse</span><span class=p>{</span>
+        <span class=nx>AccessToken</span><span class=p>:</span> <span class=nx>accessToken</span><span class=p>,</span>
+        <span class=nx>RefreshToken</span><span class=p>:</span> <span class=nx>refreshToken</span><span class=p>,</span>
     <span class=p>}</span>
     <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>NewEncoder</span><span class=p>(</span><span class=nx>w</span><span class=p>).</span><span class=nf>Encode</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>responseData</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
         <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
@@ -1191,17 +1425,16 @@
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_PASSWORD</span><span class=o>=</span>123password
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_NAME</span><span class=o>=</span>mulberry_db
 <span class=nb>export</span> <span class=nv>MULBERRY_APP_SIGNING_KEY</span><span class=o>=</span>PLEASE_REPLACE_ME</code></pre></div><p>And now you can run the code:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>go run cmd/serve/main.go</code></pre></div><p>In another terminal run the following code to make a login call:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>bmika@MACMINI-AFA2131 mulberry-server % http post 127.0.0.1:5000/api/v1/login <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span></code></pre></div><p>The return should look as follows:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
-Content-Length: <span class=m>292</span>
+Content-Length: <span class=m>385</span>
 Content-Type: application/json
-Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 22:34:28 GMT
-
+Date: Mon, <span class=m>01</span> Feb <span class=m>2021</span> 04:27:46 GMT
 <span class=o>{</span>
-    <span class=s2>&#34;access_token&#34;</span>: <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJjbGllbnRfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiIsImV4cCI6MTYxMjEzNDI2OCwic2Vzc2lvbl91dWlkIjoiOTk3ZDQ3NWUtNGMyZi00YWViLThlMjEtOWNlYWM3MTg3NDhjIn0.fBP01baxjC9EwO3vzeHpeRKppOkDlVYmTniZUEPXfAw&#34;</span>
-<span class=o>}</span></code></pre></div><p>Please save the output the &ldquo;access_token&rdquo; so you can write in your console.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_API_TOKEN</span><span class=o>=</span><span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJjbGllbnRfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiIsImV4cCI6MTYxMjEzNDI2OCwic2Vzc2lvbl91dWlkIjoiOTk3ZDQ3NWUtNGMyZi00YWViLThlMjEtOWNlYWM3MTg3NDhjIn0.fBP01baxjC9EwO3vzeHpeRKppOkDlVYmTniZUEPXfAw&#34;</span></code></pre></div><p>Next run the following call to a protected API:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>http get 127.0.0.1:5000/api/v1/time-series-data Authorization:<span class=s2>&#34;Bearer </span><span class=nv>$MULBERRY_API_TOKEN</span><span class=s2>&#34;</span></code></pre></div><p>And your result should look like this:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+    <span class=s2>&#34;access_token&#34;</span>: <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIxNTcyNjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.ZKe5DargCrHZcAQQ71M46uUr0TWk9UYkiURijaKBABA&#34;</span>,
+    <span class=s2>&#34;refresh_token&#34;</span>: <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTI0MTI4NjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.odXNQd1hm3cLPI9_e2jfjYXjgjf7wfxQ8hCx3-qqZYY&#34;</span>
+<span class=o>}</span></code></pre></div><p>Please save the output the &ldquo;access_token&rdquo; so you can write in your console.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_API_TOKEN</span><span class=o>=</span><span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIxNTcyNjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.ZKe5DargCrHZcAQQ71M46uUr0TWk9UYkiURijaKBABA&#34;</span></code></pre></div><p>Next run the following call to a protected API:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>http get 127.0.0.1:5000/api/v1/time-series-data Authorization:<span class=s2>&#34;Bearer </span><span class=nv>$MULBERRY_API_TOKEN</span><span class=s2>&#34;</span></code></pre></div><p>And your result should look like this:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>175</span>
 Content-Type: application/json
 Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 22:57:40 GMT
-
 <span class=o>[</span>
     <span class=o>{</span>
         <span class=s2>&#34;instrument_uuid&#34;</span>: <span class=s2>&#34;lalala&#34;</span>,
