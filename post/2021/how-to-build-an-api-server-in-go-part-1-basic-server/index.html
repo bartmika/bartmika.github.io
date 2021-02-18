@@ -559,8 +559,8 @@ $ curl -X DELETE <span class=se>\
     <span class=s>&#34;net/http&#34;</span>
     <span class=s>&#34;os&#34;</span>
     <span class=s>&#34;os/signal&#34;</span>
-	<span class=s>&#34;syscall&#34;</span>
-	<span class=s>&#34;time&#34;</span>
+    <span class=s>&#34;syscall&#34;</span>
+    <span class=s>&#34;time&#34;</span>
 
     <span class=s>&#34;github.com/bartmika/mulberry-server/internal/controllers&#34;</span>
 <span class=p>)</span>
@@ -571,20 +571,20 @@ $ curl -X DELETE <span class=se>\
     <span class=nx>mux</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
     <span class=nx>mux</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>)</span>
 
-	<span class=nx>srv</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
-		<span class=nx>Addr</span><span class=p>:</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s:%s&#34;</span><span class=p>,</span> <span class=s>&#34;localhost&#34;</span><span class=p>,</span> <span class=s>&#34;5000&#34;</span><span class=p>),</span>
+    <span class=nx>srv</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
+        <span class=nx>Addr</span><span class=p>:</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s:%s&#34;</span><span class=p>,</span> <span class=s>&#34;localhost&#34;</span><span class=p>,</span> <span class=s>&#34;5000&#34;</span><span class=p>),</span>
         <span class=nx>Handler</span><span class=p>:</span> <span class=nx>mux</span><span class=p>,</span>
-	<span class=p>}</span>
+    <span class=p>}</span>
 
     <span class=nx>done</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Signal</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
-	<span class=nx>signal</span><span class=p>.</span><span class=nf>Notify</span><span class=p>(</span><span class=nx>done</span><span class=p>,</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Interrupt</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGINT</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGTERM</span><span class=p>)</span>
+    <span class=nx>signal</span><span class=p>.</span><span class=nf>Notify</span><span class=p>(</span><span class=nx>done</span><span class=p>,</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Interrupt</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGINT</span><span class=p>,</span> <span class=nx>syscall</span><span class=p>.</span><span class=nx>SIGTERM</span><span class=p>)</span>
 
     <span class=k>go</span> <span class=nf>runMainRuntimeLoop</span><span class=p>(</span><span class=nx>srv</span><span class=p>)</span>
 
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Started&#34;</span><span class=p>)</span>
+    <span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Started&#34;</span><span class=p>)</span>
 
-	<span class=c1>// Run the main loop blocking code.
-</span><span class=c1></span>	<span class=o>&lt;-</span><span class=nx>done</span>
+    <span class=c1>// Run the main loop blocking code.
+</span><span class=c1></span>    <span class=o>&lt;-</span><span class=nx>done</span>
 
     <span class=nf>stopMainRuntimeLoop</span><span class=p>(</span><span class=nx>srv</span><span class=p>)</span>
 <span class=p>}</span>
@@ -599,16 +599,16 @@ $ curl -X DELETE <span class=se>\
     <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Starting graceful shutdown now...&#34;</span><span class=p>)</span>
 
     <span class=c1>// Execute the graceful shutdown sub-routine which will terminate any
-</span><span class=c1></span>	<span class=c1>// active connections and reject any new connections.
+</span><span class=c1></span>    <span class=c1>// active connections and reject any new connections.
 </span><span class=c1></span>    <span class=nx>ctx</span><span class=p>,</span> <span class=nx>cancel</span> <span class=o>:=</span> <span class=nx>context</span><span class=p>.</span><span class=nf>WithTimeout</span><span class=p>(</span><span class=nx>context</span><span class=p>.</span><span class=nf>Background</span><span class=p>(),</span> <span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
-	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
-		<span class=c1>// extra handling here
-</span><span class=c1></span>		<span class=nf>cancel</span><span class=p>()</span>
-	<span class=p>}()</span>
+    <span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+        <span class=c1>// extra handling here
+</span><span class=c1></span>        <span class=nf>cancel</span><span class=p>()</span>
+    <span class=p>}()</span>
 
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>srv</span><span class=p>.</span><span class=nf>Shutdown</span><span class=p>(</span><span class=nx>ctx</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Server Shutdown Failed:%+v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-	<span class=p>}</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>srv</span><span class=p>.</span><span class=nf>Shutdown</span><span class=p>(</span><span class=nx>ctx</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nf>Fatalf</span><span class=p>(</span><span class=s>&#34;Server Shutdown Failed:%+v&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Graceful shutdown finished.&#34;</span><span class=p>)</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Exited&#34;</span><span class=p>)</span>
 <span class=p>}</span>
