@@ -1498,14 +1498,14 @@
     <span class=nx>userRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewUserRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
     <span class=nx>tsdRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewTimeSeriesDatumRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
 
-    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>userRepo</span><span class=p>,</span> <span class=nx>tsdRepo</span><span class=p>)</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=nx>userRepo</span><span class=p>,</span> <span class=nx>tsdRepo</span><span class=p>)</span>
 
-    <span class=nx>router</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
-    <span class=nx>router</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>)</span>
+    <span class=nx>mux</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
+    <span class=nx>mux</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>)</span>
 
 	<span class=nx>srv</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
 		<span class=nx>Addr</span><span class=p>:</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s:%s&#34;</span><span class=p>,</span> <span class=s>&#34;localhost&#34;</span><span class=p>,</span> <span class=s>&#34;5000&#34;</span><span class=p>),</span>
-        <span class=nx>Handler</span><span class=p>:</span> <span class=nx>router</span><span class=p>,</span>
+        <span class=nx>Handler</span><span class=p>:</span> <span class=nx>mux</span><span class=p>,</span>
 	<span class=p>}</span>
 
     <span class=nx>done</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Signal</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>

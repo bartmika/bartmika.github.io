@@ -512,7 +512,7 @@
     <span class=nx>TsdRepo</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>TimeSeriesDatumRepo</span>
 <span class=p>}</span>
 
-<span class=kd>func</span> <span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>u</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>,</span> <span class=nx>tsd</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=p>{</span>
+<span class=kd>func</span> <span class=nf>New</span><span class=p>(</span><span class=nx>u</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>UserRepo</span><span class=p>,</span> <span class=nx>tsd</span> <span class=o>*</span><span class=nx>repositories</span><span class=p>.</span><span class=nx>TimeSeriesDatumRepo</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>BaseHandler</span><span class=p>)</span> <span class=p>{</span>
     <span class=k>return</span> <span class=o>&amp;</span><span class=nx>BaseHandler</span><span class=p>{</span>
         <span class=nx>UserRepo</span><span class=p>:</span> <span class=nx>u</span><span class=p>,</span>
         <span class=nx>TsdRepo</span><span class=p>:</span> <span class=nx>tsd</span><span class=p>,</span>
@@ -1373,14 +1373,14 @@
     <span class=nx>userRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewUserRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
     <span class=nx>tsdRepo</span> <span class=o>:=</span> <span class=nx>repositories</span><span class=p>.</span><span class=nf>NewTimeSeriesDatumRepo</span><span class=p>(</span><span class=nx>db</span><span class=p>)</span>
 
-    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>NewBaseHandler</span><span class=p>(</span><span class=nx>userRepo</span><span class=p>,</span> <span class=nx>tsdRepo</span><span class=p>)</span>
+    <span class=nx>c</span> <span class=o>:=</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>New</span><span class=p>(</span><span class=nx>userRepo</span><span class=p>,</span> <span class=nx>tsdRepo</span><span class=p>)</span>
 
-    <span class=nx>router</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
-    <span class=nx>router</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>ChainMiddleware</span><span class=p>(</span><span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>))</span>
+    <span class=nx>mux</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>NewServeMux</span><span class=p>()</span>
+    <span class=nx>mux</span><span class=p>.</span><span class=nf>HandleFunc</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=nx>controllers</span><span class=p>.</span><span class=nf>ChainMiddleware</span><span class=p>(</span><span class=nx>c</span><span class=p>.</span><span class=nx>HandleRequests</span><span class=p>))</span>
 
 	<span class=nx>srv</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>http</span><span class=p>.</span><span class=nx>Server</span><span class=p>{</span>
 		<span class=nx>Addr</span><span class=p>:</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s:%s&#34;</span><span class=p>,</span> <span class=s>&#34;localhost&#34;</span><span class=p>,</span> <span class=s>&#34;5000&#34;</span><span class=p>),</span>
-        <span class=nx>Handler</span><span class=p>:</span> <span class=nx>router</span><span class=p>,</span>
+        <span class=nx>Handler</span><span class=p>:</span> <span class=nx>mux</span><span class=p>,</span>
 	<span class=p>}</span>
 
     <span class=nx>done</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>chan</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Signal</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
@@ -1448,7 +1448,7 @@ Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 22:57:40 GMT
 <span class=item-content>2021-01-31</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/golang/>Golang</a>
 <a href=/tags/api/>API</a>
 <a href=/tags/security/>Security</a>
-<a href=/tags/howto/>HOWTO</a></div><nav class=post-nav><a class=prev href=/post/2021/winter-sown-seeds-weblog-1/><i class="iconfont icon-left"></i><span class="prev-text nav-default">Winter Sown Seeds Weblog #1</span>
+<a href=/tags/howto/>HOWTO</a></div><nav class=post-nav><a class=prev href=/post/2021/winter-sown-seeds-growlog-1/><i class="iconfont icon-left"></i><span class="prev-text nav-default">Winter Sown Seeds Growlog #1</span>
 <span class="prev-text nav-mobile">Prev</span></a>
 <a class=next href=/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/><span class="next-text nav-default">How to Build an API Server in Go - Part 3: Postgres Database</span>
 <span class="next-text nav-mobile">Next</span>
