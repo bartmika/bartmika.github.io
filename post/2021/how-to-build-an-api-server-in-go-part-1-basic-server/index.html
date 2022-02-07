@@ -1,14 +1,162 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>How to Build an API Server in Go - Part 1: Basic Server - Bartlomiej Mika</title><meta name=description content="The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net/http package and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests. This is the first post in a multi-post series."><meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-1-basic-server\/","name":"How to build an a p i server in go part 1 basic server"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Build an API Server in Go - Part 1: Basic Server","description":"The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net\/http package and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests. This is the first post in a multi-post series.\n","inLanguage":"en","wordCount":2522,"datePublished":"2021-01-25T00:02:30","dateModified":"2021-01-25T00:02:30","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, API, HOWTO"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-1-basic-server\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="How to Build an API Server in Go - Part 1: Basic Server"><meta property="og:description" content="The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net/http package and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests. This is the first post in a multi-post series."><meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="How to Build an API Server in Go - Part 1: Basic Server"><meta name=twitter:description content="The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net/http package and not any other third-party web framework. You will learn …"><meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.80.0"><link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>How to Build an API Server in Go - Part 1: Basic Server - Bartlomiej Mika</title>
+<meta name=description content="
+The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net/http package and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests. This is the first post in a multi-post series.">
+<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-1-basic-server\/","name":"How to build an API server in go part 1 basic server"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Build an API Server in Go - Part 1: Basic Server","description":"The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net\/http package and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests. This is the first post in a multi-post series.\n","inLanguage":"en","wordCount":2522,"datePublished":"2021-01-25T00:02:30","dateModified":"2021-01-25T00:02:30","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, API, HOWTO"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-1-basic-server\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
+<meta property="og:title" content="How to Build an API Server in Go - Part 1: Basic Server">
+<meta property="og:description" content="
+The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net/http package and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle POST, GET, PUT and DELETE HTTP requests. This is the first post in a multi-post series.">
+<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bartlomiej Mika">
+<meta name=twitter:title content="How to Build an API Server in Go - Part 1: Basic Server">
+<meta name=twitter:description content="
+The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the net/http package and not any other third-party web framework. You will learn …">
+<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta name=twitter:card content="summary">
+<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
+<meta name=generator content="Hugo 0.92.1">
+<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
+<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
+<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+<div class=container-fluid>
+<div class=navbar-header>
+<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button>
-<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=About href=/about/>About</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartlomiejmika.com><img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</div>
+<div class="collapse navbar-collapse" id=main-navbar>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<a title=Blog href=/>Blog</a>
+</li>
+<li>
+<a title=Tags href=/tags>Tags</a>
+</li>
+<li>
+<a title=About href=/about/>About</a>
+</li>
+</ul>
+</div>
+<div class=avatar-container>
+<div class=avatar-img-border>
+<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
+<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
+</a>
+</div>
+</div>
+</div>
+</nav>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=post-heading><h1>How to Build an API Server in Go - Part 1: Basic Server</h1><span class=post-meta><i class="fas fa-calendar"></i>&nbsp;Posted on January 25, 2021
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header class=header-section>
+<div class="intro-header no-img">
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class=post-heading>
+<h1>How to Build an API Server in Go - Part 1: Basic Server</h1>
+<span class=post-meta>
+<i class="fas fa-calendar"></i>&nbsp;Posted on January 25, 2021
 &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;12&nbsp;minutes
 &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;2522&nbsp;words
-&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika</span></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src=/img/2021/common/go-banner.png alt></p><p>The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the <a href=https://golang.org/pkg/net/http/><em>net/http</em> package</a> and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle <strong>POST</strong>, <strong>GET</strong>, <strong>PUT</strong> and <strong>DELETE</strong> HTTP requests. This is the first post in a multi-post series.</p><p>This post belongs to the following series:</p><ol><li><strong>How to Build an API Server in Go - Part 1: Basic Server</strong></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/>How to Build an API Server in Go - Part 2: Simple Database</a></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/>How to Build an API Server in Go - Part 3: Postgres Database</a></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/>How to Build an API Server in Go - Part 4: Access Control</a></li></ol><h1 id=1>Why <a href=https://golang.org/pkg/net/http/><code>net/http</code></a> Standard Library?</h1><p>A general popular opinion in web-development is to use a web-development framework for build web application - <em>why reinvent the wheel?</em></p><p>However in Golang, this general popular opinion is not held firm. The standard library is the core package provided by Golang is sufficient for all our web application needs.</p><p>I have used (and am using) <a href=https://github.com/go-chi/chi><code>go-chi</code></a> and <a href=https://github.com/gofiber/fiber><code>fibre</code></a> web libraries and I would highly recommend both. For this article, I want to explore what&rsquo;s involved with writing an application <em>without</em> any external library and only the provided <a href=https://golang.org/pkg/net/http/><code>http</code></a> library.</p><h1 id=2>What do I need?</h1><ol><li>You will need Golang version 1.15+ installed on your development machine.</li><li>You will need to know the basics of Golang. I am assuming you&rsquo;ve finished learning about how Golang works and you are looking to learn how to start coding a webserver for a API restful purposes.</li></ol><h1 id=3>Requirements - What are we building?</h1><p>Let&rsquo;s build a web-application which allows users to handle time-series data. The user can do the following:</p><ul><li>Create a new time-series datum</li><li>List time-series data</li><li>Retrieve a single time-series datum</li><li>Update a single timer-series datum</li><li>Delete a single time-series datum</li></ul><p>The name of our application will be called <code>mulberry</code> and it will exist in a code repository <code>mulberry-server</code>.</p><p>And remember, for this article, we cannot use any framework!</p><h1 id=4>Design - How will it work?</h1><h2 id=4a>Project Structure</h2><p>In Golang, there is no official project structure; as a result, the onus is on the developer to structure a correct project hierarchy. A popular solution developers choose is the <a href=https://github.com/golang-standards/project-layout>following convention</a>. Our application&rsquo;s initial structure will look as follows (and will grow with time!):</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
+&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class=container role=main>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<article role=main class=blog-post>
+<p><img src=/img/2021/common/go-banner.png alt></p>
+<p>The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the <a href=https://golang.org/pkg/net/http/><em>net/http</em> package</a> and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle <strong>POST</strong>, <strong>GET</strong>, <strong>PUT</strong> and <strong>DELETE</strong> HTTP requests. This is the first post in a multi-post series.</p>
+<p>This post belongs to the following series:</p>
+<ol>
+<li><strong>How to Build an API Server in Go - Part 1: Basic Server</strong></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/>How to Build an API Server in Go - Part 2: Simple Database</a></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/>How to Build an API Server in Go - Part 3: Postgres Database</a></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/>How to Build an API Server in Go - Part 4: Access Control</a></li>
+</ol>
+<h1 id=1>Why <a href=https://golang.org/pkg/net/http/><code>net/http</code></a> Standard Library?</h1>
+<p>A general popular opinion in web-development is to use a web-development framework for build web application - <em>why reinvent the wheel?</em></p>
+<p>However in Golang, this general popular opinion is not held firm. The standard library is the core package provided by Golang is sufficient for all our web application needs.</p>
+<p>I have used (and am using) <a href=https://github.com/go-chi/chi><code>go-chi</code></a> and <a href=https://github.com/gofiber/fiber><code>fibre</code></a> web libraries and I would highly recommend both. For this article, I want to explore what&rsquo;s involved with writing an application <em>without</em> any external library and only the provided <a href=https://golang.org/pkg/net/http/><code>http</code></a> library.</p>
+<h1 id=2>What do I need?</h1>
+<ol>
+<li>You will need Golang version 1.15+ installed on your development machine.</li>
+<li>You will need to know the basics of Golang. I am assuming you&rsquo;ve finished learning about how Golang works and you are looking to learn how to start coding a webserver for a API restful purposes.</li>
+</ol>
+<h1 id=3>Requirements - What are we building?</h1>
+<p>Let&rsquo;s build a web-application which allows users to handle time-series data. The user can do the following:</p>
+<ul>
+<li>Create a new time-series datum</li>
+<li>List time-series data</li>
+<li>Retrieve a single time-series datum</li>
+<li>Update a single timer-series datum</li>
+<li>Delete a single time-series datum</li>
+</ul>
+<p>The name of our application will be called <code>mulberry</code> and it will exist in a code repository <code>mulberry-server</code>.</p>
+<p>And remember, for this article, we cannot use any framework!</p>
+<h1 id=4>Design - How will it work? </h1>
+<h2 id=4a>Project Structure</h2>
+<p>In Golang, there is no official project structure; as a result, the onus is on the developer to structure a correct project hierarchy. A popular solution developers choose is the <a href=https://github.com/golang-standards/project-layout>following convention</a>. Our application&rsquo;s initial structure will look as follows (and will grow with time!):</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
 │   📄README.md
 │   📄Makefile
 │
@@ -20,7 +168,10 @@
 └───📁internal
     │
     └───📁controllers
-        📄controller.go</code></pre></div><h2 id=4b>API Endpoints</h2><p>We will have the following API endpoints:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=p>|</span>----------------------------------------------------------------------------
+        📄controller.go</code></pre></div>
+<h2 id=4b>API Endpoints</h2>
+<p>We will have the following API endpoints:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=p>|</span>----------------------------------------------------------------------------
 <span class=p>|</span> METHOD <span class=p>|</span> URL                              <span class=p>|</span> DESCRIPTION                   <span class=p>|</span>
 <span class=p>|</span>----------------------------------------------------------------------------
 <span class=p>|</span> GET    <span class=p>|</span> /api/v1/version                  <span class=p>|</span> Get the application version   <span class=p>|</span>
@@ -31,11 +182,39 @@
 <span class=p>|</span> GET    <span class=p>|</span> /api/v1/time-series-datum/&lt;uuid&gt; <span class=p>|</span> Get the details of a datum    <span class=p>|</span>
 <span class=p>|</span> PUT    <span class=p>|</span> /api/v1/time-series-datum/&lt;uuid&gt; <span class=p>|</span> Update a single datum         <span class=p>|</span>
 <span class=p>|</span> DELETE <span class=p>|</span> /api/v1/time-series-datum/&lt;uuid&gt; <span class=p>|</span> Delete a single datum         <span class=p>|</span>
-<span class=p>|</span>----------------------------------------------------------------------------</code></pre></div><h1 id=5>Implementation - Let&rsquo;s build our code!</h1><h2 id=5a>1. Project Location</h2><p>Start in your default Golang home folder:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nb>cd</span> ~/go/src/github.com/bartmika</code></pre></div><p>Please note:</p><ul><li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li><li>If that folder does not exist, please create it now.</li></ul><h2 id=2-code-repository>2. Code repository</h2><p>Create a new code repository called <code>mulberry-server</code> and clone your code repository:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ git clone https://github.com/bartmika/mulberry-server.git
-$ <span class=nb>cd</span> mulberry-server</code></pre></div><p>Please note:</p><ul><li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li></ul><h2 id=3-golang-modules>3. Golang Modules</h2><p>Since we are using Golang <em>modules</em> please follow these steps to get started:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ go mod init github.com/bartmika/mulberry-server
+<span class=p>|</span>----------------------------------------------------------------------------</code></pre></div>
+<h1 id=5>Implementation - Let&rsquo;s build our code!</h1>
+<h2 id=5a>1. Project Location</h2>
+<p>Start in your default Golang home folder:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ <span class=nb>cd</span> ~/go/src/github.com/bartmika</code></pre></div>
+<p>Please note:</p>
+<ul>
+<li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li>
+<li>If that folder does not exist, please create it now.</li>
+</ul>
+<h2 id=2-code-repository>2. Code repository</h2>
+<p>Create a new code repository called <code>mulberry-server</code> and clone your code repository:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ git clone https://github.com/bartmika/mulberry-server.git
+$ <span class=nb>cd</span> mulberry-server</code></pre></div>
+<p>Please note:</p>
+<ul>
+<li>Replace <code>bartmika</code> with your username on <a href=https://github.com>GitHub</a>.</li>
+</ul>
+<h2 id=3-golang-modules>3. Golang Modules</h2>
+<p>Since we are using Golang <em>modules</em> please follow these steps to get started:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ go mod init github.com/bartmika/mulberry-server
 $ <span class=nb>export</span> <span class=nv>GIT_TERMINAL_PROMPT</span><span class=o>=</span><span class=m>1</span>
-$ go mod tidy</code></pre></div><p>After running the above code your repository should look like this:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
-   📄go.md</code></pre></div><h2 id=4-project-scaffolding>4. Project Scaffolding</h2><p>Before we write any API related functionality, let&rsquo;s structure our code with a good base to build from. The scaffolding we use is based on the &ldquo;model-view-controller&rdquo; pattern; in addition, the structure is my <em>opinion</em> and should not be considered <em>the standard</em>.</p><p>Start by creating the folders and the files inside each folder.</p><p>This is how the <strong>main.go</strong> file will look like.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+$ go mod tidy</code></pre></div>
+<p>After running the above code your repository should look like this:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
+   📄go.md</code></pre></div>
+<h2 id=4-project-scaffolding>4. Project Scaffolding</h2>
+<p>Before we write any API related functionality, let&rsquo;s structure our code with a good base to build from. The scaffolding we use is based on the &ldquo;model-view-controller&rdquo; pattern; in addition, the structure is my <em>opinion</em> and should not be considered <em>the standard</em>.</p>
+<p>Start by creating the folders and the files inside each folder.</p>
+<p>This is how the <strong>main.go</strong> file will look like.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -60,7 +239,9 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 </span><span class=lnt>23
 </span><span class=lnt>24
 </span><span class=lnt>25
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -84,8 +265,13 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
     <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>s</span><span class=p>.</span><span class=nf>ListenAndServe</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>err</span> <span class=o>!=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ErrServerClosed</span> <span class=p>{</span>
         <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
     <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>And the <strong>controller.go</strong> file looks like this:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>And the <strong>controller.go</strong> file looks like this:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -115,7 +301,9 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 </span><span class=lnt>28
 </span><span class=lnt>29
 </span><span class=lnt>30
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -144,8 +332,15 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 </span><span class=c1></span>    <span class=c1>// DELETE  | /api/v1/time-series-datum/&lt;uuid&gt;  | Delete a single datum          |
 </span><span class=c1></span>    <span class=c1>//--------------------------------------------------------------------------------
 </span><span class=c1></span>    <span class=k>return</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>That&rsquo;s it, we&rsquo;ve structured our project which will grow nicely.</p><p>Let us learn how to create our first API endpoint and then call it. We will be implementing the <code>/api/v1/version</code> URL path which supports <em>GET</em> requests.</p><p>Create a new file called <strong>version.go</strong> with the contents of:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>That&rsquo;s it, we&rsquo;ve structured our project which will grow nicely.</p>
+<p>Let us learn how to create our first API endpoint and then call it. We will be implementing the <code>/api/v1/version</code> URL path which supports <em>GET</em> requests.</p>
+<p>Create a new file called <strong>version.go</strong> with the contents of:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -156,7 +351,9 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/version.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/version.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -166,8 +363,13 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 <span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Controller</span><span class=p>)</span> <span class=nf>getVersion</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>Header</span><span class=p>().</span><span class=nf>Set</span><span class=p>(</span><span class=s>&#34;Content-Type&#34;</span><span class=p>,</span> <span class=s>&#34;application/json&#34;</span><span class=p>)</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;Mulberry Server v1.0&#34;</span><span class=p>))</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Next update the <strong>controller.go</strong> with the following:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Next update the <strong>controller.go</strong> with the following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -203,7 +405,9 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 </span><span class=lnt>34
 </span><span class=lnt>35
 </span><span class=lnt>36
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -238,18 +442,40 @@ $ go mod tidy</code></pre></div><p>After running the above code your repository 
 </span><span class=c1></span>
     <span class=nx>http</span><span class=p>.</span><span class=nf>NotFound</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=k>return</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Finally start the server and confirm everything works:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ go run cmd/serve/main.go<span class=p>;</span></code></pre></div><p>If you see a message saying the server started then congratulations, you have setup the project scaffolding!</p><h1 id=testing---verify-the-code-works>Testing - Verify the code works</h1><p>Before you begin, please install the <a href=https://httpie.io/><code>httpie</code></a> application. Once installed, please run the following code to confirm we can make an API call:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5000/api/v1/version</code></pre></div><p>If you get a result somewhat similar like this, then congratulations! Please note if you are using Windows with <code>Git bash for Windows</code> and it hangs, then please <a href=https://stackoverflow.com/a/41192693>visit this url for a solution</a>.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>Last login: Thu Jan <span class=m>28</span> 00:10:01 on ttys015
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Finally start the server and confirm everything works:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ go run cmd/serve/main.go<span class=p>;</span></code></pre></div>
+<p>If you see a message saying the server started then congratulations, you have setup the project scaffolding!</p>
+<h1 id=testing---verify-the-code-works>Testing - Verify the code works</h1>
+<p>Before you begin, please install the <a href=https://httpie.io/><code>httpie</code></a> application. Once installed, please run the following code to confirm we can make an API call:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5000/api/v1/version</code></pre></div>
+<p>If you get a result somewhat similar like this, then congratulations! Please note if you are using Windows with <code>Git bash for Windows</code> and it hangs, then please <a href=https://stackoverflow.com/a/41192693>visit this url for a solution</a>.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>Last login: Thu Jan <span class=m>28</span> 00:10:01 on ttys015
 bmika@MACMINI-AFA2131 mulberry-server % http get 127.0.0.1:5000/api/v1/version
 HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>6</span>
 Content-Type: application/json
 Date: Fri, <span class=m>29</span> Jan <span class=m>2021</span> 05:03:22 GMT
 
-Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=https://httpie.io/><code>httpie</code></a> you can use <code>curl</code>. Here is what you would write in your terminal:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ curl -X GET <span class=se>\
+Mulberry Server v1.0</code></pre></div>
+<p>If you are <em>not</em> using <a href=https://httpie.io/><code>httpie</code></a> you can use <code>curl</code>. Here is what you would write in your terminal:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ curl -X GET <span class=se>\
 </span><span class=se></span>  -H <span class=s2>&#34;Content-type: application/json&#34;</span> <span class=se>\
 </span><span class=se></span>  -H <span class=s2>&#34;Accept: application/json&#34;</span> <span class=se>\
-</span><span class=se></span>  <span class=s2>&#34;http://127.0.0.1:5000/api/v1/version&#34;</span></code></pre></div><h1 id=implement-remaining-api-endpoints>Implement remaining API endpoints</h1><p>Before we begin, you have to be aware of an issue, the issue is that the std <code>net/http</code> does not add any support for <strong>URL Arguments</strong> such as <code>/api/v1/time-series-datum/:uuid</code>. As a result, Golang developers are torn between using a third-party package, structuring your API endpoints differently, or writing your own custom router.</p><p>For more on this topic, please see the following links:</p><ul><li><a href=https://archive.is/T4cp0>Go’s std net/http is all you need … right?</a></li><li><a href=https://archive.is/6hptY>How to not use an http-router in go</a></li><li><a href=https://archive.is/ZpZg6>Different approaches to HTTP routing in Go</a></li></ul><p>Given these options, what should we do? From the beginners perspective, the <a href=https://benhoyt.com/writings/go-routing/#split-switch>split switch</a> seems like the easiest to do, in addition it&rsquo;s quite performant with the cost of slightly ugly looking code.</p><p>Before we begin, make sure your project hierarchy look as follows by creating the <strong>tsd.go</strong> file:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
+</span><span class=se></span>  <span class=s2>&#34;http://127.0.0.1:5000/api/v1/version&#34;</span></code></pre></div>
+<h1 id=implement-remaining-api-endpoints>Implement remaining API endpoints</h1>
+<p>Before we begin, you have to be aware of an issue, the issue is that the std <code>net/http</code> does not add any support for <strong>URL Arguments</strong> such as <code>/api/v1/time-series-datum/:uuid</code>. As a result, Golang developers are torn between using a third-party package, structuring your API endpoints differently, or writing your own custom router.</p>
+<p>For more on this topic, please see the following links:</p>
+<ul>
+<li><a href=https://archive.is/T4cp0>Go’s std net/http is all you need … right?</a></li>
+<li><a href=https://archive.is/6hptY>How to not use an http-router in go</a></li>
+<li><a href=https://archive.is/ZpZg6>Different approaches to HTTP routing in Go</a></li>
+</ul>
+<p>Given these options, what should we do? From the beginners perspective, the <a href=https://benhoyt.com/writings/go-routing/#split-switch>split switch</a> seems like the easiest to do, in addition it&rsquo;s quite performant with the cost of slightly ugly looking code.</p>
+<p>Before we begin, make sure your project hierarchy look as follows by creating the <strong>tsd.go</strong> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
 │   📄README.md
 │   📄Makefile
 │
@@ -264,7 +490,11 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
         📄controller.go
         📄version.go
         📄tsd.go
-        📄user.go</code></pre></div><p>Please fill the <strong>tsd.go</strong> file with the following contents:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+        📄user.go</code></pre></div>
+<p>Please fill the <strong>tsd.go</strong> file with the following contents:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -290,7 +520,9 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
 </span><span class=lnt>24
 </span><span class=lnt>25
 </span><span class=lnt>26
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -315,8 +547,13 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
 
 <span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Controller</span><span class=p>)</span> <span class=nf>deleteTimeSeriesDatum</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>uuid</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Delete Series Datum with UUID: &#34;</span> <span class=o>+</span> <span class=nx>uuid</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>And then create the <strong>user.go</strong> file:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=c1></span><span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>And then create the <strong>user.go</strong> file:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -330,7 +567,9 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -343,8 +582,13 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
 
 <span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>Controller</span><span class=p>)</span> <span class=nf>postRegister</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>Write</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=s>&#34;TODO: Registering...&#34;</span><span class=p>))</span> <span class=c1>//TODO: IMPLEMENT.
-</span><span class=c1></span><span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>And then update the <strong>controller.go</strong> file:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=c1></span><span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>And then update the <strong>controller.go</strong> file:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -392,7 +636,9 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
 </span><span class=lnt>46
 </span><span class=lnt>47
 </span><span class=lnt>48
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -439,8 +685,11 @@ Mulberry Server v1.0</code></pre></div><p>If you are <em>not</em> using <a href=
     <span class=k>default</span><span class=p>:</span>
         <span class=nx>http</span><span class=p>.</span><span class=nf>NotFound</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>And finally to test out making API calls, we have the following commands you can run in your console.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5000/api/v1/version
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>And finally to test out making API calls, we have the following commands you can run in your console.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ http get 127.0.0.1:5000/api/v1/version
 
 $ http post 127.0.0.1:5000/api/v1/register <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;lalal@lalal.com&#34;</span> <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;lalalal&#34;</span> <span class=nv>name</span><span class=o>=</span><span class=s2>&#34;lalalalalala&#34;</span>
 
@@ -454,7 +703,10 @@ $ http get 127.0.0.1:5000/api/v1/time-series-datum/xxx
 
 $ http put 127.0.0.1:5000/api/v1/time-series-datum/xxx <span class=nv>instrument_id</span><span class=o>=</span><span class=s2>&#34;1&#34;</span> <span class=nv>timestamp</span><span class=o>=</span><span class=s2>&#34;2021-01-02&#34;</span>
 
-$ http delete 127.0.0.1:5000/api/v1/time-series-datum/xxx</code></pre></div><p>If you got a <code>200 OK</code> response with some-sort of string message, then congratulations! You have implemented your server using only the <code>net/http</code> standard library.</p><p>If you want to use the <code>curl</code> command then run the following:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ curl -X GET <span class=se>\
+$ http delete 127.0.0.1:5000/api/v1/time-series-datum/xxx</code></pre></div>
+<p>If you got a <code>200 OK</code> response with some-sort of string message, then congratulations! You have implemented your server using only the <code>net/http</code> standard library.</p>
+<p>If you want to use the <code>curl</code> command then run the following:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ curl -X GET <span class=se>\
 </span><span class=se></span>  -H <span class=s2>&#34;Content-type: application/json&#34;</span> <span class=se>\
 </span><span class=se></span>  -H <span class=s2>&#34;Accept: application/json&#34;</span> <span class=se>\
 </span><span class=se></span>  <span class=s2>&#34;http://127.0.0.1:5000/api/v1/version&#34;</span>
@@ -496,7 +748,12 @@ $ curl -X PUT <span class=se>\
 $ curl -X DELETE <span class=se>\
 </span><span class=se></span>  -H <span class=s2>&#34;Content-type: application/json&#34;</span> <span class=se>\
 </span><span class=se></span>  -H <span class=s2>&#34;Accept: application/json&#34;</span> <span class=se>\
-</span><span class=se></span>  <span class=s2>&#34;http://127.0.0.1:5000/api/v1/time-series-datum/xxx&#34;</span></code></pre></div><h1 id=graceful-shutdown>Graceful Shutdown</h1><p>Update the <strong>main.go</strong> file with the following content to support graceful shutdowns of our webserver.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=se></span>  <span class=s2>&#34;http://127.0.0.1:5000/api/v1/time-series-datum/xxx&#34;</span></code></pre></div>
+<h1 id=graceful-shutdown>Graceful Shutdown</h1>
+<p>Update the <strong>main.go</strong> file with the following content to support graceful shutdowns of our webserver.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -559,7 +816,9 @@ $ curl -X DELETE <span class=se>\
 </span><span class=lnt>61
 </span><span class=lnt>62
 </span><span class=lnt>63
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -621,11 +880,165 @@ $ curl -X DELETE <span class=se>\
     <span class=p>}</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Graceful shutdown finished.&#34;</span><span class=p>)</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Exited&#34;</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h1 id=final-thoughts---whats-next>Final Thoughts - What&rsquo;s next?</h1><p>That&rsquo;s it! We have ourselves a basic API web-app. We have dipped our feat on the shores of the ocean of Golang web-development and the water feels welcoming. Moving forward we&rsquo;ll need to cover more topics such as:</p><ul><li>How do we read the body of a request? How do we write responses?</li><li>How do we handle using a database?</li><li>How do we handle login and authenticated API endpoints?</li><li>How do we handle sessions?</li><li>How do we handle background processes?</li></ul><p>Now onward to the next part of our series: <a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/><strong>Part 2: Simple Database &#187;</strong></a>.</p><div class=blog-tags><a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id=final-thoughts---whats-next>Final Thoughts - What&rsquo;s next?</h1>
+<p>That&rsquo;s it! We have ourselves a basic API web-app. We have dipped our feat on the shores of the ocean of Golang web-development and the water feels welcoming. Moving forward we&rsquo;ll need to cover more topics such as:</p>
+<ul>
+<li>How do we read the body of a request? How do we write responses?</li>
+<li>How do we handle using a database?</li>
+<li>How do we handle login and authenticated API endpoints?</li>
+<li>How do we handle sessions?</li>
+<li>How do we handle background processes?</li>
+</ul>
+<p>Now onward to the next part of our series: <a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/><strong>Part 2: Simple Database &#187;</strong></a>.</p>
+<div class=blog-tags>
+<a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/api/>API</a>&nbsp;
-<a href=https://bartlomiejmika.com/tags/howto/>HOWTO</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&text=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&description=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section><h4 class=see-also>See also</h4><ul><li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li><li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li><li><a href=/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/>How to Read Data From a SparkFun Weather Shield (DEV-13956) in Golang</a></li></ul></article><ul class="pager blog-pager"><li class=previous><a href=https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/ data-toggle=tooltip data-placement=top title="Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view">&larr; Previous Post</a></li><li class=next><a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 2: Simple Database">Next Post &rarr;</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url='https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-1-basic-server';};</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://www.facebook.com/bartlomiej-mika title=Facebook><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-facebook fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://reddit.com/u/eurasiasoft title=Reddit><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=https://mikasoftware.com>Mika Software Corporation</a>
+<a href=https://bartlomiejmika.com/tags/howto/>HOWTO</a>&nbsp;
+</div>
+<hr>
+<section id=social-share>
+<div class="list-inline footer-links">
+<div class=share-box aria-hidden=true>
+<ul class=share>
+<li>
+<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&text=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter"></i>
+</a>
+</li>
+<li>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook"></i>
+</a>
+</li>
+<li>
+<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit"></i>
+</a>
+</li>
+<li>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin"></i>
+</a>
+</li>
+<li>
+<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on StumbleUpon">
+<i class="fab fa-stumbleupon"></i>
+</a>
+</li>
+<li>
+<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-1-basic-server%2f&description=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%201%3a%20Basic%20Server" target=_blank title="Share on Pinterest">
+<i class="fab fa-pinterest"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<h4 class=see-also>See also</h4>
+<ul>
+<li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li>
+<li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li>
+<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li>
+</ul>
+</article>
+<ul class="pager blog-pager">
+<li class=previous>
+<a href=https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/ data-toggle=tooltip data-placement=top title="Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view">&larr; Previous Post</a>
+</li>
+<li class=next>
+<a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 2: Simple Database">Next Post &rarr;</a>
+</li>
+</ul>
+<div class=disqus-comments>
+<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server>comments</span></button>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server'}</script>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<ul class="list-inline text-center footer-links">
+<li>
+<a href=mailto:bart@mikasoftware.com title="Email me">
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://github.com/bartmika title=GitHub>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://reddit.com/u/eurasiasoft title=Reddit>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href title=RSS>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+</ul>
+<p class="credits copyright text-muted">
+<a href=https://mikasoftware.com>Mika Software Corporation</a>
 &nbsp;&bull;&nbsp;&copy;
-2021
+2022
 &nbsp;&bull;&nbsp;
-<a href=https://bartlomiejmika.com>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.80.0</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a></p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/main.js></script><script src=https://bartlomiejmika.com/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</p>
+<p class="credits theme-by text-muted">
+<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
+</p>
+</div>
+</div>
+</div>
+</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
+<script src=https://bartlomiejmika.com/js/main.js></script>
+<script src=https://bartlomiejmika.com/js/highlight.min.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
+<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
+<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
+</body>
+</html>

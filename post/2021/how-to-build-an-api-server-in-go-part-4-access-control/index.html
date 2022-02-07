@@ -1,14 +1,142 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>How to Build an API Server in Go - Part 4: Access Control - Bartlomiej Mika</title><meta name=description content="Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library."><meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-4-access-control\/","name":"How to build an a p i server in go part 4 access control"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Build an API Server in Go - Part 4: Access Control","description":"Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library.\n","inLanguage":"en","wordCount":3313,"datePublished":"2021-01-31T00:02:30","dateModified":"2021-01-31T00:02:30","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, API, Security, HOWTO"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-4-access-control\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="How to Build an API Server in Go - Part 4: Access Control"><meta property="og:description" content="Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library."><meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="How to Build an API Server in Go - Part 4: Access Control"><meta name=twitter:description content="Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library."><meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.80.0"><link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>How to Build an API Server in Go - Part 4: Access Control - Bartlomiej Mika</title>
+<meta name=description content="
+Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library.">
+<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-4-access-control\/","name":"How to build an API server in go part 4 access control"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Build an API Server in Go - Part 4: Access Control","description":"Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library.\n","inLanguage":"en","wordCount":3313,"datePublished":"2021-01-31T00:02:30","dateModified":"2021-01-31T00:02:30","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, API, Security, HOWTO"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-4-access-control\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
+<meta property="og:title" content="How to Build an API Server in Go - Part 4: Access Control">
+<meta property="og:description" content="
+Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library.">
+<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bartlomiej Mika">
+<meta name=twitter:title content="How to Build an API Server in Go - Part 4: Access Control">
+<meta name=twitter:description content="
+Learn how to protect API endpoints with access and refresh tokens using the third-party jwt-go library.">
+<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta name=twitter:card content="summary">
+<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
+<meta name=generator content="Hugo 0.92.1">
+<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
+<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
+<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+<div class=container-fluid>
+<div class=navbar-header>
+<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button>
-<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=About href=/about/>About</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartlomiejmika.com><img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</div>
+<div class="collapse navbar-collapse" id=main-navbar>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<a title=Blog href=/>Blog</a>
+</li>
+<li>
+<a title=Tags href=/tags>Tags</a>
+</li>
+<li>
+<a title=About href=/about/>About</a>
+</li>
+</ul>
+</div>
+<div class=avatar-container>
+<div class=avatar-img-border>
+<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
+<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
+</a>
+</div>
+</div>
+</div>
+</nav>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=post-heading><h1>How to Build an API Server in Go - Part 4: Access Control</h1><span class=post-meta><i class="fas fa-calendar"></i>&nbsp;Posted on January 31, 2021
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header class=header-section>
+<div class="intro-header no-img">
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class=post-heading>
+<h1>How to Build an API Server in Go - Part 4: Access Control</h1>
+<span class=post-meta>
+<i class="fas fa-calendar"></i>&nbsp;Posted on January 31, 2021
 &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;16&nbsp;minutes
 &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3313&nbsp;words
-&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika</span></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src=/img/2021/common/go-banner.png alt></p><p>Learn how to protect API endpoints with access and refresh tokens using the third-party <a href=https://github.com/dgrijalva/jwt-go>jwt-go</a> library.</p><p>This post belongs to the following series:</p><ol><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/>How to Build an API Server in Go - Part 1: Basic Server</a></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/>How to Build an API Server in Go - Part 2: Simple Database</a></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/>How to Build an API Server in Go - Part 3: Postgres Database</a></li><li><strong>How to Build an API Server in Go - Part 4: Access Control</strong></li></ol><h1 id=authentication>Authentication</h1><p>Just as a reminder this is part 4 of the series, you&rsquo;ll need to finish <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-3/>part 3</a> before continuing.</p><h2 id=structure>Structure</h2><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
+&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class=container role=main>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<article role=main class=blog-post>
+<p><img src=/img/2021/common/go-banner.png alt></p>
+<p>Learn how to protect API endpoints with access and refresh tokens using the third-party <a href=https://github.com/dgrijalva/jwt-go>jwt-go</a> library.</p>
+<p>This post belongs to the following series:</p>
+<ol>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/>How to Build an API Server in Go - Part 1: Basic Server</a></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/>How to Build an API Server in Go - Part 2: Simple Database</a></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/>How to Build an API Server in Go - Part 3: Postgres Database</a></li>
+<li><strong>How to Build an API Server in Go - Part 4: Access Control</strong></li>
+</ol>
+<h1 id=authentication>Authentication</h1>
+<p>Just as a reminder this is part 4 of the series, you&rsquo;ll need to finish <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-3/>part 3</a> before continuing.</p>
+<h2 id=structure>Structure</h2>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>📦mulberry-server
 │   📄README.md
 │   📄Makefile
 │
@@ -41,7 +169,12 @@
     <span class=p>|</span>
     └───📁utils
         📄jwt.go
-        📄password.go</code></pre></div><h2 id=models-package>models package</h2><h3 id=usergo>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+        📄password.go</code></pre></div>
+<h2 id=models-package>models package</h2>
+<h3 id=usergo>user.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -98,7 +231,9 @@
 </span><span class=lnt>55
 </span><span class=lnt>56
 </span><span class=lnt>57
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/user.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -154,8 +289,14 @@
 </span><span class=c1></span><span class=kd>type</span> <span class=nx>RefreshTokenResponse</span> <span class=kd>struct</span> <span class=p>{</span>
 	<span class=nx>AccessToken</span> <span class=kt>string</span> <span class=s>`json:&#34;access_token&#34;`</span>
     <span class=nx>RefreshToken</span> <span class=kt>string</span> <span class=s>`json:&#34;refresh_token&#34;`</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h2 id=utils-package>utils package</h2><h3 id=jwtgo>jwt.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id=utils-package>utils package</h2>
+<h3 id=jwtgo>jwt.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -215,7 +356,9 @@
 </span><span class=lnt>58
 </span><span class=lnt>59
 </span><span class=lnt>60
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/pkg/utils/jwt.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/pkg/utils/jwt.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>utils</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -274,8 +417,14 @@
         <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>err</span>
     <span class=p>}</span>
     <span class=k>return</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=kc>nil</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h2 id=controllers-package>controllers package</h2><h3 id=middlewarego>middleware.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id=controllers-package>controllers package</h2>
+<h3 id=middlewarego>middleware.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -354,7 +503,9 @@
 </span><span class=lnt>77
 </span><span class=lnt>78
 </span><span class=lnt>79
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/middleware.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/middleware.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -432,8 +583,13 @@
         <span class=c1>// Flow to the next middleware.
 </span><span class=c1></span>        <span class=nf>fn</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=controllergo>controller.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=controllergo>controller.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -508,7 +664,9 @@
 </span><span class=lnt>73
 </span><span class=lnt>74
 </span><span class=lnt>75
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/controllers/controller.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -582,8 +740,13 @@
     <span class=k>default</span><span class=p>:</span>
         <span class=nx>http</span><span class=p>.</span><span class=nf>NotFound</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
     <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=usergo-1>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=usergo-1>user.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -750,7 +913,9 @@
 </span><span class=lnt>165
 </span><span class=lnt>166
 </span><span class=lnt>167
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -917,7 +1082,13 @@
 </span><span class=c1>// [1][2]: Learned from:
 </span><span class=c1>// a. https://blog.golang.org/json
 </span><span class=c1>// b. https://stackoverflow.com/questions/21197239/decoding-json-using-json-unmarshal-vs-json-newdecoder-decode
-</span></code></pre></td></tr></table></div></div><h3 id=tsdgo>tsd.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=tsdgo>tsd.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -1092,7 +1263,9 @@
 </span><span class=lnt>173
 </span><span class=lnt>174
 </span><span class=lnt>175
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -1266,8 +1439,14 @@
         <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
     <span class=p>}</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>WriteHeader</span><span class=p>(</span><span class=nx>http</span><span class=p>.</span><span class=nx>StatusOK</span><span class=p>)</span> <span class=c1>// Note: https://tools.ietf.org/html/rfc7231#section-6.3.1
-</span><span class=c1></span><span class=p>}</span>
-</code></pre></td></tr></table></div></div><h2 id=serve-package>serve package</h2><h3 id=maingo>main.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=c1></span><span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id=serve-package>serve package</h2>
+<h3 id=maingo>main.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -1348,7 +1527,9 @@
 </span><span class=lnt>79
 </span><span class=lnt>80
 </span><span class=lnt>81
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -1428,20 +1609,37 @@
 	<span class=p>}</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Graceful shutdown finished.&#34;</span><span class=p>)</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Exited&#34;</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h1 id=testing>Testing</h1><h2 id=starting-the-server>Starting the Server</h2><p>We are going to use <em>environment variables</em> to load configuration settings for our application.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_DB_HOST</span><span class=o>=</span>localhost
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id=testing>Testing</h1>
+<h2 id=starting-the-server>Starting the Server</h2>
+<p>We are going to use <em>environment variables</em> to load configuration settings for our application.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_DB_HOST</span><span class=o>=</span>localhost
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_PORT</span><span class=o>=</span><span class=m>5432</span>
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_USER</span><span class=o>=</span>golang
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_PASSWORD</span><span class=o>=</span>123password
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_NAME</span><span class=o>=</span>mulberry_db
-<span class=nb>export</span> <span class=nv>MULBERRY_APP_SIGNING_KEY</span><span class=o>=</span>PLEASE_REPLACE_ME</code></pre></div><p>And now you can run the code:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>go run cmd/serve/main.go</code></pre></div><p>In another terminal run the following code to make a login call:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>bmika@MACMINI-AFA2131 mulberry-server % http post 127.0.0.1:5000/api/v1/login <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span></code></pre></div><p>The return should look as follows:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+<span class=nb>export</span> <span class=nv>MULBERRY_APP_SIGNING_KEY</span><span class=o>=</span>PLEASE_REPLACE_ME</code></pre></div>
+<p>And now you can run the code:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go run cmd/serve/main.go</code></pre></div>
+<p>In another terminal run the following code to make a login call:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>bmika@MACMINI-AFA2131 mulberry-server % http post 127.0.0.1:5000/api/v1/login <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span></code></pre></div>
+<p>The return should look as follows:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>385</span>
 Content-Type: application/json
 Date: Mon, <span class=m>01</span> Feb <span class=m>2021</span> 04:27:46 GMT
 <span class=o>{</span>
     <span class=s2>&#34;access_token&#34;</span>: <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIxNTcyNjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.ZKe5DargCrHZcAQQ71M46uUr0TWk9UYkiURijaKBABA&#34;</span>,
     <span class=s2>&#34;refresh_token&#34;</span>: <span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTI0MTI4NjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.odXNQd1hm3cLPI9_e2jfjYXjgjf7wfxQ8hCx3-qqZYY&#34;</span>
-<span class=o>}</span></code></pre></div><p>Please save the output the &ldquo;access_token&rdquo; so you can write in your console.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_API_TOKEN</span><span class=o>=</span><span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIxNTcyNjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.ZKe5DargCrHZcAQQ71M46uUr0TWk9UYkiURijaKBABA&#34;</span></code></pre></div><p>Next run the following call to a protected API:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>http get 127.0.0.1:5000/api/v1/time-series-data Authorization:<span class=s2>&#34;Bearer </span><span class=nv>$MULBERRY_API_TOKEN</span><span class=s2>&#34;</span></code></pre></div><p>And your result should look like this:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+<span class=o>}</span></code></pre></div>
+<p>Please save the output the &ldquo;access_token&rdquo; so you can write in your console.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_API_TOKEN</span><span class=o>=</span><span class=s2>&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIxNTcyNjYsInVzZXJfdXVpZCI6IjlkZDJjYzBhLTkzNGQtNDc4OC04MzA0LTFlMGI4MmQ5YjZlNiJ9.ZKe5DargCrHZcAQQ71M46uUr0TWk9UYkiURijaKBABA&#34;</span></code></pre></div>
+<p>Next run the following call to a protected API:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>http get 127.0.0.1:5000/api/v1/time-series-data Authorization:<span class=s2>&#34;Bearer </span><span class=nv>$MULBERRY_API_TOKEN</span><span class=s2>&#34;</span></code></pre></div>
+<p>And your result should look like this:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>175</span>
 Content-Type: application/json
 Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 22:57:40 GMT
@@ -1453,11 +1651,154 @@ Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 22:57:40 GMT
         <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;923148e4-5dd9-4ec7-bf04-4a50f880c7db&#34;</span>,
         <span class=s2>&#34;value&#34;</span>: <span class=m>123</span>
     <span class=o>}</span>
-<span class=o>]</span></code></pre></div><div class=blog-tags><a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
+<span class=o>]</span></code></pre></div>
+<div class=blog-tags>
+<a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/api/>API</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/security/>Security</a>&nbsp;
-<a href=https://bartlomiejmika.com/tags/howto/>HOWTO</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&text=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&description=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section><h4 class=see-also>See also</h4><ul><li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li><li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li><li><a href=/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/>How to Read Data From a SparkFun Weather Shield (DEV-13956) in Golang</a></li></ul></article><ul class="pager blog-pager"><li class=previous><a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 3: Postgres Database">&larr; Previous Post</a></li><li class=next><a href=https://bartlomiejmika.com/post/2021/winter-sown-seeds-growlog-1/ data-toggle=tooltip data-placement=top title="Winter Sown Seeds Growlog #1">Next Post &rarr;</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url='https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-4-access-control';};</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://www.facebook.com/bartlomiej-mika title=Facebook><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-facebook fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://reddit.com/u/eurasiasoft title=Reddit><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=https://mikasoftware.com>Mika Software Corporation</a>
+<a href=https://bartlomiejmika.com/tags/howto/>HOWTO</a>&nbsp;
+</div>
+<hr>
+<section id=social-share>
+<div class="list-inline footer-links">
+<div class=share-box aria-hidden=true>
+<ul class=share>
+<li>
+<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&text=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter"></i>
+</a>
+</li>
+<li>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook"></i>
+</a>
+</li>
+<li>
+<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit"></i>
+</a>
+</li>
+<li>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin"></i>
+</a>
+</li>
+<li>
+<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on StumbleUpon">
+<i class="fab fa-stumbleupon"></i>
+</a>
+</li>
+<li>
+<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-4-access-control%2f&description=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%204%3a%20Access%20Control" target=_blank title="Share on Pinterest">
+<i class="fab fa-pinterest"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<h4 class=see-also>See also</h4>
+<ul>
+<li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li>
+<li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li>
+<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li>
+</ul>
+</article>
+<ul class="pager blog-pager">
+<li class=previous>
+<a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 3: Postgres Database">&larr; Previous Post</a>
+</li>
+<li class=next>
+<a href=https://bartlomiejmika.com/post/2021/winter-sown-seeds-growlog-1/ data-toggle=tooltip data-placement=top title="Winter Sown Seeds Growlog #1">Next Post &rarr;</a>
+</li>
+</ul>
+<div class=disqus-comments>
+<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control>comments</span></button>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control'}</script>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<ul class="list-inline text-center footer-links">
+<li>
+<a href=mailto:bart@mikasoftware.com title="Email me">
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://github.com/bartmika title=GitHub>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://reddit.com/u/eurasiasoft title=Reddit>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href title=RSS>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+</ul>
+<p class="credits copyright text-muted">
+<a href=https://mikasoftware.com>Mika Software Corporation</a>
 &nbsp;&bull;&nbsp;&copy;
-2021
+2022
 &nbsp;&bull;&nbsp;
-<a href=https://bartlomiejmika.com>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.80.0</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a></p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/main.js></script><script src=https://bartlomiejmika.com/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</p>
+<p class="credits theme-by text-muted">
+<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
+</p>
+</div>
+</div>
+</div>
+</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
+<script src=https://bartlomiejmika.com/js/main.js></script>
+<script src=https://bartlomiejmika.com/js/highlight.min.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
+<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
+<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
+</body>
+</html>

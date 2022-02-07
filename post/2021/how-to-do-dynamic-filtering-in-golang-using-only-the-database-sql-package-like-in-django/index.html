@@ -1,33 +1,184 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django - Bartlomiej Mika</title><meta name=description content="Learn how to add filters to your list functions in Golang using the database/sql package"><meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django\/","name":"How to do dynamic filtering in golang using only the database s q l package like in django"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django","description":"Recently I had to do some advanced filtering using the database\/sql package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.\n","inLanguage":"en","wordCount":2025,"datePublished":"2021-05-07T15:15:47","dateModified":"2021-05-07T15:15:47","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, SQL"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django"><meta property="og:description" content="Learn how to add filters to your list functions in Golang using the database/sql package"><meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="How to do Dynamic Filtering in Golang using only the Database SQL …"><meta name=twitter:description content="Learn how to add filters to your list functions in Golang using the database/sql package"><meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.80.0"><link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django - Bartlomiej Mika</title>
+<meta name=description content="Learn how to add filters to your list functions in Golang using the database/sql package">
+<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django\/","name":"How to do dynamic filtering in golang using only the database SQL package like in django"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django","description":"Recently I had to do some advanced filtering using the database\/sql package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.\n","inLanguage":"en","wordCount":1996,"datePublished":"2021-05-07T15:15:47","dateModified":"2021-05-07T15:15:47","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, SQL"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
+<meta property="og:title" content="How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django">
+<meta property="og:description" content="Learn how to add filters to your list functions in Golang using the database/sql package">
+<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bartlomiej Mika">
+<meta name=twitter:title content="How to do Dynamic Filtering in Golang using only the Database SQL …">
+<meta name=twitter:description content="Learn how to add filters to your list functions in Golang using the database/sql package">
+<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta name=twitter:card content="summary">
+<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
+<meta name=generator content="Hugo 0.92.1">
+<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
+<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
+<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+<div class=container-fluid>
+<div class=navbar-header>
+<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button>
-<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=About href=/about/>About</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartlomiejmika.com><img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</div>
+<div class="collapse navbar-collapse" id=main-navbar>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<a title=Blog href=/>Blog</a>
+</li>
+<li>
+<a title=Tags href=/tags>Tags</a>
+</li>
+<li>
+<a title=About href=/about/>About</a>
+</li>
+</ul>
+</div>
+<div class=avatar-container>
+<div class=avatar-img-border>
+<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
+<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
+</a>
+</div>
+</div>
+</div>
+</nav>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=post-heading><h1>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django</h1><h2 class=post-subheading>Learn how to add filters to your list functions in Golang using the database/sql package</h2><span class=post-meta><i class="fas fa-calendar"></i>&nbsp;Posted on May 7, 2021
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header class=header-section>
+<div class="intro-header no-img">
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class=post-heading>
+<h1>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django</h1>
+<h2 class=post-subheading>Learn how to add filters to your list functions in Golang using the database/sql package</h2>
+<span class=post-meta>
+<i class="fas fa-calendar"></i>&nbsp;Posted on May 7, 2021
 &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;10&nbsp;minutes
-&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;2025&nbsp;words
-&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika</span></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src=/img/2021/common/go-banner.png alt></p><p>Recently I had to do some advanced filtering using the <a href=https://golang.org/pkg/database/sql/><code>database/sql</code></a> package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.</p><p>This article is broken up as follows:</p><ul><li>Context</li><li>Setting up the problem in Python</li><li>Setting up the problem in Golang</li><li>Understand the problem</li><li>First attempt (Static filtering)</li><li>Second attempt (Too complicated)</li><li>The “variadic function” to the rescue</li><li>The Solution</li></ul><p>Let&rsquo;s begin!</p><h1 id=context>Context</h1><p>Before using Golang to write web-applications, I&rsquo;ve was using <a href=https://www.djangoproject.com><code>Django Web Framework</code></a> which is written in Python. Django provides a <a href=https://docs.djangoproject.com/en/3.2/topics/db/models/>object relational-mapping (ORM)</a> system to handle your python code interacting with the database. Through all my years, I still think the Django ORM is <em>the best I have ever seen</em>.</p><p>Now that I switched my programming from Python to Golang, I no longer have access to this <em>phenomenal library</em>. There are other ORM solutions but none that I&rsquo;ve found to my liking; as a result, I am using only the <a href=https://golang.org/pkg/database/sql/><code>database/sql</code></a> package.</p><p>The transition from Django to Golang has not been easy due to fact of how much Django <em>spoiled me</em>. Django has <em>abstracted away</em> a lot algorithms and computer science theory for me to use in a easy to use plug-in-play code! With the transition I am going through, this situation reminds me of a great article called <a href=https://www.datagubbe.se/endofciv/>Is Software Abstraction Killing Civilization?</a> in which it details talks about how programmers lose certain knowledge through time because we keep using abstracted code; as a result, I&rsquo;d I am writing this article to detail my learning.</p><h1 id=setting-up-the-problem-in-django>Setting up the problem in Django</h1><p>Let&rsquo;s assume we have the following data-structure and you populated the table with some dummy data:</p><div class=highlight><pre class=chroma><code class=language-sql data-lang=sql><span class=k>CREATE</span> <span class=k>TABLE</span> <span class=n>things</span> <span class=p>(</span>
-    <span class=n>tenant_id</span> <span class=nb>BIGINT</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>id</span> <span class=n>BIGSERIAL</span> <span class=k>PRIMARY</span> <span class=k>KEY</span><span class=p>,</span>
-    <span class=n>manufacturer_id</span> <span class=nb>BIGINT</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>part_id</span> <span class=nb>BIGINT</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=k>state</span> <span class=nb>SMALLINT</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>name</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>127</span><span class=p>)</span> <span class=k>NOT</span> <span class=k>NULL</span>
-<span class=p>);</span></code></pre></div><p>If we want to lookup &ldquo;3D Printer&rdquo; in the <code>name</code> then we would write:</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Q</span>
+&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1996&nbsp;words
+&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class=container role=main>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<article role=main class=blog-post>
+<p><img src=/img/2021/common/go-banner.png alt></p>
+<p>Recently I had to do some advanced filtering using the <a href=https://golang.org/pkg/database/sql/><code>database/sql</code></a> package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.</p>
+<p>This article is broken up as follows:</p>
+<ul>
+<li>Context</li>
+<li>Setting up the problem in Python</li>
+<li>Setting up the problem in Golang</li>
+<li>Understand the problem</li>
+<li>First attempt (Static filtering)</li>
+<li>Second attempt (Too complicated)</li>
+<li>The “variadic function” to the rescue</li>
+<li>The Solution</li>
+</ul>
+<p>Let&rsquo;s begin!</p>
+<h1 id=context>Context</h1>
+<p>Before using Golang to write web-applications, I&rsquo;ve was using <a href=https://www.djangoproject.com><code>Django Web Framework</code></a> which is written in Python. Django provides a <a href=https://docs.djangoproject.com/en/3.2/topics/db/models/>object relational-mapping (ORM)</a> system to handle your python code interacting with the database. Through all my years, I still think the Django ORM is <em>the best I have ever seen</em>.</p>
+<p>Now that I switched my programming from Python to Golang, I no longer have access to this <em>phenomenal library</em>. There are other ORM solutions but none that I&rsquo;ve found to my liking; as a result, I am using only the <a href=https://golang.org/pkg/database/sql/><code>database/sql</code></a> package.</p>
+<p>The transition from Django to Golang has not been easy due to fact of how much Django <em>spoiled me</em>. Django has <em>abstracted away</em> a lot algorithms and computer science theory for me to use in a easy to use plug-in-play code! With the transition I am going through, this situation reminds me of a great article called <a href=https://www.datagubbe.se/endofciv/>Is Software Abstraction Killing Civilization?</a> in which it details talks about how programmers lose certain knowledge through time because we keep using abstracted code; as a result, I&rsquo;d I am writing this article to detail my learning.</p>
+<h1 id=setting-up-the-problem-in-django>Setting up the problem in Django</h1>
+<p>Let&rsquo;s assume we have the following data-structure and you populated the table with some dummy data:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>things</span><span class=w> </span><span class=p>(</span><span class=w>
+</span><span class=w>    </span><span class=n>tenant_id</span><span class=w> </span><span class=nb>BIGINT</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>id</span><span class=w> </span><span class=n>BIGSERIAL</span><span class=w> </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>manufacturer_id</span><span class=w> </span><span class=nb>BIGINT</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>part_id</span><span class=w> </span><span class=nb>BIGINT</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=k>state</span><span class=w> </span><span class=nb>SMALLINT</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>name</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>127</span><span class=p>)</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=w>
+</span><span class=w></span><span class=p>);</span></code></pre></div>
+<p>If we want to lookup &ldquo;3D Printer&rdquo; in the <code>name</code> then we would write:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Q</span>
 
-<span class=n>series</span> <span class=o>=</span> <span class=n>Thing</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>filter</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;3D Printer&#34;</span><span class=p>)</span></code></pre></div><p>Or if we want to lookup a <code>manufacturer_id</code> which does NOT have a particular <code>part_id</code>, we would write:</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Q</span>
+<span class=n>series</span> <span class=o>=</span> <span class=n>Thing</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>filter</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;3D Printer&#34;</span><span class=p>)</span></code></pre></div>
+<p>Or if we want to lookup a <code>manufacturer_id</code> which does NOT have a particular <code>part_id</code>, we would write:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Q</span>
 
 <span class=n>series</span> <span class=o>=</span> <span class=n>Thing</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>filter</span><span class=p>(</span>
     <span class=n>Q</span><span class=p>(</span><span class=n>manufacturer_id</span><span class=o>=</span><span class=mi>1</span><span class=p>)</span> <span class=o>&amp;</span>
     <span class=o>~</span><span class=n>Q</span><span class=p>(</span><span class=n>part_id</span><span class=o>=</span><span class=mi>444</span><span class=p>)</span>
-<span class=p>)</span></code></pre></div><p>And how about if we lookup all the things with the <code>name</code> of 3D printers with a particular <code>part_id</code>?</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Q</span>
+<span class=p>)</span></code></pre></div>
+<p>And how about if we lookup all the things with the <code>name</code> of 3D printers with a particular <code>part_id</code>?</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Q</span>
 
 <span class=n>series</span> <span class=o>=</span> <span class=n>Thing</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>filter</span><span class=p>(</span>
     <span class=n>Q</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;3D Printer&#34;</span><span class=p>)</span> <span class=o>&amp;</span>
     <span class=n>Q</span><span class=p>(</span><span class=n>part_id</span><span class=o>=</span><span class=mi>123456789</span><span class=p>)</span>
-<span class=p>)</span></code></pre></div><p><strong>So the Django ORM is quite good at being flexible enough to handle whatever filtering you can throw at it. How do we build something so flexible in Golang?</strong></p><h1 id=setting-up-the-problem-in-golang>Setting up the problem in Golang</h1><p>I will provide important code snippets to help demonstrate. Please note that this code is following the <a href=https://adodd.net/post/go-ddd-repository-pattern/>repository pattern</a> so if you don&rsquo;t understand then please read up before proceeding further.</p><p>When following the <strong>repository pattern</strong>, I break up my code into the <em>models</em> and <em>repositories</em> packages.</p><ul><li><strong>models</strong> - Is responsible strictly for the data structure.</li><li><strong>repositories</strong> - Will implement the interface from <em>models</em>.</li></ul><p>The code is as follows:</p><h3 id=modelsthinggo>models/thing.go</h3><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/models/thing.go
+<span class=p>)</span></code></pre></div>
+<p><strong>So the Django ORM is quite good at being flexible enough to handle whatever filtering you can throw at it. How do we build something so flexible in Golang?</strong></p>
+<h1 id=setting-up-the-problem-in-golang>Setting up the problem in Golang</h1>
+<p>I will provide important code snippets to help demonstrate. Please note that this code is following the <a href=https://adodd.net/post/go-ddd-repository-pattern/>repository pattern</a> so if you don&rsquo;t understand then please read up before proceeding further.</p>
+<p>When following the <strong>repository pattern</strong>, I break up my code into the <em>models</em> and <em>repositories</em> packages.</p>
+<ul>
+<li><strong>models</strong> - Is responsible strictly for the data structure.</li>
+<li><strong>repositories</strong> - Will implement the interface from <em>models</em>.</li>
+</ul>
+<p>The code is as follows:</p>
+<h3 id=modelsthinggo>models/thing.go</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/models/thing.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -66,7 +217,8 @@
     <span class=nx>State</span>          <span class=kt>uint</span>        <span class=s>`db:&#34;state&#34; json:&#34;state&#34;`</span>
     <span class=nx>Name</span>           <span class=kt>string</span>      <span class=s>`db:&#34;state&#34; json:&#34;name&#34;`</span>
 <span class=p>}</span>
-</code></pre></div><h3 id=repositoriesthinggo>repositories/thing.go</h3><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
+</code></pre></div><h3 id=repositoriesthinggo>repositories/thing.go</h3>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>repositories</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -97,7 +249,10 @@
     <span class=c1>// TODO
 </span><span class=c1></span>    <span class=k>return</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>nil</span>
 <span class=p>}</span>
-</code></pre></div><h3 id=example-usage>Example Usage</h3><h4 id=filter-only-one-column>Filter only one column</h4><p>Here is how we lookup a single column:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// Assume you setup the context
+</code></pre></div><h3 id=example-usage>Example Usage</h3>
+<h4 id=filter-only-one-column>Filter only one column</h4>
+<p>Here is how we lookup a single column:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// Assume you setup the context
 </span><span class=c1>// ctx := ...
 </span><span class=c1></span>
 <span class=c1>// Assume you connected to the database
@@ -111,7 +266,9 @@
 <span class=p>}</span>
 <span class=nx>things</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>thingRepo</span><span class=p>.</span><span class=nf>ListByFilter</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>thingFilter</span><span class=p>)</span>
 <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>things</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-</code></pre></div><h4 id=filter-more-then-one-column>Filter more then one column</h4><p>Here is how we lookup three columns:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// Assume you setup the context
+</code></pre></div><h4 id=filter-more-then-one-column>Filter more then one column</h4>
+<p>Here is how we lookup three columns:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// Assume you setup the context
 </span><span class=c1>// ctx := ...
 </span><span class=c1></span>
 <span class=c1>// Assume you connected to the database
@@ -127,7 +284,21 @@
 <span class=p>}</span>
 <span class=nx>things</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>thingRepo</span><span class=p>.</span><span class=nf>ListByFilter</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>thingFilter</span><span class=p>)</span>
 <span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>things</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-</code></pre></div><p>Now that we&rsquo;ve seen filtering code prototype and usage, let&rsquo;s discuss implementation of the <code>TODO</code> items in our repository.</p><h1 id=understand-the-problem>Understand the problem</h1><p>If we look at our <code>ThingFilter</code> structure we see that the user has the option of using three optional filters and 3 required:</p><ul><li>TenantId -> Required</li><li>ManufacturerId -> Optional</li><li>PartId -> Optional</li><li>State -> Optional</li><li>LastSeenId -> Required</li><li>Limit -> Required</li></ul><p>Therefore our filtering code should handle these cases.</p><h2 id=first-attempt-static-filtering>First attempt (Static filtering)</h2><p>My first attempt at solving the problem was to create the dedicated functions for whatever filtering we will have. Take a look at the <code>repositories/thing.go</code> file:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
+</code></pre></div><p>Now that we&rsquo;ve seen filtering code prototype and usage, let&rsquo;s discuss implementation of the <code>TODO</code> items in our repository.</p>
+<h1 id=understand-the-problem>Understand the problem</h1>
+<p>If we look at our <code>ThingFilter</code> structure we see that the user has the option of using three optional filters and 3 required:</p>
+<ul>
+<li>TenantId -> Required</li>
+<li>ManufacturerId -> Optional</li>
+<li>PartId -> Optional</li>
+<li>State -> Optional</li>
+<li>LastSeenId -> Required</li>
+<li>Limit -> Required</li>
+</ul>
+<p>Therefore our filtering code should handle these cases.</p>
+<h2 id=first-attempt-static-filtering>First attempt (Static filtering)</h2>
+<p>My first attempt at solving the problem was to create the dedicated functions for whatever filtering we will have. Take a look at the <code>repositories/thing.go</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
 </span><span class=c1>// ...
 </span><span class=c1></span>
 <span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>ThingRepoImpl</span><span class=p>)</span> <span class=nf>ListAll</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=p>([]</span><span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>Thing</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
@@ -156,7 +327,16 @@
 
 <span class=c1>// Etc, etc
 </span><span class=c1>// ...
-</span></code></pre></div><p>As you can see there are a number of problems to take into consideration:</p><ul><li>Every time you want to add a new column to filter, a lot more functions need to be created.</li><li>It&rsquo;s not practical - The more filters you want to do, the more functions you have to write to maintain.</li></ul><p>What pattern do you notice? This pattern does not work, an alternate solutions needs to exist.</p><h2 id=second-attempt-too-complicated>Second attempt (Too complicated)</h2><p>My second attempt involved creating a unified function which encapsulates all the filtering capability.</p><p>Take a look at the <code>repositories/thing.go</code> file:</p><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
+</span></code></pre></div><p>As you can see there are a number of problems to take into consideration:</p>
+<ul>
+<li>Every time you want to add a new column to filter, a lot more functions need to be created.</li>
+<li>It&rsquo;s not practical - The more filters you want to do, the more functions you have to write to maintain.</li>
+</ul>
+<p>What pattern do you notice? This pattern does not work, an alternate solutions needs to exist.</p>
+<h2 id=second-attempt-too-complicated>Second attempt (Too complicated)</h2>
+<p>My second attempt involved creating a unified function which encapsulates all the filtering capability.</p>
+<p>Take a look at the <code>repositories/thing.go</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
 </span><span class=c1>// ...
 </span><span class=c1></span>
 <span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>ThingRepoImpl</span><span class=p>)</span> <span class=nf>queryRowsWithFilter</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>querySelect</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>filter</span> <span class=o>*</span><span class=nx>models</span><span class=p>.</span><span class=nx>ThingFilter</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>sql</span><span class=p>.</span><span class=nx>Rows</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
@@ -254,7 +434,19 @@
     <span class=nx>err</span> <span class=p>=</span> <span class=nx>rows</span><span class=p>.</span><span class=nf>Err</span><span class=p>()</span>
     <span class=k>return</span> <span class=nx>arr</span><span class=p>,</span> <span class=nx>err</span>
 <span class=p>}</span>
-</code></pre></div><p>As you can see there are a number of problems to take into consideration:</p><ul><li>Every time you want to add a new column to filter, the code get&rsquo;s super complicated quickly with repetition.</li><li>It&rsquo;s complicated</li><li>It&rsquo;s not practical - The more filters you want to do, the more complex it becomes</li></ul><p>What pattern do you notice? The parameters we want to filter needs to change every time for the <code>QueryContext</code> function and we need to update the <code>sql statement</code> as well. The SQL statement is a string so we can easily modify the string, but how do we call the <code>QueryContext</code> function multiple times with different parameters?</p><h2 id=the-variadic-function-to-the-rescue>The &ldquo;variadic function&rdquo; to the rescue</h2><p>In Golang, we have a <a href=https://golangbot.com/variadic-functions/>variadic function</a> which can be used to load up different parameters into the <code>QueryContext</code> function.</p><h1 id=the-solution>The Solution</h1><p>The solution which works is to utilize <a href=https://golangbot.com/variadic-functions/>variadic functions</a> and our code looks as follows.</p><h4 id=repositoriesthinggo-1>repositories/thing.go</h4><div class=highlight><pre class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
+</code></pre></div><p>As you can see there are a number of problems to take into consideration:</p>
+<ul>
+<li>Every time you want to add a new column to filter, the code get&rsquo;s super complicated quickly with repetition.</li>
+<li>It&rsquo;s complicated</li>
+<li>It&rsquo;s not practical - The more filters you want to do, the more complex it becomes</li>
+</ul>
+<p>What pattern do you notice? The parameters we want to filter needs to change every time for the <code>QueryContext</code> function and we need to update the <code>sql statement</code> as well. The SQL statement is a string so we can easily modify the string, but how do we call the <code>QueryContext</code> function multiple times with different parameters?</p>
+<h2 id=the-variadic-function-to-the-rescue>The &ldquo;variadic function&rdquo; to the rescue</h2>
+<p>In Golang, we have a <a href=https://golangbot.com/variadic-functions/>variadic function</a> which can be used to load up different parameters into the <code>QueryContext</code> function.</p>
+<h1 id=the-solution>The Solution</h1>
+<p>The solution which works is to utilize <a href=https://golangbot.com/variadic-functions/>variadic functions</a> and our code looks as follows.</p>
+<h4 id=repositoriesthinggo-1>repositories/thing.go</h4>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-golang data-lang=golang><span class=c1>// github.com/bartmika/hello-server/internal/repositories/thing.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>repositories</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -410,9 +602,152 @@
     <span class=nx>err</span> <span class=o>:=</span> <span class=nx>s</span><span class=p>.</span><span class=nx>db</span><span class=p>.</span><span class=nf>QueryRowContext</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=nx>query</span><span class=p>,</span> <span class=nx>filterValues</span><span class=o>...</span><span class=p>).</span><span class=nf>Scan</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>count</span><span class=p>)</span>
     <span class=k>return</span> <span class=nx>count</span><span class=p>,</span> <span class=nx>err</span>
 <span class=p>}</span>
-</code></pre></div><div class=blog-tags><a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
-<a href=https://bartlomiejmika.com/tags/sql/>SQL</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&text=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&title=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&title=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&title=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&description=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section><h4 class=see-also>See also</h4><ul><li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li><li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li><li><a href=/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/>How to Read Data From a SparkFun Weather Shield (DEV-13956) in Golang</a></li></ul></article><ul class="pager blog-pager"><li class=previous><a href=https://bartlomiejmika.com/post/2021/how-to-get-go2tv-working-with-your-samsung-smart-tv/ data-toggle=tooltip data-placement=top title="How to Get Go2TV Working With Your Samsung Smart TV">&larr; Previous Post</a></li><li class=next><a href=https://bartlomiejmika.com/post/2021/red-mulberry-growlog-2/ data-toggle=tooltip data-placement=top title="Red Mulberry Growlog #2">Next Post &rarr;</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url='https:\/\/bartlomiejmika.com\/post\/2021\/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django';};</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://www.facebook.com/bartlomiej-mika title=Facebook><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-facebook fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://reddit.com/u/eurasiasoft title=Reddit><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=https://mikasoftware.com>Mika Software Corporation</a>
+</code></pre></div>
+<div class=blog-tags>
+<a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
+<a href=https://bartlomiejmika.com/tags/sql/>SQL</a>&nbsp;
+</div>
+<hr>
+<section id=social-share>
+<div class="list-inline footer-links">
+<div class=share-box aria-hidden=true>
+<ul class=share>
+<li>
+<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&text=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter"></i>
+</a>
+</li>
+<li>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook"></i>
+</a>
+</li>
+<li>
+<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&title=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit"></i>
+</a>
+</li>
+<li>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&title=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin"></i>
+</a>
+</li>
+<li>
+<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&title=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on StumbleUpon">
+<i class="fab fa-stumbleupon"></i>
+</a>
+</li>
+<li>
+<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django%2f&description=How%20to%20do%20Dynamic%20Filtering%20in%20Golang%20using%20only%20the%20Database%20SQL%20Package%20like%20in%20Django" target=_blank title="Share on Pinterest">
+<i class="fab fa-pinterest"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<h4 class=see-also>See also</h4>
+<ul>
+<li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li>
+<li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li>
+<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li>
+</ul>
+</article>
+<ul class="pager blog-pager">
+<li class=previous>
+<a href=https://bartlomiejmika.com/post/2021/how-to-get-go2tv-working-with-your-samsung-smart-tv/ data-toggle=tooltip data-placement=top title="How to Get Go2TV Working With Your Samsung Smart TV">&larr; Previous Post</a>
+</li>
+<li class=next>
+<a href=https://bartlomiejmika.com/post/2021/red-mulberry-growlog-2/ data-toggle=tooltip data-placement=top title="Red Mulberry Growlog #2">Next Post &rarr;</a>
+</li>
+</ul>
+<div class=disqus-comments>
+<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django>comments</span></button>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django'}</script>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<ul class="list-inline text-center footer-links">
+<li>
+<a href=mailto:bart@mikasoftware.com title="Email me">
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://github.com/bartmika title=GitHub>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://reddit.com/u/eurasiasoft title=Reddit>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href title=RSS>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+</ul>
+<p class="credits copyright text-muted">
+<a href=https://mikasoftware.com>Mika Software Corporation</a>
 &nbsp;&bull;&nbsp;&copy;
-2021
+2022
 &nbsp;&bull;&nbsp;
-<a href=https://bartlomiejmika.com>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.80.0</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a></p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/main.js></script><script src=https://bartlomiejmika.com/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</p>
+<p class="credits theme-by text-muted">
+<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
+</p>
+</div>
+</div>
+</div>
+</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
+<script src=https://bartlomiejmika.com/js/main.js></script>
+<script src=https://bartlomiejmika.com/js/highlight.min.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
+<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
+<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
+</body>
+</html>

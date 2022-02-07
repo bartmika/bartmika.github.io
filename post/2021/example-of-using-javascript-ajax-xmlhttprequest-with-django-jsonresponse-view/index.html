@@ -1,14 +1,135 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view - Bartlomiej Mika</title><meta name=description content="Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project."><meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view\/","name":"Example of using java script a j a x xml http request with django json response view"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view","description":"Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project.\n","inLanguage":"en","wordCount":432,"datePublished":"2021-01-01T00:00:00","dateModified":"2021-01-01T00:00:00","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Python, Django"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view"><meta property="og:description" content="Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project."><meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="Example of using JavaScript AJAX XmlHttpRequest with Django …"><meta name=twitter:description content="Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project."><meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.80.0"><link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view - Bartlomiej Mika</title>
+<meta name=description content="
+Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project.">
+<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view\/","name":"Example of using java script ajax xml HTTP request with django JSON response view"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view","description":"Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project.\n","inLanguage":"en","wordCount":432,"datePublished":"2021-01-01T00:00:00","dateModified":"2021-01-01T00:00:00","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Python, Django"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
+<meta property="og:title" content="Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view">
+<meta property="og:description" content="
+Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project.">
+<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta property="og:url" content="https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bartlomiej Mika">
+<meta name=twitter:title content="Example of using JavaScript AJAX XmlHttpRequest with Django …">
+<meta name=twitter:description content="
+Forget Axios or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic XmlHttpRequest with your Django project.">
+<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta name=twitter:card content="summary">
+<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
+<meta name=generator content="Hugo 0.92.1">
+<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
+<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
+<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+<div class=container-fluid>
+<div class=navbar-header>
+<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button>
-<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=About href=/about/>About</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartlomiejmika.com><img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</div>
+<div class="collapse navbar-collapse" id=main-navbar>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<a title=Blog href=/>Blog</a>
+</li>
+<li>
+<a title=Tags href=/tags>Tags</a>
+</li>
+<li>
+<a title=About href=/about/>About</a>
+</li>
+</ul>
+</div>
+<div class=avatar-container>
+<div class=avatar-img-border>
+<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
+<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
+</a>
+</div>
+</div>
+</div>
+</nav>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=post-heading><h1>Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view</h1><span class=post-meta><i class="fas fa-calendar"></i>&nbsp;Posted on January 1, 2021
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header class=header-section>
+<div class="intro-header no-img">
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class=post-heading>
+<h1>Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view</h1>
+<span class=post-meta>
+<i class="fas fa-calendar"></i>&nbsp;Posted on January 1, 2021
 &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;3&nbsp;minutes
 &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;432&nbsp;words
-&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika</span></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src=/img/2020/08/28/joan-gamell-ZS67i1HLllo-unsplash.jpg alt></p><p>Forget <a href=https://github.com/axios/axios>Axios</a> or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic <code>XmlHttpRequest</code> with your Django project.</p><ol><li><p>Begin by setting up your <code>Django</code> project:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>    mkdir ajax_django_example
+&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class=container role=main>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<article role=main class=blog-post>
+<p><img src=/img/2020/08/28/joan-gamell-ZS67i1HLllo-unsplash.jpg alt></p>
+<p>Forget <a href=https://github.com/axios/axios>Axios</a> or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic <code>XmlHttpRequest</code> with your Django project.</p>
+<ol>
+<li>
+<p>Begin by setting up your <code>Django</code> project:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>    mkdir ajax_django_example
     <span class=nb>cd</span> ajax_django_example/
     virtualenv env
     <span class=nb>source</span> env/bin/activate
@@ -18,7 +139,11 @@
     <span class=nb>cd</span> example
     python manage.py startapp hello
     python manage.py runserver
-    </code></pre></div></li><li><p>Populate your <code>views.py</code> file:</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python>    <span class=c1># hello/views.py</span>
+    </code></pre></div>
+</li>
+<li>
+<p>Populate your <code>views.py</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python>    <span class=c1># hello/views.py</span>
     <span class=kn>from</span> <span class=nn>django.http</span> <span class=kn>import</span> <span class=n>HttpResponse</span>
     <span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
     <span class=kn>from</span> <span class=nn>django.http</span> <span class=kn>import</span> <span class=n>JsonResponse</span>
@@ -43,7 +168,11 @@
 
     <span class=c1># Would you like to know more?</span>
     <span class=c1># https://docs.djangoproject.com/en/2.2/ref/request-response/#jsonresponse-objects</span>
-    </code></pre></div></li><li><p>Set the <code>urls.py</code> file:</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python>    <span class=c1># hello/urls.py</span>
+    </code></pre></div>
+</li>
+<li>
+<p>Set the <code>urls.py</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python>    <span class=c1># hello/urls.py</span>
     <span class=kn>from</span> <span class=nn>django.urls</span> <span class=kn>import</span> <span class=n>path</span>
 
     <span class=kn>from</span> <span class=nn>.</span> <span class=kn>import</span> <span class=n>views</span>
@@ -53,7 +182,11 @@
         <span class=n>path</span><span class=p>(</span><span class=s1>&#39;version&#39;</span><span class=p>,</span> <span class=n>views</span><span class=o>.</span><span class=n>get_version</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s1>&#39;version&#39;</span><span class=p>),</span>
         <span class=n>path</span><span class=p>(</span><span class=s1>&#39;add&#39;</span><span class=p>,</span> <span class=n>views</span><span class=o>.</span><span class=n>post_add</span><span class=p>,</span> <span class=n>name</span><span class=o>=</span><span class=s1>&#39;add&#39;</span><span class=p>),</span>
     <span class=p>]</span>
-    </code></pre></div></li><li><p>Set the project&rsquo;s <code>settings.py</code> file:</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python>    <span class=c1># example/settings.py</span>
+    </code></pre></div>
+</li>
+<li>
+<p>Set the project&rsquo;s <code>settings.py</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python>    <span class=c1># example/settings.py</span>
 
     <span class=c1># ...</span>
 
@@ -78,7 +211,11 @@
     <span class=p>]</span>
 
     <span class=c1># ...</span>
-    </code></pre></div></li><li><p>Set the project&rsquo;s <code>urls.py</code> file:</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python>    <span class=c1># example/urls.py</span>
+    </code></pre></div>
+</li>
+<li>
+<p>Set the project&rsquo;s <code>urls.py</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python>    <span class=c1># example/urls.py</span>
     <span class=s2>&#34;&#34;&#34;example URL Configuration
 </span><span class=s2>
 </span><span class=s2>    The `urlpatterns` list routes URLs to views. For more information please see:
@@ -101,7 +238,11 @@
         <span class=n>path</span><span class=p>(</span><span class=s1>&#39;admin/&#39;</span><span class=p>,</span> <span class=n>admin</span><span class=o>.</span><span class=n>site</span><span class=o>.</span><span class=n>urls</span><span class=p>),</span>
         <span class=n>path</span><span class=p>(</span><span class=s1>&#39;&#39;</span><span class=p>,</span> <span class=n>include</span><span class=p>(</span><span class=s1>&#39;hello.urls&#39;</span><span class=p>)),</span>
     <span class=p>]</span>
-    </code></pre></div></li><li><p>Next step is the JavaScript portion.</p><div class=highlight><pre class=chroma><code class=language-javascript data-lang=javascript>    <span class=c1>// hello/templates/hello/index.js
+    </code></pre></div>
+</li>
+<li>
+<p>Next step is the JavaScript portion.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript>    <span class=c1>// hello/templates/hello/index.js
 </span><span class=c1></span>    <span class=kd>function</span> <span class=nx>getVersion</span><span class=p>()</span> <span class=p>{</span>
         <span class=kd>var</span> <span class=nx>xhttp</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>XMLHttpRequest</span><span class=p>();</span>
         <span class=nx>xhttp</span><span class=p>.</span><span class=nx>onreadystatechange</span> <span class=o>=</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
@@ -128,7 +269,11 @@
     <span class=c1>// Would you like to know more?
 </span><span class=c1></span>    <span class=c1>// https://www.w3schools.com/js/js_ajax_intro.asp
 </span><span class=c1></span>    
-</code></pre></div></li><li><p>Continue</p><div class=highlight><pre class=chroma><code class=language-html data-lang=html>    <span class=c>&lt;!-- hello/templates/hello/index.html --&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Continue</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-html data-lang=html>    <span class=c>&lt;!-- hello/templates/hello/index.html --&gt;</span>
     <span class=cp>&lt;!DOCTYPE html&gt;</span>
     <span class=p>&lt;</span><span class=nt>html</span><span class=p>&gt;</span>
         <span class=p>&lt;</span><span class=nt>body</span><span class=p>&gt;</span>
@@ -152,9 +297,150 @@
 
         <span class=p>&lt;/</span><span class=nt>body</span><span class=p>&gt;</span>
     <span class=p>&lt;/</span><span class=nt>html</span><span class=p>&gt;</span>
-    </code></pre></div></li><li><p>That&rsquo;s it! Test it out the code and you should see it working.</p></li></ol><p>Cover photo by <a href=https://unsplash.com/@gamell>Joan Gamell</a> on <a href=https://unsplash.com>Unsplash</a>.</p><div class=blog-tags><a href=https://bartlomiejmika.com/tags/python/>Python</a>&nbsp;
-<a href=https://bartlomiejmika.com/tags/django/>Django</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&text=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&title=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&title=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&title=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&description=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section></article><ul class="pager blog-pager"><li class=previous><a href=https://bartlomiejmika.com/post/2020/how-to-install-hugo-from-git-bash-for-window-users/ data-toggle=tooltip data-placement=top title="How to Install Hugo From Git Bash for Window Users">&larr; Previous Post</a></li><li class=next><a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 1: Basic Server">Next Post &rarr;</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url='https:\/\/bartlomiejmika.com\/post\/2021\/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view';};</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://www.facebook.com/bartlomiej-mika title=Facebook><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-facebook fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://reddit.com/u/eurasiasoft title=Reddit><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=https://mikasoftware.com>Mika Software Corporation</a>
+    </code></pre></div>
+</li>
+<li>
+<p>That&rsquo;s it! Test it out the code and you should see it working.</p>
+</li>
+</ol>
+<p>Cover photo by <a href=https://unsplash.com/@gamell>Joan Gamell</a> on <a href=https://unsplash.com>Unsplash</a>.</p>
+<div class=blog-tags>
+<a href=https://bartlomiejmika.com/tags/python/>Python</a>&nbsp;
+<a href=https://bartlomiejmika.com/tags/django/>Django</a>&nbsp;
+</div>
+<hr>
+<section id=social-share>
+<div class="list-inline footer-links">
+<div class=share-box aria-hidden=true>
+<ul class=share>
+<li>
+<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&text=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter"></i>
+</a>
+</li>
+<li>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook"></i>
+</a>
+</li>
+<li>
+<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&title=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit"></i>
+</a>
+</li>
+<li>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&title=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin"></i>
+</a>
+</li>
+<li>
+<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&title=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on StumbleUpon">
+<i class="fab fa-stumbleupon"></i>
+</a>
+</li>
+<li>
+<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fexample-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view%2f&description=Example%20of%20using%20JavaScript%20AJAX%20XmlHttpRequest%20with%20Django%20JsonResponse%20view" target=_blank title="Share on Pinterest">
+<i class="fab fa-pinterest"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</section>
+</article>
+<ul class="pager blog-pager">
+<li class=previous>
+<a href=https://bartlomiejmika.com/post/2020/how-to-install-hugo-from-git-bash-for-window-users/ data-toggle=tooltip data-placement=top title="How to Install Hugo From Git Bash for Window Users">&larr; Previous Post</a>
+</li>
+<li class=next>
+<a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 1: Basic Server">Next Post &rarr;</a>
+</li>
+</ul>
+<div class=disqus-comments>
+<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view>comments</span></button>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view'}</script>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<ul class="list-inline text-center footer-links">
+<li>
+<a href=mailto:bart@mikasoftware.com title="Email me">
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://github.com/bartmika title=GitHub>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://reddit.com/u/eurasiasoft title=Reddit>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href title=RSS>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+</ul>
+<p class="credits copyright text-muted">
+<a href=https://mikasoftware.com>Mika Software Corporation</a>
 &nbsp;&bull;&nbsp;&copy;
-2021
+2022
 &nbsp;&bull;&nbsp;
-<a href=https://bartlomiejmika.com>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.80.0</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a></p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/main.js></script><script src=https://bartlomiejmika.com/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</p>
+<p class="credits theme-by text-muted">
+<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
+</p>
+</div>
+</div>
+</div>
+</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
+<script src=https://bartlomiejmika.com/js/main.js></script>
+<script src=https://bartlomiejmika.com/js/highlight.min.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
+<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
+<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
+</body>
+</html>

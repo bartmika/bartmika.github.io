@@ -1,25 +1,161 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>How to Build an API Server in Go - Part 3: Postgres Database - Bartlomiej Mika</title><meta name=description content="Learn how to implement the database layer for your webserver"><meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-3-postgres-database\/","name":"How to build an a p i server in go part 3 postgres database"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Build an API Server in Go - Part 3: Postgres Database","description":"The purpose of this article is to provide instructions on how to setup postgres database with our application.\n","inLanguage":"en","wordCount":3833,"datePublished":"2021-01-30T00:02:30","dateModified":"2021-01-30T00:02:30","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, API, Database, SQL, Postgres, HOWTO"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-3-postgres-database\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="How to Build an API Server in Go - Part 3: Postgres Database"><meta property="og:description" content="Learn how to implement the database layer for your webserver"><meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="How to Build an API Server in Go - Part 3: Postgres Database"><meta name=twitter:description content="Learn how to implement the database layer for your webserver"><meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary"><link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.80.0"><link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-172742383-1','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>How to Build an API Server in Go - Part 3: Postgres Database - Bartlomiej Mika</title>
+<meta name=description content="Learn how to implement the database layer for your webserver">
+<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-3-postgres-database\/","name":"How to build an API server in go part 3 postgres database"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Build an API Server in Go - Part 3: Postgres Database","description":"The purpose of this article is to provide instructions on how to setup postgres database with our application.\n","inLanguage":"en","wordCount":3727,"datePublished":"2021-01-30T00:02:30","dateModified":"2021-01-30T00:02:30","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, API, Database, SQL, Postgres, HOWTO"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-3-postgres-database\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
+<meta property="og:title" content="How to Build an API Server in Go - Part 3: Postgres Database">
+<meta property="og:description" content="Learn how to implement the database layer for your webserver">
+<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta property="og:url" content="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bartlomiej Mika">
+<meta name=twitter:title content="How to Build an API Server in Go - Part 3: Postgres Database">
+<meta name=twitter:description content="Learn how to implement the database layer for your webserver">
+<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta name=twitter:card content="summary">
+<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
+<meta name=generator content="Hugo 0.92.1">
+<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
+<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
+<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+<div class=container-fluid>
+<div class=navbar-header>
+<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button>
-<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=About href=/about/>About</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartlomiejmika.com><img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</div>
+<div class="collapse navbar-collapse" id=main-navbar>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<a title=Blog href=/>Blog</a>
+</li>
+<li>
+<a title=Tags href=/tags>Tags</a>
+</li>
+<li>
+<a title=About href=/about/>About</a>
+</li>
+</ul>
+</div>
+<div class=avatar-container>
+<div class=avatar-img-border>
+<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
+<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
+</a>
+</div>
+</div>
+</div>
+</nav>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=post-heading><h1>How to Build an API Server in Go - Part 3: Postgres Database</h1><h2 class=post-subheading>Learn how to implement the database layer for your webserver</h2><span class=post-meta><i class="fas fa-calendar"></i>&nbsp;Posted on January 30, 2021
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header class=header-section>
+<div class="intro-header no-img">
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class=post-heading>
+<h1>How to Build an API Server in Go - Part 3: Postgres Database</h1>
+<h2 class=post-subheading>Learn how to implement the database layer for your webserver</h2>
+<span class=post-meta>
+<i class="fas fa-calendar"></i>&nbsp;Posted on January 30, 2021
 &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;18&nbsp;minutes
-&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3833&nbsp;words
-&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika</span></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src=/img/2021/common/go-banner.png alt></p><p>The purpose of this article is to provide instructions on how to setup <em>postgres</em> database with our application.</p><p>This post belongs to the following series:</p><ol><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/>How to Build an API Server in Go - Part 1: Basic Server</a></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/>How to Build an API Server in Go - Part 2: Simple Database</a></li><li><strong>How to Build an API Server in Go - Part 3: Postgres Database</strong></li><li><a href=/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/>How to Build an API Server in Go - Part 4: Access Control</a></li></ol><h1 id=database-setup>Database Setup</h1><p>Before we begin, please download and install <a href=https://www.postgresql.org/><strong>postgres database</strong></a> onto your computer.</p><p>Load up your <em>terminal</em> or <em>postgres GUI</em> and run the following code:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;3727&nbsp;words
+&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class=container role=main>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<article role=main class=blog-post>
+<p><img src=/img/2021/common/go-banner.png alt></p>
+<p>The purpose of this article is to provide instructions on how to setup <em>postgres</em> database with our application.</p>
+<p>This post belongs to the following series:</p>
+<ol>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/>How to Build an API Server in Go - Part 1: Basic Server</a></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/>How to Build an API Server in Go - Part 2: Simple Database</a></li>
+<li><strong>How to Build an API Server in Go - Part 3: Postgres Database</strong></li>
+<li><a href=/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/>How to Build an API Server in Go - Part 4: Access Control</a></li>
+</ol>
+<h1 id=database-setup>Database Setup</h1>
+<p>Before we begin, please download and install <a href=https://www.postgresql.org/><strong>postgres database</strong></a> onto your computer.</p>
+<p>Load up your <em>terminal</em> or <em>postgres GUI</em> and run the following code:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-sql data-lang=sql><span class=k>drop</span> <span class=k>database</span> <span class=n>mulberry_db</span><span class=p>;</span>
-<span class=k>create</span> <span class=k>database</span> <span class=n>mulberry_db</span><span class=p>;</span>
-<span class=err>\</span><span class=k>c</span> <span class=n>mulberry_db</span><span class=p>;</span>
-<span class=k>CREATE</span> <span class=k>USER</span> <span class=n>golang</span> <span class=k>WITH</span> <span class=n>PASSWORD</span> <span class=s1>&#39;123password&#39;</span><span class=p>;</span>
-<span class=k>GRANT</span> <span class=k>ALL</span> <span class=k>PRIVILEGES</span> <span class=k>ON</span> <span class=k>DATABASE</span> <span class=n>mulberry_db</span> <span class=k>to</span> <span class=n>golang</span><span class=p>;</span>
-<span class=k>ALTER</span> <span class=k>USER</span> <span class=n>golang</span> <span class=k>CREATEDB</span><span class=p>;</span></code></pre></td></tr></table></div></div><p>Afterwords we will setup our application structure. Copy and paste the following:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=k>drop</span><span class=w> </span><span class=k>database</span><span class=w> </span><span class=n>mulberry_db</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>create</span><span class=w> </span><span class=k>database</span><span class=w> </span><span class=n>mulberry_db</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=err>\</span><span class=k>c</span><span class=w> </span><span class=n>mulberry_db</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>CREATE</span><span class=w> </span><span class=k>USER</span><span class=w> </span><span class=n>golang</span><span class=w> </span><span class=k>WITH</span><span class=w> </span><span class=n>PASSWORD</span><span class=w> </span><span class=s1>&#39;123password&#39;</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>GRANT</span><span class=w> </span><span class=k>ALL</span><span class=w> </span><span class=k>PRIVILEGES</span><span class=w> </span><span class=k>ON</span><span class=w> </span><span class=k>DATABASE</span><span class=w> </span><span class=n>mulberry_db</span><span class=w> </span><span class=k>to</span><span class=w> </span><span class=n>golang</span><span class=p>;</span><span class=w>
+</span><span class=w></span><span class=k>ALTER</span><span class=w> </span><span class=k>USER</span><span class=w> </span><span class=n>golang</span><span class=w> </span><span class=k>CREATEDB</span><span class=p>;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Afterwords we will setup our application structure. Copy and paste the following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -40,27 +176,46 @@
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span><span class=lnt>21
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-sql data-lang=sql><span class=k>CREATE</span> <span class=k>TABLE</span> <span class=n>users</span> <span class=p>(</span>
-    <span class=n>uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>PRIMARY</span> <span class=k>KEY</span><span class=p>,</span>
-    <span class=n>name</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>255</span><span class=p>)</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>email</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>255</span><span class=p>)</span> <span class=k>UNIQUE</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>password_hash</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>511</span><span class=p>)</span> <span class=k>NOT</span> <span class=k>NULL</span>
-<span class=p>);</span>
-<span class=k>CREATE</span> <span class=k>UNIQUE</span> <span class=k>INDEX</span> <span class=n>idx_user_uuid</span>
-<span class=k>ON</span> <span class=n>users</span> <span class=p>(</span><span class=n>uuid</span><span class=p>);</span>
-<span class=k>CREATE</span> <span class=k>UNIQUE</span> <span class=k>INDEX</span> <span class=n>idx_user_email</span>
-<span class=k>ON</span> <span class=n>users</span> <span class=p>(</span><span class=n>email</span><span class=p>);</span>
-
-<span class=k>CREATE</span> <span class=k>TABLE</span> <span class=n>time_series_data</span> <span class=p>(</span>
-    <span class=n>uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>PRIMARY</span> <span class=k>KEY</span><span class=p>,</span>
-    <span class=n>instrument_uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>UNIQUE</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>value</span> <span class=nb>FLOAT</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=k>timestamp</span> <span class=k>TIMESTAMP</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=n>user_uuid</span> <span class=nb>VARCHAR</span> <span class=p>(</span><span class=mi>36</span><span class=p>)</span> <span class=k>UNIQUE</span> <span class=k>NOT</span> <span class=k>NULL</span><span class=p>,</span>
-    <span class=k>FOREIGN</span> <span class=k>KEY</span> <span class=p>(</span><span class=n>user_uuid</span><span class=p>)</span> <span class=k>REFERENCES</span> <span class=n>users</span><span class=p>(</span><span class=n>uuid</span><span class=p>)</span>
-<span class=p>);</span>
-<span class=k>CREATE</span> <span class=k>UNIQUE</span> <span class=k>INDEX</span> <span class=n>idx_time_series_data_uuid</span>
-<span class=k>ON</span> <span class=n>time_series_data</span> <span class=p>(</span><span class=n>uuid</span><span class=p>);</span></code></pre></td></tr></table></div></div><h1 id=data-layer>Data Layer</h1><p>The project structure will remain the same as from <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1/>part 2</a>. We will begin with updating the files in the following order:</p><ol><li>mulberry-server/pkg/db/db.go</li><li>mulberry-server/pkg/models/user.go</li><li>mulberry-server/pkg/models/tsd.go</li><li>mulberry-server/internal/respositories/user.go</li><li>mulberry-server/internal/respositories/tsd.go</li></ol><h2 id=models-package>Models Package</h2><p>Let&rsquo;s begin rewriting the data layer by starting in the <strong>db.go</strong> file. Please note we will be utilizing a third-party library for handling communication with the <strong>postgres</strong> database.</p><h3 id=dbgo>db.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>users</span><span class=w> </span><span class=p>(</span><span class=w>
+</span><span class=w>    </span><span class=n>uuid</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>36</span><span class=p>)</span><span class=w> </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>name</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>255</span><span class=p>)</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>email</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>255</span><span class=p>)</span><span class=w> </span><span class=k>UNIQUE</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>password_hash</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>511</span><span class=p>)</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=w>
+</span><span class=w></span><span class=p>);</span><span class=w>
+</span><span class=w></span><span class=k>CREATE</span><span class=w> </span><span class=k>UNIQUE</span><span class=w> </span><span class=k>INDEX</span><span class=w> </span><span class=n>idx_user_uuid</span><span class=w>
+</span><span class=w></span><span class=k>ON</span><span class=w> </span><span class=n>users</span><span class=w> </span><span class=p>(</span><span class=n>uuid</span><span class=p>);</span><span class=w>
+</span><span class=w></span><span class=k>CREATE</span><span class=w> </span><span class=k>UNIQUE</span><span class=w> </span><span class=k>INDEX</span><span class=w> </span><span class=n>idx_user_email</span><span class=w>
+</span><span class=w></span><span class=k>ON</span><span class=w> </span><span class=n>users</span><span class=w> </span><span class=p>(</span><span class=n>email</span><span class=p>);</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>time_series_data</span><span class=w> </span><span class=p>(</span><span class=w>
+</span><span class=w>    </span><span class=n>uuid</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>36</span><span class=p>)</span><span class=w> </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>instrument_uuid</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>36</span><span class=p>)</span><span class=w> </span><span class=k>UNIQUE</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>value</span><span class=w> </span><span class=nb>FLOAT</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=k>timestamp</span><span class=w> </span><span class=k>TIMESTAMP</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=n>user_uuid</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>36</span><span class=p>)</span><span class=w> </span><span class=k>UNIQUE</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span><span class=w>    </span><span class=k>FOREIGN</span><span class=w> </span><span class=k>KEY</span><span class=w> </span><span class=p>(</span><span class=n>user_uuid</span><span class=p>)</span><span class=w> </span><span class=k>REFERENCES</span><span class=w> </span><span class=n>users</span><span class=p>(</span><span class=n>uuid</span><span class=p>)</span><span class=w>
+</span><span class=w></span><span class=p>);</span><span class=w>
+</span><span class=w></span><span class=k>CREATE</span><span class=w> </span><span class=k>UNIQUE</span><span class=w> </span><span class=k>INDEX</span><span class=w> </span><span class=n>idx_time_series_data_uuid</span><span class=w>
+</span><span class=w></span><span class=k>ON</span><span class=w> </span><span class=n>time_series_data</span><span class=w> </span><span class=p>(</span><span class=n>uuid</span><span class=p>);</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id=data-layer>Data Layer</h1>
+<p>The project structure will remain the same as from <a href=/posts/2021/how-to-write-a-webserver-in-golang-using-only-the-std-net-http-part-1/>part 2</a>. We will begin with updating the files in the following order:</p>
+<ol>
+<li>mulberry-server/pkg/db/db.go</li>
+<li>mulberry-server/pkg/models/user.go</li>
+<li>mulberry-server/pkg/models/tsd.go</li>
+<li>mulberry-server/internal/respositories/user.go</li>
+<li>mulberry-server/internal/respositories/tsd.go</li>
+</ol>
+<h2 id=models-package>Models Package</h2>
+<p>Let&rsquo;s begin rewriting the data layer by starting in the <strong>db.go</strong> file. Please note we will be utilizing a third-party library for handling communication with the <strong>postgres</strong> database.</p>
+<h3 id=dbgo>db.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -88,7 +243,9 @@
 </span><span class=lnt>26
 </span><span class=lnt>27
 </span><span class=lnt>28
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>db</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>db</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&#34;fmt&#34;</span>
@@ -115,8 +272,13 @@
         <span class=k>return</span> <span class=kc>nil</span><span class=p>,</span> <span class=nx>err</span>
     <span class=p>}</span>
     <span class=k>return</span> <span class=nx>dbInstance</span><span class=p>,</span> <span class=kc>nil</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=usergo>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=usergo>user.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -163,7 +325,9 @@
 </span><span class=lnt>45
 </span><span class=lnt>46
 </span><span class=lnt>47
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/user.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -209,8 +373,13 @@
 </span><span class=c1></span><span class=kd>type</span> <span class=nx>LoginResponse</span> <span class=kd>struct</span> <span class=p>{</span>
     <span class=nx>AccessToken</span> <span class=kt>string</span> <span class=s>`json:&#34;access_token&#34;`</span>
     <span class=nx>Uuid</span> <span class=kt>string</span>        <span class=s>`json:&#34;uuid&#34;`</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=tsdgo>tsd.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=tsdgo>tsd.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -256,7 +425,9 @@
 </span><span class=lnt>44
 </span><span class=lnt>45
 </span><span class=lnt>46
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/tsd.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/internal/models/tsd.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>models</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -301,8 +472,15 @@
     <span class=nx>Value</span> <span class=kt>float64</span> <span class=s>`json:&#34;value,string&#34;`</span>
     <span class=nx>Timestamp</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span> <span class=s>`json:&#34;timestamp&#34;`</span>
     <span class=nx>UserUuid</span> <span class=kt>string</span> <span class=s>`json:&#34;user_uuid&#34;`</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h2 id=repositories-package>Repositories Package</h2><p>Now we will move to the <strong>repositories</strong> package and start with the <strong>user.go</strong> file:</p><h3 id=usergo-1>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id=repositories-package>Repositories Package</h2>
+<p>Now we will move to the <strong>repositories</strong> package and start with the <strong>user.go</strong> file:</p>
+<h3 id=usergo-1>user.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -414,7 +592,9 @@
 </span><span class=lnt>110
 </span><span class=lnt>111
 </span><span class=lnt>112
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>repositories</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>repositories</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&#34;context&#34;</span>
@@ -525,8 +705,13 @@
         <span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
     <span class=p>)</span>
     <span class=k>return</span> <span class=nx>err</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h3 id=tsdgo-1>tsd.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=tsdgo-1>tsd.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -698,7 +883,9 @@
 </span><span class=lnt>170
 </span><span class=lnt>171
 </span><span class=lnt>172
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>repositories</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>repositories</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&#34;context&#34;</span>
@@ -869,8 +1056,22 @@
         <span class=nx>m</span><span class=p>.</span><span class=nx>Uuid</span><span class=p>,</span>
     <span class=p>)</span>
     <span class=k>return</span> <span class=nx>err</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h1 id=application-layer>Application Layer</h1><p>We need to update the <strong>controllers</strong> package to support <a href=https://golang.org/pkg/context/>contexts</a>. The following files need to be updated:</p><ol><li>mulberry-server/internal/controllers/user.go</li><li>mulberry-server/internal/controllers/tsd.go</li><li>mulberry-server/cmd/serve/main.go</li></ol><h2 id=controllers-package>Controllers Package</h2><p>Begin with the <strong>user.go</strong> file:</p><h3 id=usergo-2>user.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id=application-layer>Application Layer</h1>
+<p>We need to update the <strong>controllers</strong> package to support <a href=https://golang.org/pkg/context/>contexts</a>. The following files need to be updated:</p>
+<ol>
+<li>mulberry-server/internal/controllers/user.go</li>
+<li>mulberry-server/internal/controllers/tsd.go</li>
+<li>mulberry-server/cmd/serve/main.go</li>
+</ol>
+<h2 id=controllers-package>Controllers Package</h2>
+<p>Begin with the <strong>user.go</strong> file:</p>
+<h3 id=usergo-2>user.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -988,7 +1189,9 @@
 </span><span class=lnt>116
 </span><span class=lnt>117
 </span><span class=lnt>118
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/user.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -1106,7 +1309,13 @@
 </span><span class=c1>// [1][2]: Learned from:
 </span><span class=c1>// a. https://blog.golang.org/json
 </span><span class=c1>// b. https://stackoverflow.com/questions/21197239/decoding-json-using-json-unmarshal-vs-json-newdecoder-decode
-</span></code></pre></td></tr></table></div></div><h3 id=tsdgo-2>tsd.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h3 id=tsdgo-2>tsd.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -1249,7 +1458,9 @@
 </span><span class=lnt>141
 </span><span class=lnt>142
 </span><span class=lnt>143
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// FILE LOCATION: github.com/bartmika/mulberry-server/internal/controllers/tsd.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>controllers</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -1391,8 +1602,15 @@
         <span class=nx>http</span><span class=p>.</span><span class=nf>Error</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>err</span><span class=p>.</span><span class=nf>Error</span><span class=p>(),</span> <span class=nx>http</span><span class=p>.</span><span class=nx>StatusInternalServerError</span><span class=p>)</span>
     <span class=p>}</span>
     <span class=nx>w</span><span class=p>.</span><span class=nf>WriteHeader</span><span class=p>(</span><span class=nx>http</span><span class=p>.</span><span class=nx>StatusOK</span><span class=p>)</span> <span class=c1>// Note: https://tools.ietf.org/html/rfc7231#section-6.3.1
-</span><span class=c1></span><span class=p>}</span>
-</code></pre></td></tr></table></div></div><h2 id=main-package>Main Package</h2><p>And finally with the <strong>main.go</strong> file:</p><h3 id=maingo>main.go</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=c1></span><span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h2 id=main-package>Main Package</h2>
+<p>And finally with the <strong>main.go</strong> file:</p>
+<h3 id=maingo>main.go</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -1473,7 +1691,9 @@
 </span><span class=lnt>79
 </span><span class=lnt>80
 </span><span class=lnt>81
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=c1>// github.com/bartmika/mulberry-server/cmd/serve/main.go
 </span><span class=c1></span><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
@@ -1553,33 +1773,56 @@
 	<span class=p>}</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Graceful shutdown finished.&#34;</span><span class=p>)</span>
     <span class=nx>log</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Server Exited&#34;</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h1 id=testing>Testing</h1><h2 id=starting-the-server>Starting the Server</h2><p>We are going to use <em>environment variables</em> to load configuration settings for our application.</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_DB_HOST</span><span class=o>=</span>localhost
+<span class=p>}</span></code></pre></td></tr></table>
+</div>
+</div>
+<h1 id=testing>Testing</h1>
+<h2 id=starting-the-server>Starting the Server</h2>
+<p>We are going to use <em>environment variables</em> to load configuration settings for our application.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>export</span> <span class=nv>MULBERRY_DB_HOST</span><span class=o>=</span>localhost
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_PORT</span><span class=o>=</span><span class=m>5432</span>
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_USER</span><span class=o>=</span>golang
 <span class=nb>export</span> <span class=nv>MULBERRY_DB_PASSWORD</span><span class=o>=</span>123password
-<span class=nb>export</span> <span class=nv>MULBERRY_DB_NAME</span><span class=o>=</span>mulberry_db</code></pre></div><p>And now you can run the code:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>go run cmd/serve/main.go</code></pre></div><h2 id=making-api-calls>Making API Calls</h2><p>Let&rsquo;s begin by making a post. Please note that the <em>timestamp</em> must be formatted using <strong>&ldquo;RFC3339&rdquo; date/time standard</strong> - For more information please read this <a href=https://archive.is/7cqtR>great article</a>.</p><h3 id=register-api>Register API</h3><p>Let&rsquo;s attempt to <em>register</em>. Start the server and run the following commands in your console:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http post 127.0.0.1:5000/api/v1/register <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=se>\
+<span class=nb>export</span> <span class=nv>MULBERRY_DB_NAME</span><span class=o>=</span>mulberry_db</code></pre></div>
+<p>And now you can run the code:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go run cmd/serve/main.go</code></pre></div>
+<h2 id=making-api-calls>Making API Calls</h2>
+<p>Let&rsquo;s begin by making a post. Please note that the <em>timestamp</em> must be formatted using <strong>&ldquo;RFC3339&rdquo; date/time standard</strong> - For more information please read this <a href=https://archive.is/7cqtR>great article</a>.</p>
+<h3 id=register-api>Register API</h3>
+<p>Let&rsquo;s attempt to <em>register</em>. Start the server and run the following commands in your console:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ http post 127.0.0.1:5000/api/v1/register <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=se>\
 </span><span class=se></span>                                        <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span> <span class=se>\
-</span><span class=se></span>                                            <span class=nv>name</span><span class=o>=</span><span class=s2>&#34;Frank Herbert&#34;</span></code></pre></div><p>The output should be as follows:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+</span><span class=se></span>                                            <span class=nv>name</span><span class=o>=</span><span class=s2>&#34;Frank Herbert&#34;</span></code></pre></div>
+<p>The output should be as follows:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>105</span>
 Content-Type: application/json
 Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:09 GMT
 <span class=o>{</span>
     <span class=s2>&#34;message&#34;</span>: <span class=s2>&#34;You have successfully registered an account.&#34;</span>,
     <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
-<span class=o>}</span></code></pre></div><h3 id=login-api>Login API</h3><p>And for our grand finally, run the login command which works:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http post 127.0.0.1:5000/api/v1/login <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=se>\
-</span><span class=se></span>                                     <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span></code></pre></div><p>Wonderful! The success output will be as follows:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+<span class=o>}</span></code></pre></div>
+<h3 id=login-api>Login API</h3>
+<p>And for our grand finally, run the login command which works:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ http post 127.0.0.1:5000/api/v1/login <span class=nv>email</span><span class=o>=</span><span class=s2>&#34;fherbert@dune.com&#34;</span> <span class=se>\
+</span><span class=se></span>                                     <span class=nv>password</span><span class=o>=</span><span class=s2>&#34;the-spice-must-flow&#34;</span></code></pre></div>
+<p>Wonderful! The success output will be as follows:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>125</span>
 Content-Type: application/json
 Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:52 GMT
 <span class=o>{</span>
     <span class=s2>&#34;access_token&#34;</span>: <span class=s2>&#34;TODO: WE WILL FIGURE OUT HOW TO DO THIS IN ANOTHER ARTICLE!&#34;</span>,
     <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
-<span class=o>}</span></code></pre></div><h3 id=create-api>Create API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>post</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>data</span> <span class=nx>instrument_uuid</span><span class=p>=</span><span class=s>&#34;lalala&#34;</span> \
+<span class=o>}</span></code></pre></div>
+<h3 id=create-api>Create API</h3>
+<p>Run the following in your console:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>post</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>data</span> <span class=nx>instrument_uuid</span><span class=p>=</span><span class=s>&#34;lalala&#34;</span> \
                                                              <span class=nx>value</span><span class=p>=</span><span class=s>&#34;123&#34;</span> \
                                                          <span class=nx>timestamp</span><span class=p>=</span><span class=s>&#34;2021-01-30T10:20:10.000Z&#34;</span> \
-                                                         <span class=nx>user_uuid</span><span class=p>=</span><span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
-</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>201</span> <span class=nx>Created</span>
+                                                         <span class=nx>user_uuid</span><span class=p>=</span><span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span></code></pre></div>
+<p>And you should get the following message:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>201</span> <span class=nx>Created</span>
 <span class=nx>Content</span><span class=o>-</span><span class=nx>Length</span><span class=p>:</span> <span class=mi>175</span>
 <span class=nx>Content</span><span class=o>-</span><span class=nx>Type</span><span class=p>:</span> <span class=nx>application</span><span class=o>/</span><span class=nx>json</span>
 <span class=nx>Date</span><span class=p>:</span> <span class=nx>Sun</span><span class=p>,</span> <span class=mi>31</span> <span class=nx>Jan</span> <span class=mi>2021</span> <span class=mo>05</span><span class=p>:</span><span class=mi>58</span><span class=p>:</span><span class=mo>06</span> <span class=nx>GMT</span>
@@ -1590,9 +1833,12 @@ Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:52 GMT
     <span class=s>&#34;user_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span><span class=p>,</span>
     <span class=s>&#34;uuid&#34;</span><span class=p>:</span> <span class=s>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span><span class=p>,</span>
     <span class=s>&#34;value&#34;</span><span class=p>:</span> <span class=s>&#34;123&#34;</span>
-<span class=p>}</span>
-</code></pre></div><h3 id=list-api>List API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>get</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>data</span>
-</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>200</span> <span class=nx>OK</span>
+<span class=p>}</span></code></pre></div>
+<h3 id=list-api>List API</h3>
+<p>Run the following in your console:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>get</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>data</span></code></pre></div>
+<p>And you should get the following message:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>200</span> <span class=nx>OK</span>
 <span class=nx>Content</span><span class=o>-</span><span class=nx>Length</span><span class=p>:</span> <span class=mi>145</span>
 <span class=nx>Content</span><span class=o>-</span><span class=nx>Type</span><span class=p>:</span> <span class=nx>application</span><span class=o>/</span><span class=nx>json</span>
 <span class=nx>Date</span><span class=p>:</span> <span class=nx>Sat</span><span class=p>,</span> <span class=mi>30</span> <span class=nx>Jan</span> <span class=mi>2021</span> <span class=mi>22</span><span class=p>:</span><span class=mi>37</span><span class=p>:</span><span class=mi>27</span> <span class=nx>GMT</span>
@@ -1604,9 +1850,12 @@ Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:52 GMT
         <span class=s>&#34;uuid&#34;</span><span class=p>:</span> <span class=s>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span><span class=p>,</span>
         <span class=s>&#34;value&#34;</span><span class=p>:</span> <span class=mi>123</span>
     <span class=p>}</span>
-<span class=p>]</span>
-</code></pre></div><h3 id=retrieve-api>Retrieve API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>get</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>datum</span><span class=o>/</span><span class=nx>a8f355f4</span><span class=o>-</span><span class=mi>3</span><span class=nx>bb4</span><span class=o>-</span><span class=mi>4741</span><span class=o>-</span><span class=nx>b98b</span><span class=o>-</span><span class=nx>a0dbcc7a34ff</span>
-</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>200</span> <span class=nx>OK</span>
+<span class=p>]</span></code></pre></div>
+<h3 id=retrieve-api>Retrieve API</h3>
+<p>Run the following in your console:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>get</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>datum</span><span class=o>/</span><span class=nx>a8f355f4</span><span class=o>-</span><span class=mi>3</span><span class=nx>bb4</span><span class=o>-</span><span class=mi>4741</span><span class=o>-</span><span class=nx>b98b</span><span class=o>-</span><span class=nx>a0dbcc7a34ff</span></code></pre></div>
+<p>And you should get the following message:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>HTTP</span><span class=o>/</span><span class=mf>1.1</span> <span class=mi>200</span> <span class=nx>OK</span>
 <span class=nx>Content</span><span class=o>-</span><span class=nx>Length</span><span class=p>:</span> <span class=mi>173</span>
 <span class=nx>Content</span><span class=o>-</span><span class=nx>Type</span><span class=p>:</span> <span class=nx>application</span><span class=o>/</span><span class=nx>json</span>
 <span class=nx>Date</span><span class=p>:</span> <span class=nx>Sun</span><span class=p>,</span> <span class=mi>31</span> <span class=nx>Jan</span> <span class=mi>2021</span> <span class=mo>06</span><span class=p>:</span><span class=mo>00</span><span class=p>:</span><span class=mi>47</span> <span class=nx>GMT</span>
@@ -1617,13 +1866,16 @@ Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 05:56:52 GMT
     <span class=s>&#34;user_uuid&#34;</span><span class=p>:</span> <span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span><span class=p>,</span>
     <span class=s>&#34;uuid&#34;</span><span class=p>:</span> <span class=s>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span><span class=p>,</span>
     <span class=s>&#34;value&#34;</span><span class=p>:</span> <span class=mi>123</span>
-<span class=p>}</span>
-</code></pre></div><h3 id=update-api>Update API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>put</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>datum</span><span class=o>/</span><span class=nx>a8f355f4</span><span class=o>-</span><span class=mi>3</span><span class=nx>bb4</span><span class=o>-</span><span class=mi>4741</span><span class=o>-</span><span class=nx>b98b</span><span class=o>-</span><span class=nx>a0dbcc7a34ff</span> \
+<span class=p>}</span></code></pre></div>
+<h3 id=update-api>Update API</h3>
+<p>Run the following in your console:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=err>$</span> <span class=nx>http</span> <span class=nx>put</span> <span class=mf>127.0.0.1</span><span class=p>:</span><span class=mi>5000</span><span class=o>/</span><span class=nx>api</span><span class=o>/</span><span class=nx>v1</span><span class=o>/</span><span class=nx>time</span><span class=o>-</span><span class=nx>series</span><span class=o>-</span><span class=nx>datum</span><span class=o>/</span><span class=nx>a8f355f4</span><span class=o>-</span><span class=mi>3</span><span class=nx>bb4</span><span class=o>-</span><span class=mi>4741</span><span class=o>-</span><span class=nx>b98b</span><span class=o>-</span><span class=nx>a0dbcc7a34ff</span> \
 <span class=nx>instrument_uuid</span><span class=p>=</span><span class=s>&#34;lalala&#34;</span> \
           <span class=nx>value</span><span class=p>=</span><span class=s>&#34;321&#34;</span> \
       <span class=nx>timestamp</span><span class=p>=</span><span class=s>&#34;2021-01-30T10:20:10.000Z&#34;</span> \
-      <span class=nx>user_uuid</span><span class=p>=</span><span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>
-</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+      <span class=nx>user_uuid</span><span class=p>=</span><span class=s>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span></code></pre></div>
+<p>And you should get the following message:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>173</span>
 Content-Type: application/json
 Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 06:01:14 GMT
@@ -1633,16 +1885,172 @@ Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 06:01:14 GMT
     <span class=s2>&#34;user_uuid&#34;</span>: <span class=s2>&#34;9dd2cc0a-934d-4788-8304-1e0b82d9b6e6&#34;</span>,
     <span class=s2>&#34;uuid&#34;</span>: <span class=s2>&#34;a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff&#34;</span>,
     <span class=s2>&#34;value&#34;</span>: <span class=m>321</span>
-<span class=o>}</span></code></pre></div><h3 id=delete-api>Delete API</h3><p>Run the following in your console:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>$ http delete 127.0.0.1:5000/api/v1/time-series-datum/a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff</code></pre></div><p>And you should get the following message:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
+<span class=o>}</span></code></pre></div>
+<h3 id=delete-api>Delete API</h3>
+<p>Run the following in your console:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ http delete 127.0.0.1:5000/api/v1/time-series-datum/a8f355f4-3bb4-4741-b98b-a0dbcc7a34ff</code></pre></div>
+<p>And you should get the following message:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>HTTP/1.1 <span class=m>200</span> OK
 Content-Length: <span class=m>0</span>
 Content-Type: application/json
-Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 06:01:54 GMT</code></pre></div><h1 id=whats-next>What&rsquo;s next?</h1><p>That&rsquo;s it for this article. Hope you enjoyed it. What&rsquo;s next?</p><ul><li>How do we handle sessions? Access tokens?</li><li>How do we handle background processes?</li><li>How do we handle pagination in our list API endpoint?</li></ul><p>Now onward to the next part of our series: <a href=/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/><strong>Part 4: Access Control &#187;</strong></a>.</p><div class=blog-tags><a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
+Date: Sun, <span class=m>31</span> Jan <span class=m>2021</span> 06:01:54 GMT</code></pre></div>
+<h1 id=whats-next>What&rsquo;s next?</h1>
+<p>That&rsquo;s it for this article. Hope you enjoyed it. What&rsquo;s next?</p>
+<ul>
+<li>How do we handle sessions? Access tokens?</li>
+<li>How do we handle background processes?</li>
+<li>How do we handle pagination in our list API endpoint?</li>
+</ul>
+<p>Now onward to the next part of our series: <a href=/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/><strong>Part 4: Access Control &#187;</strong></a>.</p>
+<div class=blog-tags>
+<a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/api/>API</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/database/>Database</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/sql/>SQL</a>&nbsp;
 <a href=https://bartlomiejmika.com/tags/postgres/>Postgres</a>&nbsp;
-<a href=https://bartlomiejmika.com/tags/howto/>HOWTO</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&text=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&description=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section><h4 class=see-also>See also</h4><ul><li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li><li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li><li><a href=/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/>How to Read Data From a SparkFun Weather Shield (DEV-13956) in Golang</a></li></ul></article><ul class="pager blog-pager"><li class=previous><a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 2: Simple Database">&larr; Previous Post</a></li><li class=next><a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 4: Access Control">Next Post &rarr;</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url='https:\/\/bartlomiejmika.com\/post\/2021\/how-to-build-an-api-server-in-go-part-3-postgres-database';};</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://www.facebook.com/bartlomiej-mika title=Facebook><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-facebook fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://reddit.com/u/eurasiasoft title=Reddit><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i><i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=https://mikasoftware.com>Mika Software Corporation</a>
+<a href=https://bartlomiejmika.com/tags/howto/>HOWTO</a>&nbsp;
+</div>
+<hr>
+<section id=social-share>
+<div class="list-inline footer-links">
+<div class=share-box aria-hidden=true>
+<ul class=share>
+<li>
+<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&text=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter"></i>
+</a>
+</li>
+<li>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook"></i>
+</a>
+</li>
+<li>
+<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit"></i>
+</a>
+</li>
+<li>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin"></i>
+</a>
+</li>
+<li>
+<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&title=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on StumbleUpon">
+<i class="fab fa-stumbleupon"></i>
+</a>
+</li>
+<li>
+<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fhow-to-build-an-api-server-in-go-part-3-postgres-database%2f&description=How%20to%20Build%20an%20API%20Server%20in%20Go%20-%20Part%203%3a%20Postgres%20Database" target=_blank title="Share on Pinterest">
+<i class="fab fa-pinterest"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<h4 class=see-also>See also</h4>
+<ul>
+<li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li>
+<li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li>
+<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/>How to Build a gRPC Server for a SparkFun Weather Shield</a></li>
+</ul>
+</article>
+<ul class="pager blog-pager">
+<li class=previous>
+<a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 2: Simple Database">&larr; Previous Post</a>
+</li>
+<li class=next>
+<a href=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/ data-toggle=tooltip data-placement=top title="How to Build an API Server in Go - Part 4: Access Control">Next Post &rarr;</a>
+</li>
+</ul>
+<div class=disqus-comments>
+<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database>comments</span></button>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database'}</script>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<ul class="list-inline text-center footer-links">
+<li>
+<a href=mailto:bart@mikasoftware.com title="Email me">
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://github.com/bartmika title=GitHub>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://reddit.com/u/eurasiasoft title=Reddit>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href title=RSS>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+</ul>
+<p class="credits copyright text-muted">
+<a href=https://mikasoftware.com>Mika Software Corporation</a>
 &nbsp;&bull;&nbsp;&copy;
-2021
+2022
 &nbsp;&bull;&nbsp;
-<a href=https://bartlomiejmika.com>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.80.0</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a></p></div></div></div></footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script><script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script><script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/main.js></script><script src=https://bartlomiejmika.com/js/highlight.min.js></script><script>hljs.initHighlightingOnLoad();</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0");});</script><script>renderMathInElement(document.body);</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script><script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var disqus_shortname='bartlomiej-mika';(function(){var disqus=document.createElement('script');disqus.type='text/javascript';disqus.async=true;disqus.src='//'+disqus_shortname+'.disqus.com/embed.js';(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(disqus);})();$(this).hide();});});</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</p>
+<p class="credits theme-by text-muted">
+<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
+</p>
+</div>
+</div>
+</div>
+</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
+<script src=https://bartlomiejmika.com/js/main.js></script>
+<script src=https://bartlomiejmika.com/js/highlight.min.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
+<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
+<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
+</body>
+</html>
