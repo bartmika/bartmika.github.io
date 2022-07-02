@@ -1,0 +1,469 @@
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>How to Containerize a Golang App With Docker for Development and Production - Bartlomiej Mika</title>
+<meta name=description content="
+Photo by Ian Taylor on Unsplash.
+Do you want to write a Golang app which is containerized with Docker? The purpose of this article is to help you quickly get your Golang App containerized for development (with hot-reload) and production purposes.">
+<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
+<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2022\/how-to-containerize-a-golang-app-with-docker-for-development-and-production\/","name":"How to containerize a golang app with docker for development and production"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"How to Containerize a Golang App With Docker for Development and Production","description":"Photo by Ian Taylor on Unsplash.\nDo you want to write a Golang app which is containerized with Docker? The purpose of this article is to help you quickly get your Golang App containerized for development (with hot-reload) and production purposes.\n","inLanguage":"en","wordCount":1013,"datePublished":"2022-07-02T00:23:03","dateModified":"2022-07-02T00:23:03","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Docker, Golang, DevOps"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2022\/how-to-containerize-a-golang-app-with-docker-for-development-and-production\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
+<meta property="og:title" content="How to Containerize a Golang App With Docker for Development and Production">
+<meta property="og:description" content="
+Photo by Ian Taylor on Unsplash.
+Do you want to write a Golang app which is containerized with Docker? The purpose of this article is to help you quickly get your Golang App containerized for development (with hot-reload) and production purposes.">
+<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta property="og:url" content="https://bartlomiejmika.com/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bartlomiej Mika">
+<meta name=twitter:title content="How to Containerize a Golang App With Docker for Development and …">
+<meta name=twitter:description content="
+Photo by Ian Taylor on Unsplash.
+Do you want to write a Golang app which is containerized with Docker? The purpose of this article is to help you quickly get your Golang App containerized for …">
+<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
+<meta name=twitter:card content="summary">
+<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
+<meta name=generator content="Hugo 0.92.1">
+<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
+<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
+<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+<div class=container-fluid>
+<div class=navbar-header>
+<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<span class=sr-only>Toggle navigation</span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</div>
+<div class="collapse navbar-collapse" id=main-navbar>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<a title=Blog href=/>Blog</a>
+</li>
+<li>
+<a title=Tags href=/tags>Tags</a>
+</li>
+<li>
+<a title=About href=/about/>About</a>
+</li>
+</ul>
+</div>
+<div class=avatar-container>
+<div class=avatar-img-border>
+<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
+<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
+</a>
+</div>
+</div>
+</div>
+</nav>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header class=header-section>
+<div class="intro-header no-img">
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<div class=post-heading>
+<h1>How to Containerize a Golang App With Docker for Development and Production</h1>
+<span class=post-meta>
+<i class="fas fa-calendar"></i>&nbsp;Posted on July 2, 2022
+&nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;5&nbsp;minutes
+&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1013&nbsp;words
+&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class=container role=main>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<article role=main class=blog-post>
+<p><img src=/img/2022/07/ian-taylor-jOqJbvo1P9g-unsplash.jpg alt=Docker>
+Photo by <a href=https://unsplash.com/@carrier_lost>Ian Taylor</a> on <a href=https://unsplash.com/photos/jOqJbvo1P9g>Unsplash</a>.</p>
+<p>Do you want to write a <strong>Golang</strong> app which is containerized with <strong>Docker</strong>? The purpose of this article is to help you quickly get your Golang App containerized for <strong>development</strong> (with hot-reload) and <strong>production</strong> purposes.</p>
+<h2 id=before-you-begin>Before you begin</h2>
+<p>Please install <a href=https://www.docker.com/get-started/>Docker Desktop</a> before proceeding any further. Once installed, start the desktop app and if it works you are ready to begin.</p>
+<p>Also I am assuming you have a <code>$GOPATH</code> directory where you put your Golang source code you are working on. Mien will be: <code>~/go/src/github.com/bartmika</code>.</p>
+<h2 id=-but-if-i-am-unfamiliar-with-docker>&mldr; but if I am unfamiliar with Docker?</h2>
+<p>Don&rsquo;t worry! Docker is a mature toolset which has been around long enough for there to be plenty of great educational resources to help you learn. I recommend the following as it helped me:</p>
+<p>Checkout another article I wrote which will help you learn the basics:</p>
+<ul>
+<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/><strong>Docker Learning Resources for Absolute Beginners Programming With Golang</strong></a></li>
+</ul>
+<h2 id=golang-and-docker-for-development-with-hot-reloading>Golang and Docker for Development with Hot Reloading</h2>
+<p>In this section you&rsquo;ll learn how to setup your Golang app for local development on your machine. The purpose of a development container is to hold all the dependencies (ex: Third-Party Packages like <a href=https://gorm.io/index.html>GORM</a>), infrastructure (ex: Database, Memory Cache, etc) and your code in manner that assist and improves your development.</p>
+<ol>
+<li>
+<p>Create our app repo.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>mkdir mullberry-backend
+<span class=nb>cd</span> mullberry-backend
+go mod init github.com/bartmika/mullberry-backend
+</code></pre></div></li>
+<li>
+<p>Every time you want to add a dependency you would shutdown the current running container and install the dependencies. Install our dependencies as follows:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>go get github.com/labstack/echo/v4
+go get github.com/labstack/echo/v4/middleware@v4.7.2
+</code></pre></div></li>
+<li>
+<p>Hold on, you need to have Golang installed locally? What&rsquo;s the point of the container then? <a href=https://stackoverflow.com/a/71297861>This Stackoverflow</a> user explains it best in a discussion of setting up a <code>Dockerfile</code> for development purposes:</p>
+<blockquote>
+<p>[It] is great for when you want to package your app into a container, ready for deployment. It&rsquo;s not so good for development where you want to have the source outside the container and have the running container react to changes in the source.*</p>
+</blockquote>
+<p>So in essence, if you are OK with this limitation then proceed onwards!</p>
+</li>
+<li>
+<p>Create a <code>main.go</code> file in the root of your project then copy and paste the following into it:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;net/http&#34;</span>
+	<span class=s>&#34;os&#34;</span>
+
+	<span class=s>&#34;github.com/labstack/echo/v4&#34;</span>
+	<span class=s>&#34;github.com/labstack/echo/v4/middleware&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+
+	<span class=nx>e</span> <span class=o>:=</span> <span class=nx>echo</span><span class=p>.</span><span class=nf>New</span><span class=p>()</span>
+
+	<span class=nx>e</span><span class=p>.</span><span class=nf>Use</span><span class=p>(</span><span class=nx>middleware</span><span class=p>.</span><span class=nf>Logger</span><span class=p>())</span>
+	<span class=nx>e</span><span class=p>.</span><span class=nf>Use</span><span class=p>(</span><span class=nx>middleware</span><span class=p>.</span><span class=nf>Recover</span><span class=p>())</span>
+
+	<span class=nx>e</span><span class=p>.</span><span class=nf>GET</span><span class=p>(</span><span class=s>&#34;/&#34;</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>c</span> <span class=nx>echo</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+		<span class=k>return</span> <span class=nx>c</span><span class=p>.</span><span class=nf>HTML</span><span class=p>(</span><span class=nx>http</span><span class=p>.</span><span class=nx>StatusOK</span><span class=p>,</span> <span class=s>&#34;Hello, Docker! &lt;3&#34;</span><span class=p>)</span>
+	<span class=p>})</span>
+
+	<span class=nx>e</span><span class=p>.</span><span class=nf>GET</span><span class=p>(</span><span class=s>&#34;/ping&#34;</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>c</span> <span class=nx>echo</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+		<span class=k>return</span> <span class=nx>c</span><span class=p>.</span><span class=nf>JSON</span><span class=p>(</span><span class=nx>http</span><span class=p>.</span><span class=nx>StatusOK</span><span class=p>,</span> <span class=kd>struct</span><span class=p>{</span> <span class=nx>Status</span> <span class=kt>string</span> <span class=p>}{</span><span class=nx>Status</span><span class=p>:</span> <span class=s>&#34;OK&#34;</span><span class=p>})</span>
+	<span class=p>})</span>
+
+	<span class=nx>httpPort</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Getenv</span><span class=p>(</span><span class=s>&#34;HTTP_PORT&#34;</span><span class=p>)</span>
+	<span class=k>if</span> <span class=nx>httpPort</span> <span class=o>==</span> <span class=s>&#34;&#34;</span> <span class=p>{</span>
+		<span class=nx>httpPort</span> <span class=p>=</span> <span class=s>&#34;8080&#34;</span>
+	<span class=p>}</span>
+
+	<span class=nx>e</span><span class=p>.</span><span class=nx>Logger</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>e</span><span class=p>.</span><span class=nf>Start</span><span class=p>(</span><span class=s>&#34;:&#34;</span> <span class=o>+</span> <span class=nx>httpPort</span><span class=p>))</span>
+<span class=p>}</span>
+</code></pre></div><p>Please note, the above code was copied from <a href=https://docs.docker.com/language/golang/build-images/>&ldquo;Build your Go image&rdquo;</a> via their Docker Documentation.</p>
+</li>
+<li>
+<p>Before creating anything docker related, create a <code>.dockerignore</code> file and copy and paste the following contents:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text>bin
+.dockerignore
+Dockerfile
+docker-compose.yml
+dev.Dockerfile
+dev.docker-compose.yml
+.env
+</code></pre></div><p>What is a <code>.dockerignore</code> file? In essence it&rsquo;s similar to <code>.gitignore</code> in which certain files / folders will not be saved to the docker container and image.</p>
+</li>
+<li>
+<p>Create the <code>dev.Dockerfile</code> file and copy and paste the following contents into it.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=k>FROM</span><span class=s> golang:1.18</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy application data into image</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> . /go/src/bartmika/mullberry-backend<span class=err>
+</span><span class=err></span><span class=k>WORKDIR</span><span class=s> /go/src/bartmika/mullberry-backend</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> go.mod ./<span class=err>
+</span><span class=err></span><span class=k>COPY</span> go.sum ./<span class=err>
+</span><span class=err></span><span class=k>RUN</span> go mod download<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy only `.go` files, if you want all files to be copied then replace `with `COPY . .` for the code below.</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> *.go .<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Install our third-party application for hot-reloading capability.</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> <span class=o>[</span><span class=s2>&#34;go&#34;</span>, <span class=s2>&#34;get&#34;</span>, <span class=s2>&#34;github.com/githubnemo/CompileDaemon&#34;</span><span class=o>]</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> <span class=o>[</span><span class=s2>&#34;go&#34;</span>, <span class=s2>&#34;install&#34;</span>, <span class=s2>&#34;github.com/githubnemo/CompileDaemon&#34;</span><span class=o>]</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=k>ENTRYPOINT</span> CompileDaemon -polling -log-prefix<span class=o>=</span><span class=nb>false</span> -build<span class=o>=</span><span class=s2>&#34;go build .&#34;</span> -command<span class=o>=</span><span class=s2>&#34;./mullberry-backend&#34;</span> -directory<span class=o>=</span><span class=s2>&#34;./&#34;</span><span class=err>
+</span></code></pre></div><p>If you read the comments above, you&rsquo;ll notice the usage of <a href=https://github.com/githubnemo/CompileDaemon><code>CompileDaemon</code></a>, whats that? In essence this is your hot-reloader! It watches your <code>.go</code> files in a directory and invokes <code>go build</code> if a file changed. So for example, you open this project in <code>Atom</code> IDE, make a change to the <code>main.go</code> file and click <em>Save</em>, then <a href=https://github.com/githubnemo/CompileDaemon><code>CompileDaemon</code></a> will rebuild your Go app in the container so you see the latest build!</p>
+</li>
+<li>
+<p>Create our <code>dev.docker-compose.yml</code> file:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;3.6&#39;</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>services</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>api</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class=l>mullberry-backend</span><span class=w>
+</span><span class=w>        </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mullberry-backend</span><span class=w>
+</span><span class=w>        </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>            </span>- <span class=m>8000</span><span class=p>:</span><span class=m>8080</span><span class=w>
+</span><span class=w>        </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span><span class=w>            </span>- <span class=l>./:/go/src/bartmika/mullberry-backend</span><span class=w>
+</span><span class=w>		</span><span class=nt>build</span><span class=p>:</span><span class=w>
+</span><span class=w>	        </span><span class=nt>dockerfile</span><span class=p>:</span><span class=w> </span><span class=l>dev.Dockerfile</span><span class=w>
+</span></code></pre></div><p>Wait, why am I using the <code>dev.</code> prefix to these Docker file names? The reason why is because I want to distinguish the Docker files for either the <strong>production</strong> and <strong>development</strong> purposes.</p>
+</li>
+<li>
+<p>In your terminal, start the development environment with the following command:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>$ docker-compose -f dev.docker-compose.yml up
+</code></pre></div></li>
+<li>
+<p>Confirm we can access it.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>$ curl localhost:8000/
+</code></pre></div></li>
+<li>
+<p>You should see the following output in your terminal:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-text data-lang=text>Hello, Docker! &lt;3   
+</code></pre></div><p>If you see this, congratulations you are ready to start developing! If you&rsquo;d like to learn more, feel free and checkout the <a href=https://docs.docker.com/language/golang/build-images/>&ldquo;Build your Go image&rdquo;</a> article via their Docker Documentation.</p>
+</li>
+</ol>
+<h2 id=golang-and-docker-for-production>Golang and Docker for Production</h2>
+<p>The purpose of this section is to get your Golang app containerized and ready to be run in a production environment.</p>
+<h3 id=option-1-single-stage>Option 1: Single stage</h3>
+<p>The easiest setup is a <em>single stage build</em>. The problem with this build is that your Docker image will be <em>huge</em>!</p>
+<p>To begin, create a <code>Dockerfile</code> in your project root folder and copy and paste the following into it:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=k>FROM</span><span class=s> golang:1.18</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy application data into image</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> . /go/src/bartmika/mullberry-backend<span class=err>
+</span><span class=err></span><span class=k>WORKDIR</span><span class=s> /go/src/bartmika/mullberry-backend</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> go.mod ./<span class=err>
+</span><span class=err></span><span class=k>COPY</span> go.sum ./<span class=err>
+</span><span class=err></span><span class=k>RUN</span> go mod download<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy only `.go` files, if you want all files to be copied then replace `with `COPY . .` for the code below.</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> *.go .<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Build our application.</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> go build -o ./bin/mullberry-backend<span class=err>
+</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=k>EXPOSE</span><span class=s> 8080</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Run the application.</span><span class=err>
+</span><span class=err></span><span class=k>CMD</span> <span class=p>[</span><span class=s2>&#34;./bin/mullberry-backend&#34;</span><span class=p>]</span><span class=err>
+</span></code></pre></div><p>Then run <code>up</code> and you should see it working:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>$ docker-compose up
+</code></pre></div><h3 id=option-2-multi-stage>Option 2: Multi-stage</h3>
+<p>A more complicated setup called a <em>multi-stage build</em> grants of disk space savings. The idea is you want to build your Golang app in one container and then move it into another more minimal container thus leaving behind the disk space heavy container.</p>
+<p>If you want to give this a try, create a <code>Dockerfile</code> in your project root folder and copy and paste the following into it:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-dockerfile data-lang=dockerfile><span class=c>##</span><span class=err>
+</span><span class=err></span><span class=c>## Build</span><span class=err>
+</span><span class=err></span><span class=c>##</span><span class=err>
+</span><span class=err></span><span class=k>FROM</span><span class=s> golang:1.18-alpine as dev-env</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy application data into image</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> . /go/src/bartmika/mullberry-backend<span class=err>
+</span><span class=err></span><span class=k>WORKDIR</span><span class=s> /go/src/bartmika/mullberry-backend</span><span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> go.mod ./<span class=err>
+</span><span class=err></span><span class=k>COPY</span> go.sum ./<span class=err>
+</span><span class=err></span><span class=k>RUN</span> go mod download<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Copy only `.go` files, if you want all files to be copied then replace `with `COPY . .` for the code below.</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> *.go .<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c># Build our application.</span><span class=err>
+</span><span class=err></span><span class=c># RUN go build -o /go/src/bartmika/mullberry-backend/bin/mullberry-backend</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> <span class=nv>CGO_ENABLED</span><span class=o>=</span><span class=m>0</span> <span class=nv>GOOS</span><span class=o>=</span>linux <span class=nv>GOARCH</span><span class=o>=</span>amd64 go build -gcflags <span class=s2>&#34;all=-N -l&#34;</span> -o /server<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=c>##</span><span class=err>
+</span><span class=err></span><span class=c>## Deploy</span><span class=err>
+</span><span class=err></span><span class=c>##</span><span class=err>
+</span><span class=err></span><span class=k>FROM</span><span class=s> alpine:latest</span><span class=err>
+</span><span class=err></span><span class=k>RUN</span> mkdir /data<span class=err>
+</span><span class=err>
+</span><span class=err></span><span class=k>COPY</span> --from<span class=o>=</span>dev-env /server ./<span class=err>
+</span><span class=err></span><span class=k>CMD</span> <span class=p>[</span><span class=s2>&#34;./server&#34;</span><span class=p>]</span><span class=err>
+</span></code></pre></div><p>Then run <code>up</code> and you should see it working:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>$ docker-compose up
+</code></pre></div>
+<div class=blog-tags>
+<a href=https://bartlomiejmika.com/tags/docker/>Docker</a>&nbsp;
+<a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
+<a href=https://bartlomiejmika.com/tags/devops/>DevOps</a>&nbsp;
+</div>
+<hr>
+<section id=social-share>
+<div class="list-inline footer-links">
+<div class=share-box aria-hidden=true>
+<ul class=share>
+<li>
+<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2022%2fhow-to-containerize-a-golang-app-with-docker-for-development-and-production%2f&text=How%20to%20Containerize%20a%20Golang%20App%20With%20Docker%20for%20Development%20and%20Production&via=" target=_blank title="Share on Twitter">
+<i class="fab fa-twitter"></i>
+</a>
+</li>
+<li>
+<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2022%2fhow-to-containerize-a-golang-app-with-docker-for-development-and-production%2f" target=_blank title="Share on Facebook">
+<i class="fab fa-facebook"></i>
+</a>
+</li>
+<li>
+<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2022%2fhow-to-containerize-a-golang-app-with-docker-for-development-and-production%2f&title=How%20to%20Containerize%20a%20Golang%20App%20With%20Docker%20for%20Development%20and%20Production" target=_blank title="Share on Reddit">
+<i class="fab fa-reddit"></i>
+</a>
+</li>
+<li>
+<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2022%2fhow-to-containerize-a-golang-app-with-docker-for-development-and-production%2f&title=How%20to%20Containerize%20a%20Golang%20App%20With%20Docker%20for%20Development%20and%20Production" target=_blank title="Share on LinkedIn">
+<i class="fab fa-linkedin"></i>
+</a>
+</li>
+<li>
+<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2022%2fhow-to-containerize-a-golang-app-with-docker-for-development-and-production%2f&title=How%20to%20Containerize%20a%20Golang%20App%20With%20Docker%20for%20Development%20and%20Production" target=_blank title="Share on StumbleUpon">
+<i class="fab fa-stumbleupon"></i>
+</a>
+</li>
+<li>
+<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2022%2fhow-to-containerize-a-golang-app-with-docker-for-development-and-production%2f&description=How%20to%20Containerize%20a%20Golang%20App%20With%20Docker%20for%20Development%20and%20Production" target=_blank title="Share on Pinterest">
+<i class="fab fa-pinterest"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<h4 class=see-also>See also</h4>
+<ul>
+<li><a href=/post/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/>How to Write a Golang App Remotely on a Raspberry Pi Using Atom</a></li>
+<li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li>
+<li><a href=/post/2021/quickstart-to-building-golang-apps-using-ipfs/>Quickstart to Building Golang Apps using IPFS</a></li>
+<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li>
+<li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li>
+</ul>
+</article>
+<ul class="pager blog-pager">
+<li class=previous>
+<a href=https://bartlomiejmika.com/post/2022/remote-health-data-uploader/ data-toggle=tooltip data-placement=top title="Remote Health Data Uploader">&larr; Previous Post</a>
+</li>
+</ul>
+<div class=disqus-comments>
+<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production>comments</span></button>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production'}</script>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div class=container>
+<div class=row>
+<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<ul class="list-inline text-center footer-links">
+<li>
+<a href=mailto:bart@mikasoftware.com title="Email me">
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://github.com/bartmika title=GitHub>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://reddit.com/u/eurasiasoft title=Reddit>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+<li>
+<a href title=RSS>
+<span class="fa-stack fa-lg">
+<i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+</span>
+</a>
+</li>
+</ul>
+<p class="credits copyright text-muted">
+<a href=https://mikasoftware.com>Mika Software Corporation</a>
+&nbsp;&bull;&nbsp;&copy;
+2022
+&nbsp;&bull;&nbsp;
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
+</p>
+<p class="credits theme-by text-muted">
+<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
+</p>
+</div>
+</div>
+</div>
+</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
+<script src=https://bartlomiejmika.com/js/main.js></script>
+<script src=https://bartlomiejmika.com/js/highlight.min.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
+<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
+<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
+</body>
+</html>
