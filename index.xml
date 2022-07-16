@@ -55,10 +55,7 @@ Open-Source Libraries</description>
       <pubDate>Sat, 02 Jul 2022 00:23:03 -0400</pubDate>
       
       <guid>https://bartlomiejmika.com/posts/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/</guid>
-      <description>&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;https://bartlomiejmika.com/img/2022/07/ian-taylor-jOqJbvo1P9g-unsplash.jpg&#34; alt=&#34;Docker&#34;  /&gt;
-
-Photo by &lt;a href=&#34;https://unsplash.com/@carrier_lost&#34;&gt;Ian Taylor&lt;/a&gt; on &lt;a href=&#34;https://unsplash.com/photos/jOqJbvo1P9g&#34;&gt;Unsplash&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Do you want to write a &lt;strong&gt;Golang&lt;/strong&gt; app which is containerized with &lt;strong&gt;Docker&lt;/strong&gt;? The purpose of this article is to help you quickly get your Golang App containerized for &lt;strong&gt;development&lt;/strong&gt; (with hot-reload) and &lt;strong&gt;production&lt;/strong&gt; purposes.&lt;/p&gt;</description>
+      <description>&lt;p&gt;Do you want to write a &lt;strong&gt;Golang&lt;/strong&gt; app which is containerized with &lt;strong&gt;Docker&lt;/strong&gt;? The purpose of this article is to help you quickly get your Golang App containerized for &lt;strong&gt;development&lt;/strong&gt; (with hot-reload) and &lt;strong&gt;production&lt;/strong&gt; purposes.&lt;/p&gt;</description>
     </item>
     
     <item>
