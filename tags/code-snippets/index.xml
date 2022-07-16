@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Code Snippets on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/code-snippets/</link><description>Recent content in Code Snippets on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Mon, 07 Feb 2022 00:45:18 -0500</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/code-snippets/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Perform RSA Encryption in Javascript (React.js) and Golang</title><link>https://bartlomiejmika.com/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</link><pubDate>Mon, 07 Feb 2022 00:45:18 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2022/02/07/fly-d-4Tu-sIOXeA0-unsplash.jpg" alt="RSA Encryption">&lt;/p>
-&lt;p>Do you want your &lt;strong>React.js (web)&lt;/strong> frontend app talking to your &lt;strong>Golang&lt;/strong> backend server? In this post, I&amp;rsquo;ll explain how I got cross-devices RSA encryption working in JavaScript and Golang.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Code Snippets on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/code-snippets/</link>
+    <description>Recent content in Code Snippets on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Mon, 07 Feb 2022 00:45:18 -0500</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/code-snippets/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to Perform RSA Encryption in Javascript (React.js) and Golang</title>
+      <link>https://bartlomiejmika.com/posts/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</link>
+      <pubDate>Mon, 07 Feb 2022 00:45:18 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</guid>
+      <description>&lt;p&gt;Do you want your &lt;strong&gt;React.js (web)&lt;/strong&gt; frontend app talking to your &lt;strong&gt;Golang&lt;/strong&gt; backend server? In this post, I&amp;rsquo;ll explain how I got cross-devices RSA encryption working in JavaScript and Golang.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

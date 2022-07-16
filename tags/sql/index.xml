@@ -1,3 +1,32 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SQL on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/sql/</link><description>Recent content in SQL on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Fri, 07 May 2021 15:15:47 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/sql/index.xml" rel="self" type="application/rss+xml"/><item><title>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django</title><link>https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</link><pubDate>Fri, 07 May 2021 15:15:47 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>Recently I had to do some advanced filtering using the &lt;a href="https://golang.org/pkg/database/sql/">&lt;code>database/sql&lt;/code>&lt;/a> package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.&lt;/p></description></item><item><title>How to Build an API Server in Go - Part 3: Postgres Database</title><link>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</link><pubDate>Sat, 30 Jan 2021 00:02:30 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>The purpose of this article is to provide instructions on how to setup &lt;em>postgres&lt;/em> database with our application.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>SQL on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/sql/</link>
+    <description>Recent content in SQL on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 07 May 2021 15:15:47 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/sql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</link>
+      <pubDate>Fri, 07 May 2021 15:15:47 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</guid>
+      <description>&lt;p&gt;Recently I had to do some advanced filtering using the &lt;a href=&#34;https://golang.org/pkg/database/sql/&#34;&gt;&lt;code&gt;database/sql&lt;/code&gt;&lt;/a&gt; package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build an API Server in Go - Part 3: Postgres Database</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</link>
+      <pubDate>Sat, 30 Jan 2021 00:02:30 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</guid>
+      <description>&lt;p&gt;The purpose of this article is to provide instructions on how to setup &lt;em&gt;postgres&lt;/em&gt; database with our application.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,34 +1,215 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Golang on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/golang/</link><description>Recent content in Golang on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Sat, 02 Jul 2022 00:23:03 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/golang/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Containerize a Golang App With Docker for Development and Production</title><link>https://bartlomiejmika.com/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/</link><pubDate>Sat, 02 Jul 2022 00:23:03 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2022/07/ian-taylor-jOqJbvo1P9g-unsplash.jpg" alt="Docker">
-Photo by &lt;a href="https://unsplash.com/@carrier_lost">Ian Taylor&lt;/a> on &lt;a href="https://unsplash.com/photos/jOqJbvo1P9g">Unsplash&lt;/a>.&lt;/p>
-&lt;p>Do you want to write a &lt;strong>Golang&lt;/strong> app which is containerized with &lt;strong>Docker&lt;/strong>? The purpose of this article is to help you quickly get your Golang App containerized for &lt;strong>development&lt;/strong> (with hot-reload) and &lt;strong>production&lt;/strong> purposes.&lt;/p></description></item><item><title>How to Write a Golang App Remotely on a Raspberry Pi Using Atom</title><link>https://bartlomiejmika.com/post/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/</link><pubDate>Sun, 13 Mar 2022 00:39:16 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2022/03/13/harrison-broadbent-c3YpscwJb04-unsplash.jpg" alt="Raspberry Pi">
-Photo by &lt;a href="https://unsplash.com/photos/c3YpscwJb04">Harrison Broadbent&lt;/a> on &lt;a href="https://unsplash.com/s/photos/raspberry-pi">Unsplash&lt;/a>.&lt;/p>
-&lt;p>Wouldn&amp;rsquo;t it be cool to remotely program a Golang app on a Raspberry Pi? In this post, I write how to do that if you are using Atom.&lt;/p>
-&lt;h2 id="tldr">&lt;strong>TL;DR;&lt;/strong>&lt;/h2>
-&lt;blockquote>
-&lt;ol>
-&lt;li>Setup a Raspberry Pi Device&lt;/li>
-&lt;li>Setup Golang on that Device&lt;/li>
-&lt;li>Install &lt;code>remote-ftp&lt;/code> on your Machine&lt;/li>
-&lt;li>Connect from your Atom&lt;/li>
-&lt;li>Write a Golang Application&lt;/li>
-&lt;/ol>
-&lt;/blockquote></description></item><item><title>How to Perform RSA Encryption in Javascript (React.js) and Golang</title><link>https://bartlomiejmika.com/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</link><pubDate>Mon, 07 Feb 2022 00:45:18 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2022/02/07/fly-d-4Tu-sIOXeA0-unsplash.jpg" alt="RSA Encryption">&lt;/p>
-&lt;p>Do you want your &lt;strong>React.js (web)&lt;/strong> frontend app talking to your &lt;strong>Golang&lt;/strong> backend server? In this post, I&amp;rsquo;ll explain how I got cross-devices RSA encryption working in JavaScript and Golang.&lt;/p></description></item><item><title>Quickstart to Building Golang Apps using IPFS</title><link>https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs/</link><pubDate>Sun, 26 Sep 2021 23:58:04 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/09-26/ipfs-logo.webp" alt="">&lt;/p>
-&lt;p>Do you want to write a Golang app which will use &lt;a href="http://ipfs.io">IPFS&lt;/a>? The purpose of this post is to get you up and running &lt;a href="http://ipfs.io">IPFS&lt;/a> as quickly as possible so you can see what&amp;rsquo;s involved.&lt;/p></description></item><item><title>Docker Learning Resources for Absolute Beginners Programming With Golang</title><link>https://bartlomiejmika.com/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/</link><pubDate>Sat, 28 Aug 2021 22:50:02 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/08-26/docker.jpeg" alt="">&lt;/p>
-&lt;p>Recently I was working on an &lt;a href="https://github.com/over55/workery-server">open-source project&lt;/a> which I wanted to &lt;em>dockerize&lt;/em> - problem is I had no idea experience. In this post I&amp;rsquo;ll list all the resources I used to learn &lt;a href="https://www.docker.com/">&lt;code>docker&lt;/code>&lt;/a>.&lt;/p></description></item><item><title>How to Build a gRPC Server over tstorage to create tstorage-server</title><link>https://bartlomiejmika.com/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/</link><pubDate>Fri, 09 Jul 2021 23:45:08 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/07-09/harrison-broadbent-nePxBIvqUlU-unsplash.jpg" alt="">&lt;/p>
-&lt;p>Did you just finish reading the &lt;a href="https://grpc.io/docs/languages/go/basics/">&lt;strong>gRPC Basics tutorial&lt;/strong>&lt;/a> and you don&amp;rsquo;t know where to begin with using it? In this post I&amp;rsquo;ll explain how to take a fast time-series database called &lt;a href="https://github.com/nakabonne/tstorage">&lt;code>tstorage&lt;/code>&lt;/a> and write a gRPC server and client with it.&lt;/p></description></item><item><title>How to Build a gRPC Server for a SparkFun Weather Shield</title><link>https://bartlomiejmika.com/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/</link><pubDate>Fri, 09 Jul 2021 18:35:46 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/03-27/grpc.jpg" alt="">&lt;/p>
-&lt;p>We will take what we learned in the &lt;a href="https://bartlomiejmika.com/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/">&lt;em>previous post&lt;/em>&lt;/a> and rewrite it to support interprocess communication of our SparkFun Weather Shield from other applications using the &lt;a href="https://grpc.io">&lt;code>gRPC&lt;/code>&lt;/a>.&lt;/p></description></item><item><title>How to Read Data From a SparkFun Weather Shield (DEV-13956) in Golang</title><link>https://bartlomiejmika.com/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/</link><pubDate>Fri, 09 Jul 2021 13:27:03 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/07-09/red_mulberries_germination_with_sparkfun_weather_shield.jpg" alt="">
-SparkFun Weather Shield monitoring dutifully a red mulberry seedling, the code is powered by what you will learn in this blog post.&lt;/p>
-&lt;p>The purpose of blog post is to explain how to write a Golang application which can poll time-series data from a &lt;a href="https://www.sparkfun.com/products/13956">SparkFun Weather Shield (DEV-13956)&lt;/a>.&lt;/p></description></item><item><title>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django</title><link>https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</link><pubDate>Fri, 07 May 2021 15:15:47 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>Recently I had to do some advanced filtering using the &lt;a href="https://golang.org/pkg/database/sql/">&lt;code>database/sql&lt;/code>&lt;/a> package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.&lt;/p></description></item><item><title>How to Get Go2TV Working With Your Samsung Smart TV</title><link>https://bartlomiejmika.com/post/2021/how-to-get-go2tv-working-with-your-samsung-smart-tv/</link><pubDate>Thu, 15 Apr 2021 00:22:03 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-get-go2tv-working-with-your-samsung-smart-tv/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>A recent reddit post on &lt;a href="https://www.reddit.com/r/golang/">/r/golang&lt;/a> titled &lt;a href="https://www.reddit.com/r/golang/comments/mqu6r0/go2tv_cast_videos_to_upnpdlna_mediarenderers/">Go2TV - cast videos to UPnP/DLNA MediaRenderers
-&lt;/a> caught my interest. In this blog post I&amp;rsquo;ll try to get it working with my Samsung TV.&lt;/p></description></item><item><title>Useful Resources that Helped me Learn Golang over the Years</title><link>https://bartlomiejmika.com/post/2021/useful-resources-that-helped-me-learn-golang-throughout-the-years/</link><pubDate>Thu, 08 Apr 2021 00:29:06 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/useful-resources-that-helped-me-learn-golang-throughout-the-years/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>The purpose of this post is to share my catalogue of useful links I&amp;rsquo;ve gathered in my quest to better understand Golang. If I&amp;rsquo;ve used a webpage to solve a problem, or if I used a link to learn something, then you&amp;rsquo;ll find a link of it here.&lt;/p></description></item><item><title>Example of Writing a Simple gRPC Server in Golang from Scratch</title><link>https://bartlomiejmika.com/post/2021/example-of-writing-a-simple-grpc-server-in-golang-from-scratch/</link><pubDate>Sat, 27 Mar 2021 14:10:03 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/example-of-writing-a-simple-grpc-server-in-golang-from-scratch/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/03-27/grpc.jpg" alt="">&lt;/p>
-&lt;p>How do you write a Golang server using &lt;a href="https://grpc.io/docs/languages/go/quickstart/">&lt;code>gRPC&lt;/code>&lt;/a> from scratch? Heres how to do it.&lt;/p></description></item><item><title>How to Import Datetime Columns from a PgAdmin5 CSV export file in Golang</title><link>https://bartlomiejmika.com/post/2021/how-to-import-datetime-columns-from-a-pgadmin5-csv-export-file-in-golang/</link><pubDate>Wed, 10 Mar 2021 14:34:05 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-import-datetime-columns-from-a-pgadmin5-csv-export-file-in-golang/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>If you&amp;rsquo;ve exported from &lt;a href="https://www.pgadmin.org/">&lt;code>PgAdmin&lt;/code>&lt;/a> a CSV file and tried to import that CSV into your Golang app, you may have noticed there is a challenge with importing the datatime. The purpose of this article contains the code I wrote to help me with this problem.&lt;/p></description></item><item><title>How to Build an API Server in Go - Part 4: Access Control</title><link>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/</link><pubDate>Sun, 31 Jan 2021 00:02:30 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-4-access-control/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>Learn how to protect API endpoints with access and refresh tokens using the third-party &lt;a href="https://github.com/dgrijalva/jwt-go">jwt-go&lt;/a> library.&lt;/p></description></item><item><title>How to Build an API Server in Go - Part 3: Postgres Database</title><link>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</link><pubDate>Sat, 30 Jan 2021 00:02:30 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>The purpose of this article is to provide instructions on how to setup &lt;em>postgres&lt;/em> database with our application.&lt;/p></description></item><item><title>How to Build an API Server in Go - Part 2: Simple Database</title><link>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/</link><pubDate>Fri, 29 Jan 2021 00:02:30 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-2-simple-database/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>The purpose of this post is to learn how our &lt;a href="https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/">basic API server&lt;/a> can read the body of a &lt;em>request&lt;/em>. In addition, we will learn how to use an easy-to-use &lt;em>simple database&lt;/em> for beginners called &lt;a href="https://github.com/sdomino/scribble">scribble&lt;/a>.&lt;/p></description></item><item><title>How to Build an API Server in Go - Part 1: Basic Server</title><link>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/</link><pubDate>Mon, 25 Jan 2021 00:02:30 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-build-an-api-server-in-go-part-1-basic-server/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/common/go-banner.png" alt="">&lt;/p>
-&lt;p>The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the &lt;a href="https://golang.org/pkg/net/http/">&lt;em>net/http&lt;/em> package&lt;/a> and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle &lt;strong>POST&lt;/strong>, &lt;strong>GET&lt;/strong>, &lt;strong>PUT&lt;/strong> and &lt;strong>DELETE&lt;/strong> HTTP requests. This is the first post in a multi-post series.&lt;/p></description></item><item><title>How to Install Hugo From Git Bash for Window Users</title><link>https://bartlomiejmika.com/post/2020/how-to-install-hugo-from-git-bash-for-window-users/</link><pubDate>Wed, 09 Sep 2020 22:11:07 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2020/how-to-install-hugo-from-git-bash-for-window-users/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2020/09/07-hugo-banner.jpeg" alt="">&lt;/p>
-&lt;p>The purpose of this article is to help beginners understand how to do the &lt;a href="https://github.com/gohugoio/hugo#build-and-install-the-binaries-from-source-advanced-install">advanced install&lt;/a> of &lt;a href="https://github.com/gohugoio/hugo">&lt;code>hugo&lt;/code>&lt;/a> static site generator (SSG).&lt;/p></description></item><item><title>How to Start a Personal Blog With Hugo a Static Site Generator Written in Go (Part 1)</title><link>https://bartlomiejmika.com/post/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</link><pubDate>Mon, 07 Sep 2020 15:35:07 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2020/09/07-hugo-banner.jpeg" alt="">&lt;/p>
-&lt;p>The purpose of this article is to help you setup a personal blog as quickly as possible. These are the instructions and notes I&amp;rsquo;ve written down when setting up my site that I&amp;rsquo;d like to share.&lt;/p></description></item><item><title>How to Write a Unit Test for a Remote Procedural Call in Golang</title><link>https://bartlomiejmika.com/post/2020/how-to-write-a-unit-test-for-a-remote-procedural-call-in-golang/</link><pubDate>Thu, 13 Aug 2020 23:14:55 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2020/how-to-write-a-unit-test-for-a-remote-procedural-call-in-golang/</guid><description>&lt;p>Recently I have been learning about &lt;strong>remote procedural calls&lt;/strong> (RPCs) in *&lt;em>Golang&lt;/em> and realized I was unable to find an easy example on how to write a unit test for RPCs. In this post, I&amp;rsquo;ll explain how I figured out a solution.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Golang on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/golang/</link>
+    <description>Recent content in Golang on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 15 Jul 2022 22:25:20 +0000</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to Install Hugo with Docker</title>
+      <link>https://bartlomiejmika.com/posts/2022/how-to-install-hugo-with-docker/</link>
+      <pubDate>Fri, 15 Jul 2022 22:25:20 +0000</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/how-to-install-hugo-with-docker/</guid>
+      <description>&lt;p&gt;The purpose of this article is to help you setup a personal blog as quickly as possible using &lt;a href=&#34;https://gohugo.io/&#34;&gt;&lt;code&gt;hugo&lt;/code&gt;&lt;/a&gt; and &lt;a href=&#34;https://www.docker.com/&#34;&gt;&lt;code&gt;docker&lt;/code&gt;&lt;/a&gt;. These are the instructions and notes I&amp;rsquo;ve written down when setting up my site that I&amp;rsquo;d like to share.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Containerize a Golang App With Docker for Development and Production</title>
+      <link>https://bartlomiejmika.com/posts/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/</link>
+      <pubDate>Sat, 02 Jul 2022 00:23:03 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/</guid>
+      <description>&lt;p&gt;Do you want to write a &lt;strong&gt;Golang&lt;/strong&gt; app which is containerized with &lt;strong&gt;Docker&lt;/strong&gt;? The purpose of this article is to help you quickly get your Golang App containerized for &lt;strong&gt;development&lt;/strong&gt; (with hot-reload) and &lt;strong&gt;production&lt;/strong&gt; purposes.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Write a Golang App Remotely on a Raspberry Pi Using Atom</title>
+      <link>https://bartlomiejmika.com/posts/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/</link>
+      <pubDate>Sun, 13 Mar 2022 00:39:16 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/</guid>
+      <description>&lt;p&gt;Wouldn&amp;rsquo;t it be cool to remotely program a Golang app on a Raspberry Pi? In this post, I write how to do that if you are using Atom.&lt;/p&gt;
+&lt;h2 id=&#34;tldr&#34;&gt;&lt;strong&gt;TL;DR;&lt;/strong&gt;&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;Setup a Raspberry Pi Device&lt;/li&gt;
+&lt;li&gt;Setup Golang on that Device&lt;/li&gt;
+&lt;li&gt;Install &lt;code&gt;remote-ftp&lt;/code&gt; on your Machine&lt;/li&gt;
+&lt;li&gt;Connect from your Atom&lt;/li&gt;
+&lt;li&gt;Write a Golang Application&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Perform RSA Encryption in Javascript (React.js) and Golang</title>
+      <link>https://bartlomiejmika.com/posts/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</link>
+      <pubDate>Mon, 07 Feb 2022 00:45:18 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/</guid>
+      <description>&lt;p&gt;Do you want your &lt;strong&gt;React.js (web)&lt;/strong&gt; frontend app talking to your &lt;strong&gt;Golang&lt;/strong&gt; backend server? In this post, I&amp;rsquo;ll explain how I got cross-devices RSA encryption working in JavaScript and Golang.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Quickstart to Building Golang Apps using IPFS</title>
+      <link>https://bartlomiejmika.com/posts/2021/quickstart-to-building-golang-apps-using-ipfs/</link>
+      <pubDate>Sun, 26 Sep 2021 23:58:04 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/quickstart-to-building-golang-apps-using-ipfs/</guid>
+      <description>&lt;p&gt;Do you want to write a Golang app which will use &lt;a href=&#34;http://ipfs.io&#34;&gt;IPFS&lt;/a&gt;? The purpose of this post is to get you up and running &lt;a href=&#34;http://ipfs.io&#34;&gt;IPFS&lt;/a&gt; as quickly as possible so you can see what&amp;rsquo;s involved.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker Learning Resources for Absolute Beginners Programming With Golang</title>
+      <link>https://bartlomiejmika.com/posts/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/</link>
+      <pubDate>Sat, 28 Aug 2021 22:50:02 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/</guid>
+      <description>&lt;p&gt;Recently I was working on an &lt;a href=&#34;https://github.com/over55/workery-server&#34;&gt;open-source project&lt;/a&gt; which I wanted to &lt;em&gt;dockerize&lt;/em&gt; - problem is I had no idea experience. In this post I&amp;rsquo;ll list all the resources I used to learn &lt;a href=&#34;https://www.docker.com/&#34;&gt;&lt;code&gt;docker&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build a gRPC Server over tstorage to create tstorage-server</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/</link>
+      <pubDate>Fri, 09 Jul 2021 23:45:08 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/</guid>
+      <description>&lt;p&gt;Did you just finish reading the &lt;a href=&#34;https://grpc.io/docs/languages/go/basics/&#34;&gt;&lt;strong&gt;gRPC Basics tutorial&lt;/strong&gt;&lt;/a&gt; and you don&amp;rsquo;t know where to begin with using it? In this post I&amp;rsquo;ll explain how to take a fast time-series database called &lt;a href=&#34;https://github.com/nakabonne/tstorage&#34;&gt;&lt;code&gt;tstorage&lt;/code&gt;&lt;/a&gt; and write a gRPC server and client with it.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build a gRPC Server for a SparkFun Weather Shield</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/</link>
+      <pubDate>Fri, 09 Jul 2021 18:35:46 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-a-grpc-server-for-a-sparkfun-weather-shield/</guid>
+      <description>&lt;p&gt;We will take what we learned in the &lt;a href=&#34;https://bartlomiejmika.com/posts/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/&#34;&gt;&lt;em&gt;previous post&lt;/em&gt;&lt;/a&gt; and rewrite it to support interprocess communication of our SparkFun Weather Shield from other applications using the &lt;a href=&#34;https://grpc.io&#34;&gt;&lt;code&gt;gRPC&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Read Data From a SparkFun Weather Shield (DEV-13956) in Golang</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/</link>
+      <pubDate>Fri, 09 Jul 2021 13:27:03 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-read-data-from-a-sparkfun-weather-shield-dev-13956-in-golang/</guid>
+      <description>&lt;p&gt;SparkFun Weather Shield monitoring dutifully a red mulberry seedling, the code is powered by what you will learn in this blog post.&lt;/p&gt;
+&lt;p&gt;The purpose of blog post is to explain how to write a Golang application which can poll time-series data from a &lt;a href=&#34;https://www.sparkfun.com/products/13956&#34;&gt;SparkFun Weather Shield (DEV-13956)&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to do Dynamic Filtering in Golang using only the Database SQL Package like in Django</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</link>
+      <pubDate>Fri, 07 May 2021 15:15:47 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-do-dynamic-filtering-in-golang-using-only-the-database-sql-package-like-in-django/</guid>
+      <description>&lt;p&gt;Recently I had to do some advanced filtering using the &lt;a href=&#34;https://golang.org/pkg/database/sql/&#34;&gt;&lt;code&gt;database/sql&lt;/code&gt;&lt;/a&gt; package found in the Golang standard library. In this article I share how I handled advanced filtering. If you are a beginner in Golang wanting to learn how to improve your understanding of querying the database, this article is for you.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Get Go2TV Working With Your Samsung Smart TV</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-get-go2tv-working-with-your-samsung-smart-tv/</link>
+      <pubDate>Thu, 15 Apr 2021 00:22:03 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-get-go2tv-working-with-your-samsung-smart-tv/</guid>
+      <description>&lt;p&gt;A recent reddit post on &lt;a href=&#34;https://www.reddit.com/r/golang/&#34;&gt;/r/golang&lt;/a&gt; titled &lt;a href=&#34;https://www.reddit.com/r/golang/comments/mqu6r0/go2tv_cast_videos_to_upnpdlna_mediarenderers/&#34;&gt;Go2TV - cast videos to UPnP/DLNA MediaRenderers
+&lt;/a&gt; caught my interest. In this blog post I&amp;rsquo;ll try to get it working with my Samsung TV.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Useful Resources that Helped me Learn Golang over the Years</title>
+      <link>https://bartlomiejmika.com/posts/2021/useful-resources-that-helped-me-learn-golang-throughout-the-years/</link>
+      <pubDate>Thu, 08 Apr 2021 00:29:06 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/useful-resources-that-helped-me-learn-golang-throughout-the-years/</guid>
+      <description>&lt;p&gt;The purpose of this post is to share my catalogue of useful links I&amp;rsquo;ve gathered in my quest to better understand Golang. If I&amp;rsquo;ve used a webpage to solve a problem, or if I used a link to learn something, then you&amp;rsquo;ll find a link of it here.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Example of Writing a Simple gRPC Server in Golang from Scratch</title>
+      <link>https://bartlomiejmika.com/posts/2021/example-of-writing-a-simple-grpc-server-in-golang-from-scratch/</link>
+      <pubDate>Sat, 27 Mar 2021 14:10:03 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/example-of-writing-a-simple-grpc-server-in-golang-from-scratch/</guid>
+      <description>&lt;p&gt;How do you write a Golang server using &lt;a href=&#34;https://grpc.io/docs/languages/go/quickstart/&#34;&gt;&lt;code&gt;gRPC&lt;/code&gt;&lt;/a&gt; from scratch? Heres how to do it.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Import Datetime Columns from a PgAdmin5 CSV export file in Golang</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-import-datetime-columns-from-a-pgadmin5-csv-export-file-in-golang/</link>
+      <pubDate>Wed, 10 Mar 2021 14:34:05 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-import-datetime-columns-from-a-pgadmin5-csv-export-file-in-golang/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;ve exported from &lt;a href=&#34;https://www.pgadmin.org/&#34;&gt;&lt;code&gt;PgAdmin&lt;/code&gt;&lt;/a&gt; a CSV file and tried to import that CSV into your Golang app, you may have noticed there is a challenge with importing the datatime. The purpose of this article contains the code I wrote to help me with this problem.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build an API Server in Go - Part 4: Access Control</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-4-access-control/</link>
+      <pubDate>Sun, 31 Jan 2021 00:02:30 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-4-access-control/</guid>
+      <description>&lt;p&gt;Learn how to protect API endpoints with access and refresh tokens using the third-party &lt;a href=&#34;https://github.com/dgrijalva/jwt-go&#34;&gt;jwt-go&lt;/a&gt; library.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build an API Server in Go - Part 3: Postgres Database</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</link>
+      <pubDate>Sat, 30 Jan 2021 00:02:30 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-3-postgres-database/</guid>
+      <description>&lt;p&gt;The purpose of this article is to provide instructions on how to setup &lt;em&gt;postgres&lt;/em&gt; database with our application.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build an API Server in Go - Part 2: Simple Database</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-2-simple-database/</link>
+      <pubDate>Fri, 29 Jan 2021 00:02:30 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-2-simple-database/</guid>
+      <description>&lt;p&gt;The purpose of this post is to learn how our &lt;a href=&#34;https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-1-basic-server/&#34;&gt;basic API server&lt;/a&gt; can read the body of a &lt;em&gt;request&lt;/em&gt;. In addition, we will learn how to use an easy-to-use &lt;em&gt;simple database&lt;/em&gt; for beginners called &lt;a href=&#34;https://github.com/sdomino/scribble&#34;&gt;scribble&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Build an API Server in Go - Part 1: Basic Server</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-1-basic-server/</link>
+      <pubDate>Mon, 25 Jan 2021 00:02:30 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-build-an-api-server-in-go-part-1-basic-server/</guid>
+      <description>&lt;p&gt;The purpose of this post is to provide instructions on how to setup a simple RESTful API server, in Golang, using only the &lt;a href=&#34;https://golang.org/pkg/net/http/&#34;&gt;&lt;em&gt;net/http&lt;/em&gt; package&lt;/a&gt; and not any other third-party web framework. You will learn how to create REST endpoints within your project that can handle &lt;strong&gt;POST&lt;/strong&gt;, &lt;strong&gt;GET&lt;/strong&gt;, &lt;strong&gt;PUT&lt;/strong&gt; and &lt;strong&gt;DELETE&lt;/strong&gt; HTTP requests. This is the first post in a multi-post series.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Install Hugo From Git Bash for Window Users</title>
+      <link>https://bartlomiejmika.com/posts/2020/how-to-install-hugo-from-git-bash-for-window-users/</link>
+      <pubDate>Wed, 09 Sep 2020 22:11:07 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2020/how-to-install-hugo-from-git-bash-for-window-users/</guid>
+      <description>&lt;p&gt;The purpose of this article is to help beginners understand how to do the &lt;a href=&#34;https://github.com/gohugoio/hugo#build-and-install-the-binaries-from-source-advanced-install&#34;&gt;advanced install&lt;/a&gt; of &lt;a href=&#34;https://github.com/gohugoio/hugo&#34;&gt;&lt;code&gt;hugo&lt;/code&gt;&lt;/a&gt; static site generator (SSG).&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Start a Personal Blog With Hugo a Static Site Generator Written in Go (Part 1)</title>
+      <link>https://bartlomiejmika.com/posts/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</link>
+      <pubDate>Mon, 07 Sep 2020 15:35:07 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</guid>
+      <description>&lt;p&gt;The purpose of this article is to help you setup a personal blog as quickly as possible. These are the instructions and notes I&amp;rsquo;ve written down when setting up my site that I&amp;rsquo;d like to share.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Write a Unit Test for a Remote Procedural Call in Golang</title>
+      <link>https://bartlomiejmika.com/posts/2020/how-to-write-a-unit-test-for-a-remote-procedural-call-in-golang/</link>
+      <pubDate>Thu, 13 Aug 2020 23:14:55 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2020/how-to-write-a-unit-test-for-a-remote-procedural-call-in-golang/</guid>
+      <description>&lt;p&gt;Recently I have been learning about &lt;strong&gt;remote procedural calls&lt;/strong&gt; (RPCs) in *&lt;em&gt;Golang&lt;/em&gt; and realized I was unable to find an easy example on how to write a unit test for RPCs. In this post, I&amp;rsquo;ll explain how I figured out a solution.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

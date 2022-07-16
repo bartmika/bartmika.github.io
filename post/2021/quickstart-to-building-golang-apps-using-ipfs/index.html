@@ -1,641 +1,284 @@
-<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Quickstart to Building Golang Apps using IPFS - Bartlomiej Mika</title>
-<meta name=description content="
-Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what&rsquo;s involved.">
-<meta name=author content="Mika Software Corporation"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script>
-<script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/quickstart-to-building-golang-apps-using-ipfs\/","name":"Quickstart to building golang apps using IP fs"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"Quickstart to Building Golang Apps using IPFS","description":"Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what\u0026rsquo;s involved.\n","inLanguage":"en","wordCount":1265,"datePublished":"2021-09-26T23:58:04","dateModified":"2021-09-26T23:58:04","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, IPFS"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/quickstart-to-building-golang-apps-using-ipfs\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script>
-<meta property="og:title" content="Quickstart to Building Golang Apps using IPFS">
-<meta property="og:description" content="
-Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what&rsquo;s involved.">
-<meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
-<meta property="og:url" content="https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs/">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Bartlomiej Mika">
-<meta name=twitter:title content="Quickstart to Building Golang Apps using IPFS">
-<meta name=twitter:description content="
-Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what&rsquo;s involved.">
-<meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg">
-<meta name=twitter:card content="summary">
-<link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon>
-<meta name=generator content="Hugo 0.92.1">
-<link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css integrity=sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y crossorigin=anonymous>
-<link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous>
-<link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
-<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
-<link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-172742383-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-<div class=container-fluid>
-<div class=navbar-header>
-<button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
+<!doctype html><html lang=en itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><title>Quickstart to Building Golang Apps using IPFS - Bartlomiej Mika</title><meta name=description content="
+Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what&rsquo;s involved."><meta name=author content="bartlomiejmika.com"><script type=application/ld+json>{"@context":"http://schema.org","@type":"WebSite","name":"Bartlomiej Mika","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Organization","name":"","url":"https:\/\/bartlomiejmika.com"}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https:\/\/bartlomiejmika.com","name":"home"}},{"@type":"ListItem","position":3,"item":{"@id":"https:\/\/bartlomiejmika.com\/post\/2021\/quickstart-to-building-golang-apps-using-ipfs\/","name":"Quickstart to building golang apps using IP fs"}}]}</script><script type=application/ld+json>{"@context":"http://schema.org","@type":"Article","author":{"name":"Bartlomiej Mika"},"headline":"Quickstart to Building Golang Apps using IPFS","description":"\nDo you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what\u0026rsquo;s involved.\n","inLanguage":"en","wordCount":1265,"datePublished":"2021-09-26T23:58:04","dateModified":"2021-09-26T23:58:04","image":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","keywords":["Golang, IPFS"],"mainEntityOfPage":"https:\/\/bartlomiejmika.com\/post\/2021\/quickstart-to-building-golang-apps-using-ipfs\/","publisher":{"@type":"Organization","name":"https:\/\/bartlomiejmika.com","logo":{"@type":"ImageObject","url":"https:\/\/bartlomiejmika.com\/img\/bartlomiej_mika.jpeg","height":60,"width":60}}}</script><meta property="og:title" content="Quickstart to Building Golang Apps using IPFS"><meta property="og:description" content="
+Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what&rsquo;s involved."><meta property="og:image" content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta property="og:url" content="https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs/"><meta property="og:type" content="website"><meta property="og:site_name" content="Bartlomiej Mika"><meta name=twitter:title content="Quickstart to Building Golang Apps using IPFS"><meta name=twitter:description content="
+Do you want to write a Golang app which will use IPFS? The purpose of this post is to get you up and running IPFS as quickly as possible so you can see what&rsquo;s involved."><meta name=twitter:image content="https://bartlomiejmika.com/img/bartlomiej_mika.jpeg"><meta name=twitter:card content="summary_large_image"><link href=https://bartlomiejmika.com/img/favicon.ico rel=icon type=image/x-icon><meta name=generator content="Hugo 0.102.0-DEV"><link rel=alternate href=https://bartlomiejmika.com/index.xml type=application/rss+xml title="Bartlomiej Mika"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X crossorigin=anonymous><link rel=stylesheet href=https://use.fontawesome.com/releases/v5.5.0/css/all.css integrity=sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU crossorigin=anonymous><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css integrity=sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u crossorigin=anonymous><link rel=stylesheet href=https://bartlomiejmika.com/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><link rel=stylesheet href=https://bartlomiejmika.com/css/highlight.min.css><link rel=stylesheet href=https://bartlomiejmika.com/css/codeblock.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css integrity=sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css integrity=sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R crossorigin=anonymous><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-172742383-1","auto"),ga("send","pageview"))</script></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class=container-fluid><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=#main-navbar>
 <span class=sr-only>Toggle navigation</span>
 <span class=icon-bar></span>
 <span class=icon-bar></span>
-<span class=icon-bar></span>
-</button>
-<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a>
-</div>
-<div class="collapse navbar-collapse" id=main-navbar>
-<ul class="nav navbar-nav navbar-right">
-<li>
-<a title=Blog href=/>Blog</a>
-</li>
-<li>
-<a title=Tags href=/tags>Tags</a>
-</li>
-<li>
-<a title=About href=/about/>About</a>
-</li>
-</ul>
-</div>
-<div class=avatar-container>
-<div class=avatar-img-border>
-<a title="Bartlomiej Mika" href=https://bartlomiejmika.com>
-<img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika">
-</a>
-</div>
-</div>
-</div>
-</nav>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span class=icon-bar></span></button>
+<a class=navbar-brand href=https://bartlomiejmika.com>Bartlomiej Mika</a></div><div class="collapse navbar-collapse" id=main-navbar><ul class="nav navbar-nav navbar-right"><li><a title=Blog href=/>Blog</a></li><li><a title=Tags href=/tags>Tags</a></li><li><a title=About href=/about/>About</a></li></ul></div><div class=avatar-container><div class=avatar-img-border><a title="Bartlomiej Mika" href=https://bartlomiejmika.com><img class=avatar-img src=https://bartlomiejmika.com/img/bartlomiej_mika.jpeg alt="Bartlomiej Mika"></a></div></div></div></nav><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header class=header-section>
-<div class="intro-header no-img">
-<div class=container>
-<div class=row>
-<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-<div class=post-heading>
-<h1>Quickstart to Building Golang Apps using IPFS</h1>
-<span class=post-meta>
-<i class="fas fa-calendar"></i>&nbsp;Posted on September 26, 2021
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header class=header-section><div class="intro-header no-img"><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class=post-heading><h1>Quickstart to Building Golang Apps using IPFS</h1><span class=post-meta><i class="fas fa-calendar"></i>&nbsp;Posted on September 26, 2021
 &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;6&nbsp;minutes
-&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1265&nbsp;words
-&nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Bartlomiej Mika
-</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</header>
-<div class=container role=main>
-<div class=row>
-<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-<article role=main class=blog-post>
-<p><img src=/img/2021/09-26/ipfs-logo.webp alt></p>
-<p>Do you want to write a Golang app which will use <a href=http://ipfs.io>IPFS</a>? The purpose of this post is to get you up and running <a href=http://ipfs.io>IPFS</a> as quickly as possible so you can see what&rsquo;s involved.</p>
-<h2 id=context>Context</h2>
-<p>I wanted to experiment with <a href=http://ipfs.io/>IPFS</a> with Golang but had difficulty with the <a href=https://github.com/ipfs/go-ipfs/tree/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library>provided tutorial</a>. I spent some time researching and wrote some useful code samples you can use to quickly get started running IPFS for programming.</p>
-<h2 id=before-you-begin>Before you begin</h2>
-<p>Please install <a href=http://docs.ipfs.ioinstall/ipfs-desktop/>IPFS Desktop</a> before proceeding with the code samples. Once installed, start the desktop app and if it connects you are ready to begin.</p>
-<p>Also I am assuming you have a home directory where you put your Golang source code you are working on. Mien will be: <code>~/go/src/github.com/bartmika</code>.</p>
-<h2 id=ipfs-quickstart>IPFS Quickstart</h2>
-<p>The purpose of the four examples are as follows:</p>
-<ul>
-<li>
-<p><strong>Example 1</strong> - Demonstrate how to send and receive simple text data over the IPFS network using your local IPFS daemon.</p>
-</li>
-<li>
-<p><strong>Example 2</strong> - Demonstrate how to send and receive JSON encoded data over the IPFS network using your local IPFS daemon.</p>
-</li>
-<li>
-<p><strong>Example 3</strong> - Demonstrate how I setup the <a href=https://github.com/ipfs/go-ipfs/tree/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library>Go IPFS as a Library tutorial</a>.</p>
-</li>
-<li>
-<p><strong>Example 4</strong> - Demonstrate how to use publish/subscription code via IPFS network. This functionality is typically found in chatting apps for example.</p>
-</li>
-</ul>
-<h3 id=example-1-send-and-receive-text-data-over-ipfs>Example 1: Send and Receive Text Data over IPFS</h3>
-<ol>
-<li>
-<p>Create your project in your home <code>golang</code> directory.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>cd</span> ~/go/src/github.com/bartmika
-mkdir ipfs-example1
-<span class=nb>cd</span> ipfs-example1
-</code></pre></div></li>
-<li>
-<p>Initialize our <code>golang</code> project:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go mod init github.com/bartmika/ipfs-example1
-</code></pre></div></li>
-<li>
-<p>Get our only dependency.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go get github.com/ipfs/go-ipfs-api
-</code></pre></div></li>
-<li>
-<p>When the dependencies update, your <code>go.mod</code> file should look something like this:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>module</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>bartmika</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>example1</span>
-
-<span class=k>go</span> <span class=mf>1.16</span>
-
-<span class=nx>require</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>api</span> <span class=nx>v0</span><span class=mf>.2.0</span>
-</code></pre></div></li>
-<li>
-<p>Create a <code>main.go</code> file and populate it with the following code sample:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-
-<span class=kn>import</span> <span class=p>(</span>
-	<span class=c1>// &#34;context&#34;
-</span><span class=c1></span>	<span class=s>&#34;bytes&#34;</span>
-	<span class=s>&#34;fmt&#34;</span>
-	<span class=s>&#34;os&#34;</span>
-	<span class=s>&#34;strings&#34;</span>
-
-	<span class=nx>shell</span> <span class=s>&#34;github.com/ipfs/go-ipfs-api&#34;</span>
-<span class=p>)</span>
-
-<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Connect to your local IPFS deamon running in the background.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=c1>// Where your local node is running on localhost:5001
-</span><span class=c1></span>	<span class=nx>sh</span> <span class=o>:=</span> <span class=nx>shell</span><span class=p>.</span><span class=nf>NewShell</span><span class=p>(</span><span class=s>&#34;localhost:5001&#34;</span><span class=p>)</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Add the file to IPFS
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>cid</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=s>&#34;hello world!&#34;</span><span class=p>))</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-	<span class=p>}</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;added %s\n&#34;</span><span class=p>,</span> <span class=nx>cid</span><span class=p>)</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Get the data from IPFS and save the contents to a file.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>out</span> <span class=o>:=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s.txt&#34;</span><span class=p>,</span> <span class=nx>cid</span><span class=p>)</span>
-	<span class=nx>err</span> <span class=p>=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>cid</span><span class=p>,</span> <span class=nx>out</span><span class=p>)</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-	<span class=p>}</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Get the data from IPFS and output the contents into `string` format
-</span><span class=c1></span>	<span class=c1>// and output into the terminal console.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>data</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Cat</span><span class=p>(</span><span class=nx>cid</span><span class=p>)</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-	<span class=p>}</span>
-
-	<span class=c1>// ...so we convert it to a string by passing it through
-</span><span class=c1></span>	<span class=c1>// a buffer first. A &#39;costly&#39; but useful process.
-</span><span class=c1></span>	<span class=c1>// https://golangcode.com/convert-io-readcloser-to-a-string/
-</span><span class=c1></span>	<span class=nx>buf</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>bytes</span><span class=p>.</span><span class=nx>Buffer</span><span class=p>)</span>
-	<span class=nx>buf</span><span class=p>.</span><span class=nf>ReadFrom</span><span class=p>(</span><span class=nx>data</span><span class=p>)</span>
-	<span class=nx>newStr</span> <span class=o>:=</span> <span class=nx>buf</span><span class=p>.</span><span class=nf>String</span><span class=p>()</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;data %s&#34;</span><span class=p>,</span> <span class=nx>newStr</span><span class=p>)</span>
-
-<span class=p>}</span>
-</code></pre></div></li>
-<li>
-<p>Run the code.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go run main.go
-</code></pre></div></li>
-<li>
-<p>You should see code being outputted. Spend time and review the code. Where do you go next? Read the <a href=https://github.com/ipfs/go-ipfs-api>API documentation</a>.</p>
-</li>
-</ol>
-<h3 id=example-2-send-and-receive-json-data-over-ipfs>Example 2. Send and Receive JSON Data over IPFS</h3>
-<ol>
-<li>
-<p>Create your project in your home <code>golang</code> directory.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>cd</span> ~/go/src/github.com/bartmika
-mkdir ipfs-example2
-<span class=nb>cd</span> ipfs-example2
-</code></pre></div></li>
-<li>
-<p>Initialize our <code>golang</code> project:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go mod init github.com/bartmika/ipfs-example2
-</code></pre></div></li>
-<li>
-<p>Get our only dependency.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go get github.com/ipfs/go-ipfs-api
-</code></pre></div></li>
-<li>
-<p>Create a <code>main.go</code> file and populate it with the following code sample:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-
-<span class=kn>import</span> <span class=p>(</span>
-	<span class=c1>// &#34;context&#34;
-</span><span class=c1></span>	<span class=s>&#34;bytes&#34;</span>
-	<span class=s>&#34;encoding/json&#34;</span>
-	<span class=s>&#34;fmt&#34;</span>
-	<span class=s>&#34;os&#34;</span>
-
-	<span class=nx>shell</span> <span class=s>&#34;github.com/ipfs/go-ipfs-api&#34;</span>
-<span class=p>)</span>
-
-<span class=c1>// TimeSeriesDatum is the structure used to store a single time series data
-</span><span class=c1></span><span class=kd>type</span> <span class=nx>TimeSeriesDatum</span> <span class=kd>struct</span> <span class=p>{</span>
-	<span class=nx>Id</span>    <span class=kt>uint64</span> <span class=s>`json:&#34;id&#34;`</span>
-	<span class=nx>Value</span> <span class=kt>uint64</span> <span class=s>`json:&#34;value&#34;`</span>
-<span class=p>}</span>
-
-<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Connect to your local IPFS deamon running in the background.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=c1>// Where your local node is running on localhost:5001
-</span><span class=c1></span>	<span class=nx>sh</span> <span class=o>:=</span> <span class=nx>shell</span><span class=p>.</span><span class=nf>NewShell</span><span class=p>(</span><span class=s>&#34;localhost:5001&#34;</span><span class=p>)</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Add the file to IPFS
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>tsd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>TimeSeriesDatum</span><span class=p>{</span>
-		<span class=nx>Id</span><span class=p>:</span>    <span class=mi>1</span><span class=p>,</span>
-		<span class=nx>Value</span><span class=p>:</span> <span class=mi>123</span><span class=p>,</span>
-	<span class=p>}</span>
-	<span class=nx>tsdBin</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>Marshal</span><span class=p>(</span><span class=nx>tsd</span><span class=p>)</span>
-	<span class=nx>reader</span> <span class=o>:=</span> <span class=nx>bytes</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=nx>tsdBin</span><span class=p>)</span>
-
-	<span class=nx>cid</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>reader</span><span class=p>)</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-	<span class=p>}</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;added %s\n&#34;</span><span class=p>,</span> <span class=nx>cid</span><span class=p>)</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Get the data from IPFS and output the contents into `struct` format.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>data</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Cat</span><span class=p>(</span><span class=nx>cid</span><span class=p>)</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-	<span class=p>}</span>
-
-	<span class=c1>// ...so we convert it to a string by passing it through
-</span><span class=c1></span>	<span class=c1>// a buffer first. A &#39;costly&#39; but useful process.
-</span><span class=c1></span>	<span class=c1>// https://golangcode.com/convert-io-readcloser-to-a-string/
-</span><span class=c1></span>	<span class=nx>buf</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>bytes</span><span class=p>.</span><span class=nx>Buffer</span><span class=p>)</span>
-	<span class=nx>buf</span><span class=p>.</span><span class=nf>ReadFrom</span><span class=p>(</span><span class=nx>data</span><span class=p>)</span>
-	<span class=nx>newStr</span> <span class=o>:=</span> <span class=nx>buf</span><span class=p>.</span><span class=nf>String</span><span class=p>()</span>
-
-	<span class=nx>res</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>TimeSeriesDatum</span><span class=p>{}</span>
-	<span class=nx>json</span><span class=p>.</span><span class=nf>Unmarshal</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=nx>newStr</span><span class=p>),</span> <span class=o>&amp;</span><span class=nx>res</span><span class=p>)</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>res</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></div></li>
-<li>
-<p>Run the code.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go run main.go
-</code></pre></div></li>
-<li>
-<p>You should see code being outputted. Spend time and review the code. Where do you go next? Read the <a href=https://github.com/ipfs/go-ipfs-api>API documentation</a>.</p>
-</li>
-</ol>
-<h3 id=example-3-go-ipfs-as-a-library>Example 3. Go IPFS as a Library</h3>
-<p>I tried the running the <a href=https://github.com/ipfs/go-ipfs/tree/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library>Use go-ipfs as a library to spawn a node and add a file code</a> (on Sept 25th 2021) and ran into various errors. After some researching here is what I did to get it working locally.</p>
-<ol>
-<li>
-<p>Create your project in your home <code>golang</code> directory.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>cd</span> ~/go/src/github.com/bartmika
-mkdir ipfs-example3
-<span class=nb>cd</span> ipfs-example3
-</code></pre></div></li>
-<li>
-<p>Initialize our <code>golang</code> project:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go mod init github.com/bartmika/ipfs-example3
-</code></pre></div></li>
-<li>
-<p>I ran into various problems with the go packages and finally go it working with the following contents. Update your <code>go.mod</code> file to look as follows:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>module</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>bartmika</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>example</span>
-
-<span class=k>go</span> <span class=mf>1.16</span>
-
-<span class=nf>require</span> <span class=p>(</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span> <span class=nx>v0</span><span class=mf>.7.0</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>config</span> <span class=nx>v0</span><span class=mf>.13.0</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>files</span> <span class=nx>v0</span><span class=mf>.0.8</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=kd>interface</span><span class=o>-</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>core</span> <span class=nx>v0</span><span class=mf>.4.0</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>libp2p</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>libp2p</span><span class=o>-</span><span class=nx>core</span> <span class=nx>v0</span><span class=mf>.6.1</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>libp2p</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>libp2p</span><span class=o>-</span><span class=nx>peerstore</span> <span class=nx>v0</span><span class=mf>.2.6</span>
-    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>multiformats</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>multiaddr</span> <span class=nx>v0</span><span class=mf>.3.1</span>
-<span class=p>)</span>
-</code></pre></div></li>
-<li>
-<p>Create a <code>main.go</code> file and populate it with the <a href=https://github.com/ipfs/go-ipfs/blob/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library/main.go>code found here</a>.</p>
-</li>
-<li>
-<p>Run the code.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go run main.go
-</code></pre></div></li>
-<li>
-<p>You should see code being outputted. Spend time and review the code.</p>
-</li>
-</ol>
-<h3 id=example-4-publish-and-subscribe-to-text-data-over-ipfs>Example 4: Publish and Subscribe to Text Data over IPFS</h3>
-<ol>
-<li>
-<p>Create your project in your home <code>golang</code> directory.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>cd</span> ~/go/src/github.com/bartmika
-mkdir ipfs-example4
-<span class=nb>cd</span> ipfs-example4
-</code></pre></div></li>
-<li>
-<p>Initialize our <code>golang</code> project:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go mod init github.com/bartmika/ipfs-example4
-</code></pre></div></li>
-<li>
-<p>Get our only dependency.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go get github.com/ipfs/go-ipfs-api
-</code></pre></div></li>
-<li>
-<p>When the dependencies update, your <code>go.mod</code> file should look something like this:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=nx>module</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>bartmika</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>example4</span>
-
-<span class=k>go</span> <span class=mf>1.16</span>
-
-<span class=nx>require</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>api</span> <span class=nx>v0</span><span class=mf>.2.0</span>
-</code></pre></div></li>
-<li>
-<p>Create a <code>main.go</code> file and populate it with the following code sample:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-
-<span class=kn>import</span> <span class=p>(</span>
-	<span class=s>&#34;log&#34;</span>
-	<span class=s>&#34;time&#34;</span>
-	<span class=c1>// &#34;context&#34;
-</span><span class=c1></span>
-	<span class=nx>shell</span> <span class=s>&#34;github.com/ipfs/go-ipfs-api&#34;</span>
-<span class=p>)</span>
-
-<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Before we begin...
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=c1>// Make sure that `pubsub` is enabled by either running:
-</span><span class=c1></span>	<span class=c1>// (a) ipfs daemon --enable-pubsub-experiment
-</span><span class=c1></span>	<span class=c1>// (b) Or enable `pubsub` in your `IPFS Desktop`
-</span><span class=c1></span>
-	<span class=c1>// (c) Create a topic we are to follow.
-</span><span class=c1></span>	<span class=nx>topic</span> <span class=o>:=</span> <span class=s>&#34;some-test-topic-created-by-bart&#34;</span> <span class=c1>// You can change to your own value!
-</span><span class=c1></span>
-	<span class=c1>// (d) Please read more about `pubsub` via the following links:
-</span><span class=c1></span>	<span class=c1>// - Take a look at pubsub on IPFS via http://blog.ipfs.io.ipns.localhost:8080/25-pubsub/
-</span><span class=c1></span>
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Connect to your local IPFS deamon running in the background.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=c1>// Where your local node is running on localhost:5001
-</span><span class=c1></span>	<span class=nx>sh</span> <span class=o>:=</span> <span class=nx>shell</span><span class=p>.</span><span class=nf>NewShell</span><span class=p>(</span><span class=s>&#34;localhost:5001&#34;</span><span class=p>)</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Subscribe to a `topic` in IPFS.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>subscription</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>PubSubSubscribe</span><span class=p>(</span><span class=nx>topic</span><span class=p>)</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
-	<span class=p>}</span>
-	<span class=k>defer</span> <span class=nx>subscription</span><span class=p>.</span><span class=nf>Cancel</span><span class=p>()</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Publish to the `topic` through IPFS.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
-		<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Publisher is about to begin...&#34;</span><span class=p>)</span>
-		<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>2</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
-
-		<span class=nx>sh</span><span class=p>.</span><span class=nf>PubSubPublish</span><span class=p>(</span><span class=nx>topic</span><span class=p>,</span> <span class=s>&#34;Hello world!!&#34;</span><span class=p>)</span>
-		<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Finished publishing.&#34;</span><span class=p>)</span>
-	<span class=p>}()</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Wait to receive published data in the topic.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Waiting to receive data from publisher on topic...&#34;</span><span class=p>)</span>
-	<span class=nx>res</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>subscription</span><span class=p>.</span><span class=nf>Next</span><span class=p>()</span>
-	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
-	<span class=p>}</span>
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Successfully received from published!&#34;</span><span class=p>)</span>
-
-	<span class=c1>//
-</span><span class=c1></span>	<span class=c1>// Decode the string data.
-</span><span class=c1></span>	<span class=c1>//
-</span><span class=c1></span>
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received From:&#34;</span><span class=p>,</span> <span class=nx>res</span><span class=p>.</span><span class=nx>From</span><span class=p>)</span>
-	<span class=nx>str</span> <span class=o>:=</span> <span class=nb>string</span><span class=p>(</span><span class=nx>res</span><span class=p>.</span><span class=nx>Data</span><span class=p>)</span>
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received Data:&#34;</span><span class=p>,</span> <span class=nx>str</span><span class=p>)</span>
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received Seqno:&#34;</span><span class=p>,</span> <span class=nx>res</span><span class=p>.</span><span class=nx>Seqno</span><span class=p>)</span>
-	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received TopicIDs:&#34;</span><span class=p>,</span> <span class=nx>res</span><span class=p>.</span><span class=nx>TopicIDs</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></div></li>
-<li>
-<p>Run the code.</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>go run main.go
-</code></pre></div></li>
-<li>
-<p>You should see code being outputted. Spend time and review the code. Where do you go next? Read the <a href=https://github.com/ipfs/go-ipfs-api>API documentation</a>.</p>
-</li>
-</ol>
-<h2 id=misc-how-do-i-delete-all-my-pinned-items>Misc: How do I delete all my pinned items?</h2>
-<p>You may have noticed in your <strong>IPFS Desktop</strong> that the <strong>Settings</strong> navigation has a <strong>PINNING SERVICES</strong> section saying we have some pinned items. We can remove these items.</p>
-<p>Simply run the following code in your terminal:</p>
-<div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>ipfs pin ls --type recursive <span class=p>|</span> cut -d<span class=s1>&#39; &#39;</span> -f1 <span class=p>|</span> xargs -n1 ipfs pin rm
-</code></pre></div><p>Special thanks to <a href=https://stackoverflow.com/users/2609013/jclay>jclay</a> via <a href=https://stackoverflow.com/a/43118023>stackoverflow</a> for providing the above commands.</p>
-<div class=blog-tags>
-<a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
-<a href=https://bartlomiejmika.com/tags/ipfs/>IPFS</a>&nbsp;
-</div>
-<hr>
-<section id=social-share>
-<div class="list-inline footer-links">
-<div class=share-box aria-hidden=true>
-<ul class=share>
-<li>
-<a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&text=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS&via=" target=_blank title="Share on Twitter">
-<i class="fab fa-twitter"></i>
-</a>
-</li>
-<li>
-<a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f" target=_blank title="Share on Facebook">
-<i class="fab fa-facebook"></i>
-</a>
-</li>
-<li>
-<a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&title=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on Reddit">
-<i class="fab fa-reddit"></i>
-</a>
-</li>
-<li>
-<a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&title=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on LinkedIn">
-<i class="fab fa-linkedin"></i>
-</a>
-</li>
-<li>
-<a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&title=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on StumbleUpon">
-<i class="fab fa-stumbleupon"></i>
-</a>
-</li>
-<li>
-<a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&description=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on Pinterest">
-<i class="fab fa-pinterest"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</section>
-<h4 class=see-also>See also</h4>
-<ul>
-<li><a href=/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/>How to Containerize a Golang App With Docker for Development and Production</a></li>
-<li><a href=/post/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/>How to Write a Golang App Remotely on a Raspberry Pi Using Atom</a></li>
-<li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li>
-<li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li>
-<li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li>
-</ul>
-</article>
-<ul class="pager blog-pager">
-<li class=previous>
-<a href=https://bartlomiejmika.com/post/2021/learn-crystal-lang-with-practice-problems-part-1-variables-math-and-strings/ data-toggle=tooltip data-placement=top title="Learn Crystal with Practice Problems - Part 1: Variables Math and Strings">&larr; Previous Post</a>
-</li>
-<li class=next>
-<a href=https://bartlomiejmika.com/post/2021/red-mulberry-growlog-3/ data-toggle=tooltip data-placement=top title="Red Mulberry Growlog #3">Next Post &rarr;</a>
-</li>
-</ul>
-<div class=disqus-comments>
-<button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs>comments</span></button>
-<div id=disqus_thread></div>
-<script type=text/javascript>var disqus_config=function(){this.page.url='https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs'}</script>
-</div>
-</div>
-</div>
-</div>
-<footer>
-<div class=container>
-<div class=row>
-<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-<ul class="list-inline text-center footer-links">
-<li>
-<a href=mailto:bart@mikasoftware.com title="Email me">
-<span class="fa-stack fa-lg">
-<i class="fas fa-circle fa-stack-2x"></i>
-<i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
-</span>
-</a>
-</li>
-<li>
-<a href=https://www.facebook.com/bartlomiej-mika title=Facebook>
-<span class="fa-stack fa-lg">
-<i class="fas fa-circle fa-stack-2x"></i>
-<i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
-</span>
-</a>
-</li>
-<li>
-<a href=https://github.com/bartmika title=GitHub>
-<span class="fa-stack fa-lg">
-<i class="fas fa-circle fa-stack-2x"></i>
-<i class="fab fa-github fa-stack-1x fa-inverse"></i>
-</span>
-</a>
-</li>
-<li>
-<a href=https://reddit.com/u/eurasiasoft title=Reddit>
-<span class="fa-stack fa-lg">
-<i class="fas fa-circle fa-stack-2x"></i>
-<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i>
-</span>
-</a>
-</li>
-<li>
-<a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn>
-<span class="fa-stack fa-lg">
-<i class="fas fa-circle fa-stack-2x"></i>
-<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
-</span>
-</a>
-</li>
-<li>
-<a href title=RSS>
-<span class="fa-stack fa-lg">
-<i class="fas fa-circle fa-stack-2x"></i>
-<i class="fas fa-rss fa-stack-1x fa-inverse"></i>
-</span>
-</a>
-</li>
-</ul>
-<p class="credits copyright text-muted">
-<a href=https://mikasoftware.com>Mika Software Corporation</a>
+&nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1265&nbsp;words</span></div></div></div></div></div></header><div class=container role=main><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role=main class=blog-post><p><img src=/img/2021/09-26/ipfs-logo.webp alt></p><p>Do you want to write a Golang app which will use <a href=http://ipfs.io>IPFS</a>? The purpose of this post is to get you up and running <a href=http://ipfs.io>IPFS</a> as quickly as possible so you can see what&rsquo;s involved.</p><h2 id=context>Context</h2><p>I wanted to experiment with <a href=http://ipfs.io/>IPFS</a> with Golang but had difficulty with the <a href=https://github.com/ipfs/go-ipfs/tree/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library>provided tutorial</a>. I spent some time researching and wrote some useful code samples you can use to quickly get started running IPFS for programming.</p><h2 id=before-you-begin>Before you begin</h2><p>Please install <a href=http://docs.ipfs.ioinstall/ipfs-desktop/>IPFS Desktop</a> before proceeding with the code samples. Once installed, start the desktop app and if it connects you are ready to begin.</p><p>Also I am assuming you have a home directory where you put your Golang source code you are working on. Mien will be: <code>~/go/src/github.com/bartmika</code>.</p><h2 id=ipfs-quickstart>IPFS Quickstart</h2><p>The purpose of the four examples are as follows:</p><ul><li><p><strong>Example 1</strong> - Demonstrate how to send and receive simple text data over the IPFS network using your local IPFS daemon.</p></li><li><p><strong>Example 2</strong> - Demonstrate how to send and receive JSON encoded data over the IPFS network using your local IPFS daemon.</p></li><li><p><strong>Example 3</strong> - Demonstrate how I setup the <a href=https://github.com/ipfs/go-ipfs/tree/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library>Go IPFS as a Library tutorial</a>.</p></li><li><p><strong>Example 4</strong> - Demonstrate how to use publish/subscription code via IPFS network. This functionality is typically found in chatting apps for example.</p></li></ul><h3 id=example-1-send-and-receive-text-data-over-ipfs>Example 1: Send and Receive Text Data over IPFS</h3><ol><li><p>Create your project in your home <code>golang</code> directory.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>cd</span> ~/go/src/github.com/bartmika
+</span></span><span class=line><span class=cl>mkdir ipfs-example1
+</span></span><span class=line><span class=cl><span class=nb>cd</span> ipfs-example1
+</span></span></code></pre></div></li><li><p>Initialize our <code>golang</code> project:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go mod init github.com/bartmika/ipfs-example1
+</span></span></code></pre></div></li><li><p>Get our only dependency.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go get github.com/ipfs/go-ipfs-api
+</span></span></code></pre></div></li><li><p>When the dependencies update, your <code>go.mod</code> file should look something like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>module</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>bartmika</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>example1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>go</span> <span class=mf>1.16</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>require</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>api</span> <span class=nx>v0</span><span class=mf>.2.0</span>
+</span></span></code></pre></div></li><li><p>Create a <code>main.go</code> file and populate it with the following code sample:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// &#34;context&#34;
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=s>&#34;bytes&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;os&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;strings&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>shell</span> <span class=s>&#34;github.com/ipfs/go-ipfs-api&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Connect to your local IPFS deamon running in the background.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Where your local node is running on localhost:5001
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>sh</span> <span class=o>:=</span> <span class=nx>shell</span><span class=p>.</span><span class=nf>NewShell</span><span class=p>(</span><span class=s>&#34;localhost:5001&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Add the file to IPFS
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>cid</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=s>&#34;hello world!&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;added %s\n&#34;</span><span class=p>,</span> <span class=nx>cid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Get the data from IPFS and save the contents to a file.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>out</span> <span class=o>:=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;%s.txt&#34;</span><span class=p>,</span> <span class=nx>cid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>err</span> <span class=p>=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>cid</span><span class=p>,</span> <span class=nx>out</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Get the data from IPFS and output the contents into `string` format
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// and output into the terminal console.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>data</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Cat</span><span class=p>(</span><span class=nx>cid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// ...so we convert it to a string by passing it through
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// a buffer first. A &#39;costly&#39; but useful process.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// https://golangcode.com/convert-io-readcloser-to-a-string/
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>buf</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>bytes</span><span class=p>.</span><span class=nx>Buffer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>buf</span><span class=p>.</span><span class=nf>ReadFrom</span><span class=p>(</span><span class=nx>data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>newStr</span> <span class=o>:=</span> <span class=nx>buf</span><span class=p>.</span><span class=nf>String</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;data %s&#34;</span><span class=p>,</span> <span class=nx>newStr</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div></li><li><p>Run the code.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go run main.go
+</span></span></code></pre></div></li><li><p>You should see code being outputted. Spend time and review the code. Where do you go next? Read the <a href=https://github.com/ipfs/go-ipfs-api>API documentation</a>.</p></li></ol><h3 id=example-2-send-and-receive-json-data-over-ipfs>Example 2. Send and Receive JSON Data over IPFS</h3><ol><li><p>Create your project in your home <code>golang</code> directory.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>cd</span> ~/go/src/github.com/bartmika
+</span></span><span class=line><span class=cl>mkdir ipfs-example2
+</span></span><span class=line><span class=cl><span class=nb>cd</span> ipfs-example2
+</span></span></code></pre></div></li><li><p>Initialize our <code>golang</code> project:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go mod init github.com/bartmika/ipfs-example2
+</span></span></code></pre></div></li><li><p>Get our only dependency.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go get github.com/ipfs/go-ipfs-api
+</span></span></code></pre></div></li><li><p>Create a <code>main.go</code> file and populate it with the following code sample:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// &#34;context&#34;
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=s>&#34;bytes&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;encoding/json&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;os&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>shell</span> <span class=s>&#34;github.com/ipfs/go-ipfs-api&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// TimeSeriesDatum is the structure used to store a single time series data
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>TimeSeriesDatum</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Id</span>    <span class=kt>uint64</span> <span class=s>`json:&#34;id&#34;`</span>
+</span></span><span class=line><span class=cl>	<span class=nx>Value</span> <span class=kt>uint64</span> <span class=s>`json:&#34;value&#34;`</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Connect to your local IPFS deamon running in the background.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Where your local node is running on localhost:5001
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>sh</span> <span class=o>:=</span> <span class=nx>shell</span><span class=p>.</span><span class=nf>NewShell</span><span class=p>(</span><span class=s>&#34;localhost:5001&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Add the file to IPFS
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>tsd</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>TimeSeriesDatum</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Id</span><span class=p>:</span>    <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Value</span><span class=p>:</span> <span class=mi>123</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>tsdBin</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nf>Marshal</span><span class=p>(</span><span class=nx>tsd</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>reader</span> <span class=o>:=</span> <span class=nx>bytes</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=nx>tsdBin</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>cid</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>reader</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;added %s\n&#34;</span><span class=p>,</span> <span class=nx>cid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Get the data from IPFS and output the contents into `struct` format.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>data</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>Cat</span><span class=p>(</span><span class=nx>cid</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;error: %s&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// ...so we convert it to a string by passing it through
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// a buffer first. A &#39;costly&#39; but useful process.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// https://golangcode.com/convert-io-readcloser-to-a-string/
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>buf</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>bytes</span><span class=p>.</span><span class=nx>Buffer</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>buf</span><span class=p>.</span><span class=nf>ReadFrom</span><span class=p>(</span><span class=nx>data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>newStr</span> <span class=o>:=</span> <span class=nx>buf</span><span class=p>.</span><span class=nf>String</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nx>res</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>TimeSeriesDatum</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>json</span><span class=p>.</span><span class=nf>Unmarshal</span><span class=p>([]</span><span class=nb>byte</span><span class=p>(</span><span class=nx>newStr</span><span class=p>),</span> <span class=o>&amp;</span><span class=nx>res</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>res</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div></li><li><p>Run the code.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go run main.go
+</span></span></code></pre></div></li><li><p>You should see code being outputted. Spend time and review the code. Where do you go next? Read the <a href=https://github.com/ipfs/go-ipfs-api>API documentation</a>.</p></li></ol><h3 id=example-3-go-ipfs-as-a-library>Example 3. Go IPFS as a Library</h3><p>I tried the running the <a href=https://github.com/ipfs/go-ipfs/tree/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library>Use go-ipfs as a library to spawn a node and add a file code</a> (on Sept 25th 2021) and ran into various errors. After some researching here is what I did to get it working locally.</p><ol><li><p>Create your project in your home <code>golang</code> directory.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>cd</span> ~/go/src/github.com/bartmika
+</span></span><span class=line><span class=cl>mkdir ipfs-example3
+</span></span><span class=line><span class=cl><span class=nb>cd</span> ipfs-example3
+</span></span></code></pre></div></li><li><p>Initialize our <code>golang</code> project:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go mod init github.com/bartmika/ipfs-example3
+</span></span></code></pre></div></li><li><p>I ran into various problems with the go packages and finally go it working with the following contents. Update your <code>go.mod</code> file to look as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>module</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>bartmika</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>example</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>go</span> <span class=mf>1.16</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nf>require</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span> <span class=nx>v0</span><span class=mf>.7.0</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>config</span> <span class=nx>v0</span><span class=mf>.13.0</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>files</span> <span class=nx>v0</span><span class=mf>.0.8</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=kd>interface</span><span class=o>-</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>core</span> <span class=nx>v0</span><span class=mf>.4.0</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>libp2p</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>libp2p</span><span class=o>-</span><span class=nx>core</span> <span class=nx>v0</span><span class=mf>.6.1</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>libp2p</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>libp2p</span><span class=o>-</span><span class=nx>peerstore</span> <span class=nx>v0</span><span class=mf>.2.6</span>
+</span></span><span class=line><span class=cl>    <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>multiformats</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>multiaddr</span> <span class=nx>v0</span><span class=mf>.3.1</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></div></li><li><p>Create a <code>main.go</code> file and populate it with the <a href=https://github.com/ipfs/go-ipfs/blob/c9cc09f6f7ebe95da69be6fa92c88e4cb245d90b/docs/examples/go-ipfs-as-a-library/main.go>code found here</a>.</p></li><li><p>Run the code.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go run main.go
+</span></span></code></pre></div></li><li><p>You should see code being outputted. Spend time and review the code.</p></li></ol><h3 id=example-4-publish-and-subscribe-to-text-data-over-ipfs>Example 4: Publish and Subscribe to Text Data over IPFS</h3><ol><li><p>Create your project in your home <code>golang</code> directory.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>cd</span> ~/go/src/github.com/bartmika
+</span></span><span class=line><span class=cl>mkdir ipfs-example4
+</span></span><span class=line><span class=cl><span class=nb>cd</span> ipfs-example4
+</span></span></code></pre></div></li><li><p>Initialize our <code>golang</code> project:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go mod init github.com/bartmika/ipfs-example4
+</span></span></code></pre></div></li><li><p>Get our only dependency.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go get github.com/ipfs/go-ipfs-api
+</span></span></code></pre></div></li><li><p>When the dependencies update, your <code>go.mod</code> file should look something like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>module</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>bartmika</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>example4</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>go</span> <span class=mf>1.16</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>require</span> <span class=nx>github</span><span class=p>.</span><span class=nx>com</span><span class=o>/</span><span class=nx>ipfs</span><span class=o>/</span><span class=k>go</span><span class=o>-</span><span class=nx>ipfs</span><span class=o>-</span><span class=nx>api</span> <span class=nx>v0</span><span class=mf>.2.0</span>
+</span></span></code></pre></div></li><li><p>Create a <code>main.go</code> file and populate it with the following code sample:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;log&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=s>&#34;time&#34;</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// &#34;context&#34;
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>shell</span> <span class=s>&#34;github.com/ipfs/go-ipfs-api&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Before we begin...
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Make sure that `pubsub` is enabled by either running:
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// (a) ipfs daemon --enable-pubsub-experiment
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// (b) Or enable `pubsub` in your `IPFS Desktop`
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>// (c) Create a topic we are to follow.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>topic</span> <span class=o>:=</span> <span class=s>&#34;some-test-topic-created-by-bart&#34;</span> <span class=c1>// You can change to your own value!
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>// (d) Please read more about `pubsub` via the following links:
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// - Take a look at pubsub on IPFS via http://blog.ipfs.io.ipns.localhost:8080/25-pubsub/
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Connect to your local IPFS deamon running in the background.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Where your local node is running on localhost:5001
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>sh</span> <span class=o>:=</span> <span class=nx>shell</span><span class=p>.</span><span class=nf>NewShell</span><span class=p>(</span><span class=s>&#34;localhost:5001&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Subscribe to a `topic` in IPFS.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>subscription</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>sh</span><span class=p>.</span><span class=nf>PubSubSubscribe</span><span class=p>(</span><span class=nx>topic</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>defer</span> <span class=nx>subscription</span><span class=p>.</span><span class=nf>Cancel</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Publish to the `topic` through IPFS.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=k>go</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Publisher is about to begin...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>time</span><span class=p>.</span><span class=nf>Sleep</span><span class=p>(</span><span class=mi>2</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=nx>sh</span><span class=p>.</span><span class=nf>PubSubPublish</span><span class=p>(</span><span class=nx>topic</span><span class=p>,</span> <span class=s>&#34;Hello world!!&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Finished publishing.&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Wait to receive published data in the topic.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Waiting to receive data from publisher on topic...&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>res</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>subscription</span><span class=p>.</span><span class=nf>Next</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Successfully received from published!&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>// Decode the string data.
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=c1>//
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received From:&#34;</span><span class=p>,</span> <span class=nx>res</span><span class=p>.</span><span class=nx>From</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>str</span> <span class=o>:=</span> <span class=nb>string</span><span class=p>(</span><span class=nx>res</span><span class=p>.</span><span class=nx>Data</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received Data:&#34;</span><span class=p>,</span> <span class=nx>str</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received Seqno:&#34;</span><span class=p>,</span> <span class=nx>res</span><span class=p>.</span><span class=nx>Seqno</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=nx>log</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Received TopicIDs:&#34;</span><span class=p>,</span> <span class=nx>res</span><span class=p>.</span><span class=nx>TopicIDs</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div></li><li><p>Run the code.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>go run main.go
+</span></span></code></pre></div></li><li><p>You should see code being outputted. Spend time and review the code. Where do you go next? Read the <a href=https://github.com/ipfs/go-ipfs-api>API documentation</a>.</p></li></ol><h2 id=misc-how-do-i-delete-all-my-pinned-items>Misc: How do I delete all my pinned items?</h2><p>You may have noticed in your <strong>IPFS Desktop</strong> that the <strong>Settings</strong> navigation has a <strong>PINNING SERVICES</strong> section saying we have some pinned items. We can remove these items.</p><p>Simply run the following code in your terminal:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ipfs pin ls --type recursive <span class=p>|</span> cut -d<span class=s1>&#39; &#39;</span> -f1 <span class=p>|</span> xargs -n1 ipfs pin rm
+</span></span></code></pre></div><p>Special thanks to <a href=https://stackoverflow.com/users/2609013/jclay>jclay</a> via <a href=https://stackoverflow.com/a/43118023>stackoverflow</a> for providing the above commands.</p><div class=blog-tags><a href=https://bartlomiejmika.com/tags/golang/>Golang</a>&nbsp;
+<a href=https://bartlomiejmika.com/tags/ipfs/>IPFS</a>&nbsp;</div><hr><section id=social-share><div class="list-inline footer-links"><div class=share-box aria-hidden=true><ul class=share><li><a href="//twitter.com/share?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&text=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS&via=" target=_blank title="Share on Twitter"><i class="fab fa-twitter"></i></a></li><li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f" target=_blank title="Share on Facebook"><i class="fab fa-facebook"></i></a></li><li><a href="//reddit.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&title=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on Reddit"><i class="fab fa-reddit"></i></a></li><li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&title=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a></li><li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&title=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on StumbleUpon"><i class="fab fa-stumbleupon"></i></a></li><li><a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fbartlomiejmika.com%2fpost%2f2021%2fquickstart-to-building-golang-apps-using-ipfs%2f&description=Quickstart%20to%20Building%20Golang%20Apps%20using%20IPFS" target=_blank title="Share on Pinterest"><i class="fab fa-pinterest"></i></a></li></ul></div></div></section><h4 class=see-also>See also</h4><ul><li><a href=/post/2022/how-to-containerize-a-golang-app-with-docker-for-development-and-production/>How to Containerize a Golang App With Docker for Development and Production</a></li><li><a href=/post/2022/how-to-write-a-golang-app-remotely-on-a-raspberry-pi-using-atom/>How to Write a Golang App Remotely on a Raspberry Pi Using Atom</a></li><li><a href=/post/2022/how-to-perform-rsa-encryption-in-javascript-and-golang/>How to Perform RSA Encryption in Javascript (React.js) and Golang</a></li><li><a href=/post/2021/docker-learning-resources-for-absolute-beginners-programming-with-golang/>Docker Learning Resources for Absolute Beginners Programming With Golang</a></li><li><a href=/post/2021/how-to-build-a-grpc-server-over-tstorage-to-create-tstorage-server/>How to Build a gRPC Server over tstorage to create tstorage-server</a></li></ul></article><ul class="pager blog-pager"><li class=previous><a href=https://bartlomiejmika.com/post/2021/learn-crystal-lang-with-practice-problems-part-1-variables-math-and-strings/ data-toggle=tooltip data-placement=top title="Learn Crystal with Practice Problems - Part 1: Variables Math and Strings">&larr; Previous Post</a></li><li class=next><a href=https://bartlomiejmika.com/post/2021/red-mulberry-growlog-3/ data-toggle=tooltip data-placement=top title="Red Mulberry Growlog #3">Next Post &rarr;</a></li></ul><div class=disqus-comments><button id=show-comments class="btn btn-default" type=button>Show <span class=disqus-comment-count data-disqus-url=https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs>comments</span></button><div id=disqus_thread></div><script type=text/javascript>var disqus_config=function(){this.page.url="https://bartlomiejmika.com/post/2021/quickstart-to-building-golang-apps-using-ipfs"}</script></div></div></div></div><footer><div class=container><div class=row><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><ul class="list-inline text-center footer-links"><li><a href=mailto:bart@mikasoftware.com title="Email me"><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://www.facebook.com/bartlomiej-mika title=Facebook><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-facebook fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://github.com/bartmika title=GitHub><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-github fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://reddit.com/u/eurasiasoft title=Reddit><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-reddit-alien fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://linkedin.com/in/bartlomiej-mika-a9a5683b title=LinkedIn><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-linkedin fa-stack-1x fa-inverse"></i></span></a></li><li><a href=https://discord.gg/bmika#5075 title=Discord><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fab fa-discord fa-stack-1x fa-inverse"></i></span></a></li><li><a href title=RSS><span class="fa-stack fa-lg"><i class="fas fa-circle fa-stack-2x"></i>
+<i class="fas fa-rss fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="credits copyright text-muted"><a href=https://bartlomiejmika.com>bartlomiejmika.com</a>
 &nbsp;&bull;&nbsp;&copy;
 2022
 &nbsp;&bull;&nbsp;
-<a href=https://bartlomiejmika.com>Bartlomiej Mika</a>
-</p>
-<p class="credits theme-by text-muted">
-<a href=https://gohugo.io>Hugo v0.92.1</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a>
-</p>
-</div>
-</div>
-</div>
-</footer><script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js integrity=sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx crossorigin=anonymous></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js integrity=sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe crossorigin=anonymous></script>
-<script src=https://code.jquery.com/jquery-1.12.4.min.js integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin=anonymous></script>
+<a href=https://bartlomiejmika.com>Bartlomiej Mika</a></p><p class="credits theme-by text-muted"><a href=https://gohugo.io>Hugo v0.102.0-DEV</a> powered &nbsp;&bull;&nbsp; Theme <a href=https://github.com/halogenica/beautifulhugo>Beautiful Hugo</a> adapted from <a href=https://deanattali.com/beautiful-jekyll/>Beautiful Jekyll</a></p></div></div></div></footer><script src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin=anonymous></script>
+<script src=https://code.jquery.com/jquery-3.5.1.slim.min.js integrity=sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj crossorigin=anonymous></script>
 <script src=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js integrity=sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa crossorigin=anonymous></script>
 <script src=https://bartlomiejmika.com/js/main.js></script>
 <script src=https://bartlomiejmika.com/js/highlight.min.js></script>
-<script>hljs.initHighlightingOnLoad()</script>
-<script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
+<script>hljs.initHighlightingOnLoad()</script><script>$(document).ready(function(){$("pre.chroma").css("padding","0")})</script><script>renderMathInElement(document.body)</script><script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js integrity=sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js integrity=sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q crossorigin=anonymous></script><script src=https://bartlomiejmika.com/js/load-photoswipe.js></script>
-<script type=text/javascript>$(function(){$('#show-comments').on('click',function(){var a='bartlomiej-mika';(function(){var b=document.createElement('script');b.type='text/javascript',b.async=!0,b.src='//'+a+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(b)})(),$(this).hide()})})</script>
-<script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script>
-</body>
-</html>
+<script type=text/javascript>$(function(){$("#show-comments").on("click",function(){var e="bartlomiej-mika";(function(){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src="//"+e+".disqus.com/embed.js",(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(t)})(),$(this).hide()})})</script><script id=dsq-count-scr src=//bartlomiej-mika.disqus.com/count.js async></script></body></html>

@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>WordPress on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/wordpress/</link><description>Recent content in WordPress on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Wed, 31 Mar 2021 21:48:15 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/wordpress/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Setup Wordpress for Ubuntu 20 LTS on a Digitalocean Droplet</title><link>https://bartlomiejmika.com/post/2021/how-to-setup-wordpress-for-ubuntu-20-lts-on-a-digitalocean-droplet/</link><pubDate>Wed, 31 Mar 2021 21:48:15 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/how-to-setup-wordpress-for-ubuntu-20-lts-on-a-digitalocean-droplet/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/03-31/wordpress.jpeg" alt="">&lt;/p>
-&lt;p>Do you setup WordPress sites often and you want instructions you can repeat quickly? The purpose of this HOWTO is to provide a series of copy and paste commands you can use over and over to setup WordPress on an Ubuntu 20 LTS server using DigitalOcean for your future clients.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>WordPress on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/wordpress/</link>
+    <description>Recent content in WordPress on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 31 Mar 2021 21:48:15 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/wordpress/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to Setup Wordpress for Ubuntu 20 LTS on a Digitalocean Droplet</title>
+      <link>https://bartlomiejmika.com/posts/2021/how-to-setup-wordpress-for-ubuntu-20-lts-on-a-digitalocean-droplet/</link>
+      <pubDate>Wed, 31 Mar 2021 21:48:15 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/how-to-setup-wordpress-for-ubuntu-20-lts-on-a-digitalocean-droplet/</guid>
+      <description>&lt;p&gt;Do you setup WordPress sites often and you want instructions you can repeat quickly? The purpose of this HOWTO is to provide a series of copy and paste commands you can use over and over to setup WordPress on an Ubuntu 20 LTS server using DigitalOcean for your future clients.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

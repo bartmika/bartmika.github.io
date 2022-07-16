@@ -1,3 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Static Site Generator on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/static-site-generator/</link><description>Recent content in Static Site Generator on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Wed, 09 Sep 2020 22:11:07 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/static-site-generator/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Install Hugo From Git Bash for Window Users</title><link>https://bartlomiejmika.com/post/2020/how-to-install-hugo-from-git-bash-for-window-users/</link><pubDate>Wed, 09 Sep 2020 22:11:07 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2020/how-to-install-hugo-from-git-bash-for-window-users/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2020/09/07-hugo-banner.jpeg" alt="">&lt;/p>
-&lt;p>The purpose of this article is to help beginners understand how to do the &lt;a href="https://github.com/gohugoio/hugo#build-and-install-the-binaries-from-source-advanced-install">advanced install&lt;/a> of &lt;a href="https://github.com/gohugoio/hugo">&lt;code>hugo&lt;/code>&lt;/a> static site generator (SSG).&lt;/p></description></item><item><title>How to Start a Personal Blog With Hugo a Static Site Generator Written in Go (Part 1)</title><link>https://bartlomiejmika.com/post/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</link><pubDate>Mon, 07 Sep 2020 15:35:07 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2020/09/07-hugo-banner.jpeg" alt="">&lt;/p>
-&lt;p>The purpose of this article is to help you setup a personal blog as quickly as possible. These are the instructions and notes I&amp;rsquo;ve written down when setting up my site that I&amp;rsquo;d like to share.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Static Site Generator on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/static-site-generator/</link>
+    <description>Recent content in Static Site Generator on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 15 Jul 2022 22:25:20 +0000</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/static-site-generator/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to Install Hugo with Docker</title>
+      <link>https://bartlomiejmika.com/posts/2022/how-to-install-hugo-with-docker/</link>
+      <pubDate>Fri, 15 Jul 2022 22:25:20 +0000</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/how-to-install-hugo-with-docker/</guid>
+      <description>&lt;p&gt;The purpose of this article is to help you setup a personal blog as quickly as possible using &lt;a href=&#34;https://gohugo.io/&#34;&gt;&lt;code&gt;hugo&lt;/code&gt;&lt;/a&gt; and &lt;a href=&#34;https://www.docker.com/&#34;&gt;&lt;code&gt;docker&lt;/code&gt;&lt;/a&gt;. These are the instructions and notes I&amp;rsquo;ve written down when setting up my site that I&amp;rsquo;d like to share.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Install Hugo From Git Bash for Window Users</title>
+      <link>https://bartlomiejmika.com/posts/2020/how-to-install-hugo-from-git-bash-for-window-users/</link>
+      <pubDate>Wed, 09 Sep 2020 22:11:07 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2020/how-to-install-hugo-from-git-bash-for-window-users/</guid>
+      <description>&lt;p&gt;The purpose of this article is to help beginners understand how to do the &lt;a href=&#34;https://github.com/gohugoio/hugo#build-and-install-the-binaries-from-source-advanced-install&#34;&gt;advanced install&lt;/a&gt; of &lt;a href=&#34;https://github.com/gohugoio/hugo&#34;&gt;&lt;code&gt;hugo&lt;/code&gt;&lt;/a&gt; static site generator (SSG).&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Start a Personal Blog With Hugo a Static Site Generator Written in Go (Part 1)</title>
+      <link>https://bartlomiejmika.com/posts/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</link>
+      <pubDate>Mon, 07 Sep 2020 15:35:07 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2020/how-to-start-a-personal-blog-with-hugo-a-static-site-generator-written-in-go-part-1/</guid>
+      <description>&lt;p&gt;The purpose of this article is to help you setup a personal blog as quickly as possible. These are the instructions and notes I&amp;rsquo;ve written down when setting up my site that I&amp;rsquo;d like to share.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

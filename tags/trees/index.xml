@@ -1,10 +1,60 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Trees on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/trees/</link><description>Recent content in Trees on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Mon, 07 Feb 2022 23:57:22 -0500</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/trees/index.xml" rel="self" type="application/rss+xml"/><item><title>Red Mulberry Growlog #4</title><link>https://bartlomiejmika.com/post/2022/red-mulberry-growlog-4/</link><pubDate>Mon, 07 Feb 2022 23:57:22 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2022/red-mulberry-growlog-4/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2022/02/08/red_mulberries_1_outside.jpg" alt="Red Mulberry">
-(Date: 2021-08-25)&lt;/p>
-&lt;p>From summer to winter, this &lt;a href="https://bartlomiejmika.com/tags/grow-journal/">grow journal&lt;/a> post will show a few snapshots from the red-mulberries life.&lt;/p></description></item><item><title>Red Mulberry Growlog #3</title><link>https://bartlomiejmika.com/post/2021/red-mulberry-growlog-3/</link><pubDate>Mon, 25 Oct 2021 23:55:06 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/red-mulberry-growlog-3/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/10-25/red_mulberries_1_outside.jpg" alt="Red Mulberry 2020/11/23">
-(Date: 2021-03-19)&lt;/p>
-&lt;p>Into the over world from the underworld! The mulberries were grown in the basement for the majority of their existence and now are able to live in the outside for the first time. In this &lt;a href="https://bartlomiejmika.com/tags/grow-journal/">grow journal&lt;/a> I&amp;rsquo;ll write about my experience bring the red mulberries into the outside and growing them over summer.&lt;/p></description></item><item><title>Red Mulberry Growlog #2</title><link>https://bartlomiejmika.com/post/2021/red-mulberry-growlog-2/</link><pubDate>Mon, 10 May 2021 00:12:29 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/red-mulberry-growlog-2/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/04-27/red_mulberries_germination_1.jpg" alt="Red Mulberry 2020/11/23">
-(Germination Date: 2020/11/23)&lt;/p>
-&lt;p>How are the mulberries growing? In this growlog I show you the growth from seed to seedling and detail some of my challenges.&lt;/p></description></item><item><title>Red Mulberry Growlog #1</title><link>https://bartlomiejmika.com/post/2021/red-mulberry-growlog-1/</link><pubDate>Sun, 07 Feb 2021 00:56:15 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/red-mulberry-growlog-1/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/02-07/red-mulberry-tree-producing-fruit-in-virginia.jpg" alt="Red Mulberry">&lt;/p>
-&lt;p>&lt;strong>Red Mulberry&lt;/strong> (&lt;a href="https://en.wikipedia.org/wiki/Morus_rubra">Morus rubra&lt;/a>). (By: Famartin &lt;a href="https://commons.wikimedia.org/w/index.php?curid=62699443">CC BY-SA 3.0&lt;/a>)&lt;/p>
-&lt;p>It is with great excitement and joy, I&amp;rsquo;d like to introduce to you the first post in a series of growlogs detailing my adventures with growing rare and beautiful &lt;a href="https://en.wikipedia.org/wiki/Morus_rubra">&lt;em>Red Mulberry Trees&lt;/em>&lt;/a>. The first post will discuss &lt;em>what is mulberry tree&lt;/em>, &lt;em>why&lt;/em> I decide to focus on a &lt;em>red&lt;/em> mulberry and &lt;em>how&lt;/em> I am growing them.&lt;/p></description></item><item><title>Winter Sown Seeds Growlog #1</title><link>https://bartlomiejmika.com/post/2021/winter-sown-seeds-growlog-1/</link><pubDate>Sat, 06 Feb 2021 22:49:54 -0500</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/winter-sown-seeds-growlog-1/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/02-06/Seed-Containers.jpg" alt="Cover Image">&lt;/p>
-&lt;p>It&amp;rsquo;s February and I am already planting my tree seeds for spring! The gardening technique I will be using is called &lt;em>&amp;ldquo;Winter-Sowing&amp;rdquo;&lt;/em>. This is my first blog post pertaining to growing trees from winter sown seeds. I plan on logging and documenting my growing experience in this series of weblogs titled as &lt;strong>Winter Sown Seeds Weblog&lt;/strong>.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Trees on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/trees/</link>
+    <description>Recent content in Trees on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Mon, 07 Feb 2022 23:57:22 -0500</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/trees/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Red Mulberry Growlog #4</title>
+      <link>https://bartlomiejmika.com/posts/2022/red-mulberry-growlog-4/</link>
+      <pubDate>Mon, 07 Feb 2022 23:57:22 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/red-mulberry-growlog-4/</guid>
+      <description>&lt;p&gt;From summer to winter, this &lt;a href=&#34;https://bartlomiejmika.com/tags/grow-journal/&#34;&gt;grow journal&lt;/a&gt; post will show a few snapshots from the red-mulberries life.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Red Mulberry Growlog #3</title>
+      <link>https://bartlomiejmika.com/posts/2021/red-mulberry-growlog-3/</link>
+      <pubDate>Mon, 25 Oct 2021 23:55:06 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/red-mulberry-growlog-3/</guid>
+      <description>&lt;p&gt;Into the over world from the underworld! The mulberries were grown in the basement for the majority of their existence and now are able to live in the outside for the first time. In this &lt;a href=&#34;https://bartlomiejmika.com/tags/grow-journal/&#34;&gt;grow journal&lt;/a&gt; I&amp;rsquo;ll write about my experience bring the red mulberries into the outside and growing them over summer.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Red Mulberry Growlog #2</title>
+      <link>https://bartlomiejmika.com/posts/2021/red-mulberry-growlog-2/</link>
+      <pubDate>Mon, 10 May 2021 00:12:29 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/red-mulberry-growlog-2/</guid>
+      <description>&lt;p&gt;How are the mulberries growing? In this growlog I show you the growth from seed to seedling and detail some of my challenges.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Red Mulberry Growlog #1</title>
+      <link>https://bartlomiejmika.com/posts/2021/red-mulberry-growlog-1/</link>
+      <pubDate>Sun, 07 Feb 2021 00:56:15 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/red-mulberry-growlog-1/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Red Mulberry&lt;/strong&gt; (&lt;a href=&#34;https://en.wikipedia.org/wiki/Morus_rubra&#34;&gt;Morus rubra&lt;/a&gt;). (By: Famartin &lt;a href=&#34;https://commons.wikimedia.org/w/index.php?curid=62699443&#34;&gt;CC BY-SA 3.0&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;It is with great excitement and joy, I&amp;rsquo;d like to introduce to you the first post in a series of growlogs detailing my adventures with growing rare and beautiful &lt;a href=&#34;https://en.wikipedia.org/wiki/Morus_rubra&#34;&gt;&lt;em&gt;Red Mulberry Trees&lt;/em&gt;&lt;/a&gt;. The first post will discuss &lt;em&gt;what is mulberry tree&lt;/em&gt;, &lt;em&gt;why&lt;/em&gt; I decide to focus on a &lt;em&gt;red&lt;/em&gt; mulberry and &lt;em&gt;how&lt;/em&gt; I am growing them.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Winter Sown Seeds Growlog #1</title>
+      <link>https://bartlomiejmika.com/posts/2021/winter-sown-seeds-growlog-1/</link>
+      <pubDate>Sat, 06 Feb 2021 22:49:54 -0500</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/winter-sown-seeds-growlog-1/</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s February and I am already planting my tree seeds for spring! The gardening technique I will be using is called &lt;em&gt;&amp;ldquo;Winter-Sowing&amp;rdquo;&lt;/em&gt;. This is my first blog post pertaining to growing trees from winter sown seeds. I plan on logging and documenting my growing experience in this series of weblogs titled as &lt;strong&gt;Winter Sown Seeds Weblog&lt;/strong&gt;.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

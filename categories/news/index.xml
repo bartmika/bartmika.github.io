@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>News on Bartlomiej Mika</title><link>https://bartlomiejmika.com/categories/news/</link><description>Recent content in News on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Sat, 11 Jul 2020 00:02:30 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/categories/news/index.xml" rel="self" type="application/rss+xml"/><item><title>Hello World</title><link>https://bartlomiejmika.com/post/2020/hello-world/</link><pubDate>Sat, 11 Jul 2020 00:02:30 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2020/hello-world/</guid><description>&lt;p>&lt;img src="https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&amp;amp;cs=tinysrgb&amp;amp;dpr=2&amp;amp;h=650&amp;amp;w=940" alt="">&lt;/p>
-&lt;p>Welcome to my first blog post, I&amp;rsquo;ll explain the purpose of this site, why I started it, and what I hope to accomplish.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>News on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/categories/news/</link>
+    <description>Recent content in News on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 11 Jul 2020 00:02:30 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/categories/news/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hello World</title>
+      <link>https://bartlomiejmika.com/posts/2020/hello-world/</link>
+      <pubDate>Sat, 11 Jul 2020 00:02:30 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2020/hello-world/</guid>
+      <description>&lt;p&gt;Welcome to my first blog post, I&amp;rsquo;ll explain the purpose of this site, why I started it, and what I hope to accomplish.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

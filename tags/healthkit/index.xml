@@ -1,1 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HealthKit on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/healthkit/</link><description>Recent content in HealthKit on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Mon, 04 Apr 2022 01:45:42 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/healthkit/index.xml" rel="self" type="application/rss+xml"/><item><title>Remote Health Data Uploader</title><link>https://bartlomiejmika.com/post/2022/remote-health-data-uploader/</link><pubDate>Mon, 04 Apr 2022 01:45:42 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2022/remote-health-data-uploader/</guid><description>&lt;p>Submit your HealthKit data to a remote server.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>HealthKit on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/healthkit/</link>
+    <description>Recent content in HealthKit on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Mon, 04 Apr 2022 01:45:42 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/healthkit/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Remote Health Data Uploader</title>
+      <link>https://bartlomiejmika.com/posts/2022/remote-health-data-uploader/</link>
+      <pubDate>Mon, 04 Apr 2022 01:45:42 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2022/remote-health-data-uploader/</guid>
+      <description>&lt;p&gt;Submit your HealthKit data to a remote server.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

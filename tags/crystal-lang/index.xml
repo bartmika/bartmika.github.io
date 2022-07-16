@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Crystal-Lang on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/crystal-lang/</link><description>Recent content in Crystal-Lang on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Wed, 08 Sep 2021 23:38:40 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/crystal-lang/index.xml" rel="self" type="application/rss+xml"/><item><title>Learn Crystal with Practice Problems - Part 1: Variables Math and Strings</title><link>https://bartlomiejmika.com/post/2021/learn-crystal-lang-with-practice-problems-part-1-variables-math-and-strings/</link><pubDate>Wed, 08 Sep 2021 23:38:40 -0400</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/learn-crystal-lang-with-practice-problems-part-1-variables-math-and-strings/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2021/09-08/jason-d-k65_6C4hu2E-unsplash.jpg" alt="">&lt;/p>
-&lt;p>Are you interested in learning &lt;a href="https://bartlomiejmika.com/tags/crystal-lang/">#Crystal-Lang&lt;/a> but having difficulty because you are a &lt;a href="https://en.wikipedia.org/wiki/Kinesthetic_learning">tactile learner&lt;/a>? The purpose of this tutorial is to provide you practice problems you can try out at your leisure.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Crystal-Lang on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/crystal-lang/</link>
+    <description>Recent content in Crystal-Lang on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 08 Sep 2021 23:38:40 -0400</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/crystal-lang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Learn Crystal with Practice Problems - Part 1: Variables Math and Strings</title>
+      <link>https://bartlomiejmika.com/posts/2021/learn-crystal-lang-with-practice-problems-part-1-variables-math-and-strings/</link>
+      <pubDate>Wed, 08 Sep 2021 23:38:40 -0400</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/learn-crystal-lang-with-practice-problems-part-1-variables-math-and-strings/</guid>
+      <description>&lt;p&gt;Are you interested in learning &lt;a href=&#34;https://bartlomiejmika.com/tags/crystal-lang/&#34;&gt;#Crystal-Lang&lt;/a&gt; but having difficulty because you are a &lt;a href=&#34;https://en.wikipedia.org/wiki/Kinesthetic_learning&#34;&gt;tactile learner&lt;/a&gt;? The purpose of this tutorial is to provide you practice problems you can try out at your leisure.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Django on Bartlomiej Mika</title><link>https://bartlomiejmika.com/tags/django/</link><description>Recent content in Django on Bartlomiej Mika</description><generator>Hugo -- gohugo.io</generator><managingEditor>bart@mikasoftware.com (Mika Software Corporation)</managingEditor><webMaster>bart@mikasoftware.com (Mika Software Corporation)</webMaster><lastBuildDate>Fri, 01 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/django/index.xml" rel="self" type="application/rss+xml"/><item><title>Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view</title><link>https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/</link><pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate><author>bart@mikasoftware.com (Mika Software Corporation)</author><guid>https://bartlomiejmika.com/post/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/</guid><description>&lt;p>&lt;img src="https://bartlomiejmika.com/img/2020/08/28/joan-gamell-ZS67i1HLllo-unsplash.jpg" alt="">&lt;/p>
-&lt;p>Forget &lt;a href="https://github.com/axios/axios">Axios&lt;/a> or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic &lt;code>XmlHttpRequest&lt;/code> with your Django project.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Django on Bartlomiej Mika</title>
+    <link>https://bartlomiejmika.com/tags/django/</link>
+    <description>Recent content in Django on Bartlomiej Mika</description>
+    <image>
+      <url>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</url>
+      <link>https://bartlomiejmika.com/img/bartlomiej_mika.jpeg</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 01 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://bartlomiejmika.com/tags/django/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Example of using JavaScript AJAX XmlHttpRequest with Django JsonResponse view</title>
+      <link>https://bartlomiejmika.com/posts/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/</link>
+      <pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://bartlomiejmika.com/posts/2021/example-of-using-javascript-ajax-xmlhttprequest-with-django-jsonresponse-view/</guid>
+      <description>&lt;p&gt;Forget &lt;a href=&#34;https://github.com/axios/axios&#34;&gt;Axios&lt;/a&gt; or any other third-party JavaScript library pertaining to API calling, the purpose of this article is to explain how to utilize the basic &lt;code&gt;XmlHttpRequest&lt;/code&gt; with your Django project.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
